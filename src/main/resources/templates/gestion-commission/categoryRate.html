@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml"
+      layout:decorator="~{layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div layout:fragment="content">
+    <div class="page-wrapper">
+        <div class="container-fluid my-3">
+            <div class="row align-items-center">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title">
+                                Categorie Rate
+                                <div class="btn-group btn-group-sm float-right" role="group" aria-label="Basic example">
+                                    <button class="btn btn-small btn-info" id="addNewCategoryRatebtn">
+                                        <i class="mdi mdi-plus-circle"></i>
+                                    </button>
+                                </div>
+                            </h4>
+                        </div>
+                        <div class="tableFixHead">
+                            <table class="table color-table muted-table">
+                                <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Categorie</th>
+                                    <th>Instrument Type</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="catRate:${categorieRates}">
+                                    <td th:text="${catRate.id}"></td>
+                                    <td th:text="${catRate.category}"></td>
+                                    <td th:text="${catRate.instrumentType.instrumentTypeName}"></td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm float-right" role="group"
+                                             aria-label="Basic example">
+                                            <button class="btn btn-small btn-secondary editCategoryRatebtn"
+                                                    th:id="${catRate.id}">
+                                                <i class="mdi mdi-tooltip-edit"></i>
+                                            </button>
+
+                                            <button class="btn btn-small btn-danger showdeleteCategoryRatebtn"
+                                                    th:id="${catRate.id}">
+                                                <i class="mdi mdi-delete"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!--        modal pour edit or ajouter un Category rate-->
+    <div class="modal bs-example-modal-lg" id="ModalAddUpdateCategoryRate">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title"></h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <form th:object="${categorieRate}" method="post" th:action="@{/gestion-commission/category-rate}">
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <input type="hidden" th:field="*{id}" id="categorieRate_id">
+                        <p style="visibility:hidden;display: none" th:errors="*{categorieName}" id="errorCategory"></p>
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="categoryInput">le nom du catégorie : </label>
+                                <input type="text"
+                                       th:field="*{categorieName}"
+                                       th:classappend="${#fields.hasErrors('categorieName')}? 'is-invalid':''"
+                                       class="form-control" id="categoryInput"
+                                       placeholder="le nom du catégorie">
+                                <p class="invalid-feedback" th:if="${#fields.hasErrors('categorieName')}"
+                                   th:errors="*{categorieName}">Name
+                                    Error</p>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="instrumentType">Instrument Type : </label>
+                                <select id="instrumentType" th:field="*{instrumentType}" class="form-control"
+                                        name="profile">
+                                    <option th:each="instrumentType :${instrumentTypes}"
+                                            th:value="${instrumentType.id}"
+                                            th:text="${instrumentType.instrumentTypeName}"></option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">
+                            Annuler
+                        </button>
+                        <button type="submit" class="btn btn-info waves-effect text-left">
+                            Soumettre
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!--        Modal Delete Category rate-->
+    <div id="ModalDeleteCategoryRate" class="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabelFeetype">Delete Catgorie Rate</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                    <h4 class="deleteMessage">Delete Catgorie Rate <span></span></h4>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-info waves-effect" data-dismiss="modal">Close</button>
+                    <a type="button" id="deletebtnCategorieRate" class="btn btn-danger waves-effect">Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+<section layout:fragment="js">
+    <script>
+
+        $(document).ready(function () {
+            var errorCat = $("#errorCategory").text();
+            if (errorCat != "" || errorRate != "") {
+                $('.modal-title').text("Ajouter un nouveau Categorie Rate");
+                $('#ModalAddUpdateCategoryRate').modal('show');
+            }
+        });
+
+        //Modal add new Caegory rate
+        $(document).on('click', '#addNewCategoryRatebtn', function () {
+            $('#categoryInput').val("");
+            $('.modal-title').text("Ajouter un nouveau Categorie Rate");
+            $('#ModalAddUpdateCategoryRate').modal('show');
+        });
+
+        //Modal update Caegory rate
+        $(document).on('click', '.editCategoryRatebtn', function () {
+            $("#errorCategory").empty();
+            $('#categoryInput').val("");
+            $('#categoryInput').removeClass();
+            $('#categoryInput').addClass("form-control");
+            $('.modal-title').text("Editer un Fee Type");
+            var id = $(this).attr('id');
+            $('#categorieRate_id').val(id);
+            console.log(id);
+            $.ajax({
+                type: 'get',
+                url: "/categorieRate/" + id,
+                dataType: "json",
+                success: function (data) {
+                    console.log(data);
+                    $('#categoryInput').val(data.category);
+                    $('#instrumentType').val(data.instrumentType.id)
+                    $('#ModalAddUpdateCategoryRate').modal('show');
+                },
+                error: function (data) {
+                    console.log(data);
+                }
+            });
+        });
+
+        // show modal and delete Caegory rate
+        $(document).on('click', '.showdeleteCategoryRatebtn', function () {
+            var id = $(this).attr('id');
+            var textWithId = " " + id;
+            $('.deleteMessage span').text(textWithId);
+            $('#deletebtnCategorieRate').attr('href', '/gestion-commission/category-rate/' + id)
+            $('#ModalDeleteCategoryRate').modal('show');
+        });
+
+    </script>
+</section>
+
+</body>
+</html>

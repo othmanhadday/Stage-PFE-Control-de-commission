@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml"
+      layout:decorator="~{layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <style>
+        .tableFixHead {
+            overflow-y: auto;
+            overflow-x: auto;
+            height: 500px;
+        }
+
+        .tableFixHead thead th {
+            position: sticky;
+            top: 0;
+        }
+    </style>
+</head>
+<body>
+
+<div layout:fragment="content">
+    <div class="page-wrapper">
+        <!-- ============================================================== -->
+        <!-- Container fluid  -->
+        <!-- ============================================================== -->
+        <div class="container-fluid my-3">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title">
+                                Fees Categories
+                                <div class="btn-group btn-group-sm float-right" role="group" aria-label="Basic example">
+                                    <button class="btn btn-small btn-info" id="addNewFeeCategoriebtn">
+                                        <i class="mdi mdi-plus-circle"></i>
+                                    </button>
+                                </div>
+                            </h4>
+                        </div>
+                        <div class="tableFixHead">
+                            <table class="table color-table muted-table">
+                                <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Fee Categories</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                <tr th:each="feeCat : ${feeCategories}">
+                                    <td th:text="${feeCat.id}"></td>
+                                    <td th:text="${feeCat.categorieFeeName}"></td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm float-right" role="group"
+                                             aria-label="Basic example">
+                                            <button class="btn btn-small btn-secondary editFeeCategoriebtn"
+                                                    th:id="${feeCat.id}">
+                                                <i class="mdi mdi-tooltip-edit"></i>
+                                            </button>
+
+                                            <button class="btn btn-small btn-danger showdeleteFeeCategoriebtn"
+                                                    th:id="${feeCat.id}">
+                                                <i class="mdi mdi-delete"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title">
+                                Fee Types
+                                <div class="btn-group btn-group-sm float-right" role="group" aria-label="Basic example">
+                                    <button class="btn btn-small btn-info" id="addNewFeeTypebtn">
+                                        <i class="mdi mdi-plus-circle"></i>
+                                    </button>
+                                </div>
+                            </h4>
+                        </div>
+                        <div class="tableFixHead">
+                            <table class="table color-table muted-table">
+                                <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Fee Type</th>
+                                    <th>Fee Categorie</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="feeType : ${feeTypes}">
+                                    <td th:text="${feeType.id}"></td>
+                                    <td th:text="${feeType.typeName}"></td>
+                                    <td th:text="${feeType.categorieFees.categorieFeeName}"></td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm float-right" role="group"
+                                             aria-label="Basic example">
+                                            <button class="btn btn-small btn-secondary editFeeTypebtn"
+                                                    th:id="${feeType.id}">
+                                                <i class="mdi mdi-tooltip-edit"></i>
+                                            </button>
+
+                                            <button class="btn btn-small btn-danger showdeleteFeeTypebtn"
+                                                    th:id="${feeType.id}">
+                                                <i class="mdi mdi-delete"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!--        modal pour edit or ajouter un fees categories-->
+    <div class="modal bs-example-modal-lg" id="ModalAddUpdateFeeCategorie">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-FeeCategorie-title"></h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <form th:object="${feeCategorie}" method="post" th:action="@{/gestion-commission/feeCategorie/}">
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <input type="hidden" th:field="*{id}" id="feeCategorie_id">
+                        <p type="hidden" th:errors="*{categorieFeeName}" id="errorFeeCategorie"></p>
+                        <div class="row">
+
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="feeCategorieNameInput">Fee Categorie</label>
+                                    <input type="text"
+                                           th:field="*{categorieFeeName}"
+                                           th:classappend="${#fields.hasErrors('categorieFeeName')}? 'is-invalid':''"
+                                           class="form-control" id="feeCategorieNameInput"
+                                           placeholder="Enter Fee Categorie">
+                                    <p class="invalid-feedback" th:if="${#fields.hasErrors('categorieFeeName')}"
+                                       th:errors="*{categorieFeeName}">Name
+                                        Error</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">
+                            Annuler
+                        </button>
+                        <button type="submit" class="btn btn-info waves-effect text-left">
+                            Soumettre
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Delete fees categories  -->
+    <div id="ModalDeleteFeeCategorie" class="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">Delete Fee Categorie</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                    <h4 class="deleteMessage">Delete Fee Categorie <span></span></h4>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-info waves-effect" data-dismiss="modal">Close</button>
+                    <a type="button" id="deletebtnFeeCat" class="btn btn-danger waves-effect">Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--        modal pour edit or ajouter un fees Types-->
+    <div class="modal bs-example-modal-lg" id="ModalAddUpdateFeeType">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-FeeCategorie-title"></h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <form th:object="${feeType}" method="post" th:action="@{/gestion-commission/feeType/}">
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <input type="hidden" th:field="*{id}" id="feeType_id">
+                        <p style="display: block" th:errors="*{typeName}" id="errorFeeType"></p>
+                        <div class="row">
+
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="feeTypeNameInput">Fee Type</label>
+                                    <input type="text"
+                                           th:field="*{typeName}"
+                                           th:classappend="${#fields.hasErrors('typeName')}? 'is-invalid':''"
+                                           class="form-control" id="feeTypeNameInput"
+                                           placeholder="Enter Fee Type">
+                                    <p class="invalid-feedback" th:if="${#fields.hasErrors('typeName')}"
+                                       th:errors="*{typeName}">Name
+                                        Error</p>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="profiles">Fee Categories : </label>
+                                    <select id="profiles" th:field="*{categorieFees}" class="form-control" name="profile">
+                                        <option th:each="feeCat :${feeCategories}" th:value="${feeCat.id}"
+                                                th:text="${feeCat.categorieFeeName}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">
+                            Annuler
+                        </button>
+                        <button type="submit" class="btn btn-info waves-effect text-left">
+                            Soumettre
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Delete fees categories  -->
+    <div id="ModalDeleteFeeType" class="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabelFeetype">Delete Fee Categorie</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                    <h4 class="deleteMessage">Delete Fee Type <span></span></h4>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-info waves-effect" data-dismiss="modal">Close</button>
+                    <a type="button" id="deletebtnFeeType" class="btn btn-danger waves-effect">Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<section layout:fragment="js">
+    <script>
+        $(document).ready(function () {
+            var errorFeeCat = $("#errorFeeCategorie").text();
+            var errorFeeType = $('#errorFeeType').text();
+            if (errorFeeCat != "") {
+                $('#ModalAddUpdateFeeCategorie').modal('show');
+            }
+            if (errorFeeType != "") {
+                $('#ModalAddUpdateFeeType').modal('show');
+            }
+
+        });
+
+        //********************Categorie Fee************************
+        //Modal add new Categorie Fee
+        $(document).on('click', '#addNewFeeCategoriebtn', function () {
+            $('#feeCategorieNameInput').val("");
+            $('.modal-FeeCategorie-title').text("Ajouter un nouveau Fee Categorie");
+            $('#ModalAddUpdateFeeCategorie').modal('show');
+        });
+        //Modal update Categorie Fee
+        $(document).on('click', '.editFeeCategoriebtn', function () {
+            $("#errorFeeCategorie").empty();
+            $('#feeCategorieNameInput').val("");
+            $('#feeCategorieNameInput').removeClass();
+            $('#feeCategorieNameInput').addClass("form-control");
+            $('.modal-FeeCategorie-title').text("Editer un Fee Categorie");
+            var id = $(this).attr('id');
+            $('#feeCategorie_id').val(id);
+
+            $.ajax({
+                type: 'get',
+                url: "/categorieFees/" + id,
+                dataType: "json",
+                success: function (data) {
+                    $('#feeCategorieNameInput').val(data.categorieFeeName);
+                    $('#ModalAddUpdateFeeCategorie').modal('show');
+                },
+                error: function (data) {
+                    console.log(data);
+                }
+            });
+        });
+
+        // show modal and delete Categorie Fee
+        $(document).on('click', '.showdeleteFeeCategoriebtn', function () {
+            var id = $(this).attr('id');
+            var textWithId = " " + id;
+            $('.deleteMessage span').text(textWithId);
+            $('#deletebtnFeeCat').attr('href', '/gestion-commission/feeCategorie/' + id)
+            $('#ModalDeleteFeeCategorie').modal('show');
+        });
+
+        //********************Type Fee************************
+        //Modal add new Type Fee
+        $(document).on('click', '#addNewFeeTypebtn', function () {
+            $('#feeTypeNameInput').val("");
+            $('.modal-FeeCategorie-title').text("Ajouter un nouveau Fee Type");
+            $('#ModalAddUpdateFeeType').modal('show');
+        });
+
+        //Modal update type Fee
+        $(document).on('click', '.editFeeTypebtn', function () {
+            $("#errorFeeCategorie").empty();
+            $('#feeTypeNameInput').val("");
+            $('#feeTypeNameInput').removeClass();
+            $('#feeTypeNameInput').addClass("form-control");
+            $('.modal-FeeCategorie-title').text("Editer un Fee Type");
+            var id = $(this).attr('id');
+            $('#feeType_id').val(id);
+
+            $.ajax({
+                type: 'get',
+                url: "/feeType/" + id,
+                dataType: "json",
+                success: function (data) {
+                    console.log(data);
+                    $('#profiles').val(data.categorieFees.id)
+                    $('#feeTypeNameInput').val(data.typeName);
+                    $('#ModalAddUpdateFeeType').modal('show');
+                },
+                error: function (data) {
+                    console.log(data);
+                }
+            });
+        });
+
+        // show modal and delete type Fee
+        $(document).on('click', '.showdeleteFeeTypebtn', function () {
+            var id = $(this).attr('id');
+            var textWithId = " " + id;
+            $('.deleteMessage span').text(textWithId);
+            $('#deletebtnFeeType').attr('href', '/gestion-commission/feeType/' + id)
+            $('#ModalDeleteFeeType').modal('show');
+        });
+    </script>
+</section>
+</body>
+</html>

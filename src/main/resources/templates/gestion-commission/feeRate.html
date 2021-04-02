@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml"
+      layout:decorator="~{layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div layout:fragment="content">
+
+    <div class="page-wrapper">
+        <div class="container-fluid my-3">
+            <div class="row align-items-center">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title">
+                                Fee Rate
+                                <div class="btn-group btn-group-sm float-right" role="group" aria-label="Basic example">
+                                    <button class="btn btn-small btn-info" id="addNewFeeRatebtn">
+                                        <i class="mdi mdi-plus-circle"></i>
+                                    </button>
+                                </div>
+                            </h4>
+                        </div>
+                        <div class="tableFixHead">
+                            <table class="table color-table muted-table">
+                                <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Instrument Class</th>
+                                    <th>Instrument Type</th>
+                                    <th>Categorie</th>
+                                    <th>Fee Rate - Montant</th>
+                                    <th>Fee Type</th>
+                                    <th>Fee Categorie</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="feeRate:${feeRates}">
+                                    <td th:text="${feeRate.id}"></td>
+                                    <td th:text="${feeRate.instrumentCategorie.instrumentType.instrumentClass.instrementClass}"></td>
+                                    <td th:text="${feeRate.instrumentCategorie.instrumentType.instrumentTypeName}"></td>
+                                    <td th:text="${feeRate.instrumentCategorie.category}"></td>
+                                    <td th:if="${feeRate.feeRate >= 0 && feeRate.montant >= 0}">
+                                        <span>Error</span>
+                                    </td>
+                                    <td th:unless="${feeRate.feeRate >= 0 && feeRate.montant >= 0}">
+                                        <span th:if="${feeRate.feeRate < 0 && feeRate.montant < 0}">
+                                            Error
+                                        </span>
+                                        <span th:if="${feeRate.feeRate >= 0 }">
+                                            <span th:text="${feeRate.feeRate}"></span>
+                                        </span>
+                                        <span th:if="${feeRate.montant >= 0 }">
+                                            <span th:text="${feeRate.montant}"></span>
+                                        </span>
+                                    </td>
+
+
+                                    <td th:text="${feeRate.feeType.typeName}"></td>
+                                    <td th:text="${feeRate.feeType.categorieFees.categorieFeeName}"></td>
+
+                                    <td>
+                                        <div class="btn-group btn-group-sm float-right" role="group"
+                                             aria-label="Basic example">
+                                            <button class="btn btn-small btn-secondary editFeeRatebtn"
+                                                    th:id="${feeRate.id}">
+                                                <i class="mdi mdi-tooltip-edit"></i>
+                                            </button>
+
+                                            <button class="btn btn-small btn-danger showdeleteFeeRatebtn"
+                                                    th:id="${feeRate.id}">
+                                                <i class="mdi mdi-delete"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!--        modal pour  ajouter un Fee Rate -->
+    <div class="modal bs-example-modal-lg" id="ModalAddFeeRate" tabindex="-1" role="dialog"
+         aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Ajouter un Nouveau Fee Rate</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <form th:object="${feeRate}" method="post" th:action="@{/gestion-commission/feeRate}">
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <input type="hidden" th:field="*{id}" id="feeRate_id">
+
+                        <ul class="alert alert-danger" id="errors" th:if="${#fields.hasErrors()}">
+                            <li th:errors="*{feeType}" id="errorFeeType"></li>
+                            <li th:errors="*{instrumentCategorie}" id="errorInstrumentCategorie"></li>
+                            <li th:errors="*{feeRate}" id="errorFeeRate"></li>
+                            <li th:errors="*{montant}" id="errorMontant"></li>
+                        </ul>
+
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="instrumentClassSelect">Instrument Class : </label>
+                                <select id="instrumentClassSelect" class="form-control"
+                                        name="profile">
+                                    <option value="" selected disabled hidden class="hide">Choisissez ici</option>
+                                    <option th:each="instrumentClass :${instrumentClasses}"
+                                            th:value="${instrumentClass.id}"
+                                            th:text="${instrumentClass.instrementClass}"></option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-12 hide" id="instrumentTypeDiv">
+                            <div class="form-group">
+                                <label for="instrumentTypeSelect">Instrument Type : </label>
+                                <select id="instrumentTypeSelect" class="form-control">
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-12 hide" id="instrumentCategorieDiv">
+                            <div class="form-group">
+                                <label for="instrumentCategorieSelect">Instrument Categorie : </label>
+                                <select id="instrumentCategorieSelect" th:field="*{instrumentCategorie}"
+                                        class="form-control">
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-12 " id="feeCategorieDiv">
+                            <div class="form-group">
+                                <label for="feeCategorieSelect">Fee Categories : </label>
+                                <select id="feeCategorieSelect" class="form-control">
+                                    <option value="" selected disabled hidden>Choisissez ici</option>
+                                    <option th:each="feeCat :${feeCategories}"
+                                            th:value="${feeCat.id}"
+                                            th:text="${feeCat.categorieFeeName}"></option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-12 hide" id="feeTypeDiv">
+                            <div class="form-group">
+                                <label for="feeTypeSelect">Fee Type : </label>
+                                <select th:field="*{feeType}" id="feeTypeSelect" class="form-control">
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group hide" id="TauxMontantDiv">
+                            <label>Taux/Montant</label>
+                            <div class="row">
+                                <div class="custom-control  custom-checkbox">
+                                    <label>
+                                        <input th:value="T" th:field="*{tauxMontant}" class="tauxMontant"
+                                               name="tauxMontant" type="radio"/>
+                                        <span th:remove="tag"> Taux </span>
+                                    </label>
+                                </div>
+
+                                <div class="custom-control custom-checkbox">
+                                    <label>
+                                        <input th:value="M" th:field="*{tauxMontant}" class="tauxMontant"
+                                               name="tauxMontant" type="radio"/>
+                                        <span th:remove="tag"> Montant </span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 hide" id="feeRatediv">
+                            <div class="form-group">
+                                <label for="feeRateInput">Fee Rate : </label>
+                                <input type="number" step="any"
+                                       th:field="*{feeRate}"
+                                       th:classappend="${#fields.hasErrors('feeRate')}? 'is-invalid':''"
+                                       class="form-control" id="feeRateInput"
+                                       placeholder="Entrer Fee Rate">
+                                <p class="invalid-feedback" th:if="${#fields.hasErrors('feeRate')}"
+                                   th:errors="*{feeRate}">Name
+                                    Error</p>
+                            </div>
+                        </div>
+
+                        <div class="col-12 hide" id="feeMontantdiv">
+                            <div class="form-group">
+                                <label for="feeMontantInput">Fee Montant : </label>
+                                <input type="number" step="any"
+                                       th:field="*{montant}"
+                                       th:classappend="${#fields.hasErrors('montant')}? 'is-invalid':''"
+                                       class="form-control" id="feeMontantInput"
+                                       placeholder="Entrer Montant">
+                                <p class="invalid-feedback" th:if="${#fields.hasErrors('montant')}"
+                                   th:errors="*{montant}">Name Error</p>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">
+                            Annuler
+                        </button>
+                        <button type="submit" class="btn btn-info waves-effect text-left">
+                            Soumettre
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!--        modal pour  update un Fee Rate-->
+    <div class="modal bs-example-modal-lg" id="ModalUpdateFeeRate" tabindex="-1" role="dialog"
+         aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Update Fee Rate</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <form th:object="${feeRate}" method="post" th:action="@{/gestion-commission/feeRate}">
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <input type="hidden" th:field="*{id}" id="feeRate_id_update">
+
+                        <ul class="alert alert-danger" id="errors_update" th:if="${#fields.hasErrors()}">
+                            <li th:errors="*{feeType}" id="errorFeeType_update"></li>
+                            <li th:errors="*{instrumentCategorie}" id="errorInstrumentCategorie_update"></li>
+                            <li th:errors="*{feeRate}" id="errorFeeRate_update"></li>
+                            <li th:errors="*{montant}" id="errorMontant_update"></li>
+                        </ul>
+
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="instrumentClassSelect_update">Instrument Class : </label>
+                                <select id="instrumentClassSelect_update" class="form-control"
+                                        name="profile">
+                                    <option value="" selected disabled hidden class="hide">Choisissez ici</option>
+                                    <option th:each="instrumentClass :${instrumentClasses}"
+                                            th:value="${instrumentClass.id}"
+                                            th:text="${instrumentClass.instrementClass}"></option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="instrumentTypeSelect_update">Instrument Type : </label>
+                                <select id="instrumentTypeSelect_update" class="form-control">
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-12 ">
+                            <div class="form-group">
+                                <label for="instrumentCategorieSelect_update">Instrument Categorie : </label>
+                                <select id="instrumentCategorieSelect_update" th:field="*{instrumentCategorie}"
+                                        class="form-control">
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-12 ">
+                            <div class="form-group">
+                                <label for="feeCategorieSelect_update">Fee Categories : </label>
+                                <select id="feeCategorieSelect_update" class="form-control">
+                                    <option value="" selected disabled hidden>Choisissez ici</option>
+                                    <option th:each="feeCat :${feeCategories}"
+                                            th:value="${feeCat.id}"
+                                            th:text="${feeCat.categorieFeeName}"></option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-12 ">
+                            <div class="form-group">
+                                <label for="feeTypeSelect_update">Fee Type : </label>
+                                <select th:field="*{feeType}" id="feeTypeSelect_update" class="form-control">
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group ">
+                            <label>Taux/Montant</label>
+                            <div class="row">
+                                <div class="custom-control  custom-checkbox">
+                                    <label>
+                                        <input value="T" th:field="*{tauxMontant}" class="tauxMontant_update"
+                                               name="tauxMontantUpdate" type="radio"/>
+                                        <span th:remove="tag"> Taux </span>
+                                    </label>
+                                </div>
+
+                                <div class="custom-control custom-checkbox">
+                                    <label>
+                                        <input value="M" th:field="*{tauxMontant}" class="tauxMontant_update"
+                                               name="tauxMontantUpdate" type="radio"/>
+                                        <span th:remove="tag"> Montant </span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 hide" id="feeRatediv_update">
+                            <div class="form-group">
+                                <label for="feeRateInput_update">Fee Rate : </label>
+                                <input type="number" step="any"
+                                       th:field="*{feeRate}"
+                                       th:classappend="${#fields.hasErrors('feeRate')}? 'is-invalid':''"
+                                       class="form-control" id="feeRateInput_update"
+                                       placeholder="Entrer Fee Rate">
+                                <p class="invalid-feedback" th:if="${#fields.hasErrors('feeRate')}"
+                                   th:errors="*{feeRate}">Name
+                                    Error</p>
+                            </div>
+                        </div>
+
+                        <div class="col-12 hide" id="feeMontantdiv_update">
+                            <div class="form-group">
+                                <label for="feeMontantInput_update">Fee Montant : </label>
+                                <input type="number" step="any"
+                                       th:field="*{montant}"
+                                       th:classappend="${#fields.hasErrors('montant')}? 'is-invalid':''"
+                                       class="form-control" id="feeMontantInput_update"
+                                       placeholder="Entrer Montant">
+                                <p class="invalid-feedback" th:if="${#fields.hasErrors('montant')}"
+                                   th:errors="*{montant}">Name Error</p>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">
+                            Annuler
+                        </button>
+                        <button type="submit" class="btn btn-info waves-effect text-left">
+                            Soumettre
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <!--    modal pour supprimer Fee Rate-->
+    <div id="ModalDeleteFeeRate" class="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Delete Fee Rate</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                    <h4 class="deleteMessage">Delete Fee Rate<span></span></h4>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-info waves-effect" data-dismiss="modal">Close</button>
+                    <a type="button" id="deletebtnFeeRate" class="btn btn-danger waves-effect">Delete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<section layout:fragment="js">
+    <script>
+
+        $(document).ready(function () {
+            var id = $('#feeRate_id_update').val();
+            var errorFeeType = $("#errorFeeType").text();
+            var errorInstrumentCat = $("#errorInstrumentCategorie").text();
+            var errorFeeRate = $("#errorFeeRate").text();
+            var errorMontant = $("#errorMontant").text();
+
+            var errorFeeType_update = $("#errorFeeType_update").text();
+            var errorInstrumentCat_update = $("#errorInstrumentCategorie_update").text();
+            var errorFeeRate_update = $("#errorFeeRate_update").text();
+            var errorMontant_update = $("#errorMontant_update").text();
+            if (id.length == 0) {
+                if (errorFeeType != "" || errorInstrumentCat != "" || errorFeeRate != "" || errorMontant != "") {
+                    $('#ModalAddFeeRate').modal('show');
+                }
+            } else if (id.length > 0) {
+                if (errorFeeType_update != "" || errorInstrumentCat_update != "" || errorFeeRate_update != "" || errorMontant_update != "") {
+                    $('#ModalUpdateFeeRate').modal('show');
+                    getUpdatedItemFeeRate(id)
+                }
+            }
+
+
+        });
+
+        //**********************************ajouter nouveau fee rate***********************************
+        $(document).on('click', '#addNewFeeRatebtn', function () {
+            $("#feeRateInput").val("")
+            $('#errors').empty()
+            $('#errors').removeClass("alert alert-danger")
+            $('#feeRateInput').removeClass();
+            $('#feeRateInput').addClass("form-control");
+            $('#feeMontantInput').removeClass();
+            $('#feeMontantInput').addClass("form-control");
+            $("#feeMontantInput").val("")
+            $('input[type="radio"][class="tauxMontant"][value="M"]').attr('checked', false);
+            $('input[type="radio"][class="tauxMontant"][value="T"]').attr('checked', false);
+
+            $('#ModalAddFeeRate').modal('show');
+        });
+
+        // class instrument change to show instrument type
+        $('#instrumentClassSelect').change(function () {
+            var id = $(this).val();
+            $('#instrumentTypeSelect').empty();
+            $('#instrumentTypeSelect').prepend('<option value="" selected disabled hidden>Choisissez ici</option>');
+            $('#instrumentCategorieSelect').empty();
+            $('#instrumentCategorieSelect').prepend('<option value="" selected disabled hidden>Choisissez ici</option>');
+            $('#instrumentCategorieDiv').addClass("hide");
+
+            $.ajax({
+                type: 'get',
+                url: "/instrumentTypeByClass/" + id,
+                dataType: "json",
+                success: function (data) {
+                    $('#instrumentTypeDiv').removeClass("hide")
+                    $.each(data, function (key, value) {
+                        $('#instrumentTypeSelect')
+                            .append($('<option>', {value: value.id})
+                                .text(value.instrumentTypeName));
+                    });
+                },
+                error: function (data) {
+                    console.log(data);
+                }
+            });
+        })
+
+        // instrument type change to show instrument Categorie
+        $('#instrumentTypeSelect').change(function () {
+            var id = $(this).val();
+            $('#instrumentCategorieSelect ').empty();
+            $('#instrumentCategorieSelect').prepend('<option value="" selected disabled hidden>Choisissez ici</option>');
+            $.ajax({
+                type: 'get',
+                url: "/instrumentCatByInstrumentType/" + id,
+                dataType: "json",
+                success: function (data) {
+                    $('#instrumentCategorieDiv').removeClass("hide")
+                    $.each(data, function (key, value) {
+                        $('#instrumentCategorieSelect')
+                            .append($('<option>', {value: value.id})
+                                .text(value.category));
+                    });
+                },
+                error: function (data) {
+                    console.log(data);
+                }
+            });
+        })
+
+        // FeeCategorie change to show fee Type
+        $('#feeCategorieSelect').change(function () {
+            var id = $(this).val();
+            $('#feeTypeSelect ').empty();
+            $('#feeTypeSelect').prepend('<option value="" selected disabled hidden>Choisissez ici</option>');
+            $('#TauxMontantDiv').removeClass('hide');
+            $.ajax({
+                type: 'get',
+                url: "/feeTypesByCategorieFees/" + id,
+                dataType: "json",
+                success: function (data) {
+                    $('#feeTypeDiv').removeClass("hide")
+                    $.each(data, function (key, value) {
+                        $('#feeTypeSelect')
+                            .append($('<option>', {value: value.id})
+                                .text(value.typeName));
+                    });
+                },
+                error: function (data) {
+                    console.log(data);
+                }
+            });
+        })
+
+        $('.tauxMontant').click(function () {
+            if ($(this).val() == 'T') {
+                $("#feeRatediv").removeClass('hide')
+                $("#feeMontantdiv").addClass('hide')
+                $("#feeMontantInput").val('')
+            }
+            if ($(this).val() == 'M') {
+                $("#feeMontantdiv").removeClass('hide')
+                $("#feeRatediv").addClass('hide')
+                $("#feeRateInput").val('')
+            }
+        })
+
+        //*******************************Update Fee Rate***********************************
+
+        $('.tauxMontant_update').click(function () {
+            if ($(this).val() == 'T') {
+                $("#feeRatediv_update").removeClass('hide')
+                $("#feeMontantdiv_update").addClass('hide')
+            }
+            if ($(this).val() == 'M') {
+                $("#feeMontantdiv_update").removeClass('hide')
+                $("#feeRatediv_update").addClass('hide')
+            }
+        })
+
+
+        $(document).on('click', '.editFeeRatebtn', function () {
+            var id = $(this).attr('id');
+            $('#feeRate_id_update').val(id);
+
+            $('#errors_update').empty()
+            $('#errors_update').removeClass("alert alert-danger")
+            $("#feeRatediv_update").addClass('hide')
+            $("#feeMontantdiv_update").addClass('hide')
+            $('#feeRateInput_update').val("")
+            $('#feeRateInput_update').removeClass()
+            $('#feeRateInput_update').addClass('form-control')
+            $('#feeMontantInput_update').val("")
+            $('#feeMontantInput_update').removeClass()
+            $('#feeMontantInput_update').addClass('form-control')
+            $('.tauxMontant_update').each(function () {
+                $('input[type="radio"]').prop('checked', false);
+            })
+            $('#instrumentClassSelect_update').val("")
+            getUpdatedItemFeeRate(id);
+        })
+
+
+        // class instrument change to show instrument type
+        $('#instrumentClassSelect_update').change(function () {
+            var id = $(this).val();
+            $('#instrumentTypeSelect_update').empty();
+            $('#instrumentTypeSelect_update').prepend('<option value="" selected disabled hidden>Choisissez ici</option>');
+            $('#instrumentCategorieSelect_update').empty();
+            $('#instrumentCategorieSelect_update').prepend('<option value="" selected disabled hidden>Choisissez ici</option>');
+
+            $.ajax({
+                type: 'get',
+                url: "/instrumentTypeByClass/" + id,
+                dataType: "json",
+                success: function (data) {
+                    $.each(data, function (key, value) {
+                        $('#instrumentTypeSelect_update')
+                            .append($('<option>', {value: value.id})
+                                .text(value.instrumentTypeName));
+                    });
+                },
+                error: function (data) {
+                    console.log(data);
+                }
+            });
+        })
+
+        // instrument type change to show instrument Categorie
+        $('#instrumentTypeSelect_update').change(function () {
+            var id = $(this).val();
+            $('#instrumentCategorieSelect_update').empty();
+            $('#instrumentCategorieSelect_update').prepend('<option value="" selected disabled hidden>Choisissez ici</option>');
+            $.ajax({
+                type: 'get',
+                url: "/instrumentCatByInstrumentType/" + id,
+                dataType: "json",
+                success: function (data) {
+                    $.each(data, function (key, value) {
+                        $('#instrumentCategorieSelect_update')
+                            .append($('<option>', {value: value.id})
+                                .text(value.category));
+                    });
+                },
+                error: function (data) {
+                    console.log(data);
+                }
+            });
+        })
+
+        // FeeCategorie change to show fee Type
+        $('#feeCategorieSelect_update').change(function () {
+            var id = $(this).val();
+            $('#feeTypeSelect_update').empty();
+            $('#feeTypeSelect_update').prepend('<option value="" selected disabled hidden>Choisissez ici</option>');
+            $.ajax({
+                type: 'get',
+                url: "/feeTypesByCategorieFees/" + id,
+                dataType: "json",
+                success: function (data) {
+                    $.each(data, function (key, value) {
+                        $('#feeTypeSelect_update')
+                            .append($('<option>', {value: value.id})
+                                .text(value.typeName));
+                    });
+                },
+                error: function (data) {
+                    console.log(data);
+                }
+            });
+        })
+
+
+        function getUpdatedItemFeeRate(id) {
+            $.ajax({
+                type: 'get',
+                url: "/feeRateById/" + id,
+                dataType: "json",
+                success: function (data) {
+                    if (data.tauxMontant == "M") {
+                        $('input[type="radio"][class="tauxMontant_update"][value="M"]').prop('checked', true);
+                        $("#feeMontantdiv_update").removeClass('hide')
+                        $('#feeMontantInput_update').val(data.montant)
+                    } else if (data.tauxMontant == "T") {
+                        $('input[type="radio"][class="tauxMontant_update"][value="T"]').prop('checked', true);
+                        $("#feeRatediv_update").removeClass('hide')
+                        $('#feeRateInput_update').val(data.feeRate)
+                    } else {
+                    }
+                    $('#instrumentClassSelect_update').val(data.instrumentCategorie.instrumentType.instrumentClass.id);
+                    $('#feeCategorieSelect_update').val(data.feeType.categorieFees.id);
+                    $('#instrumentTypeSelect_update').empty();
+                    $('#instrumentCategorieSelect_update').empty();
+                    $('#feeTypeSelect_update').empty();
+
+                    // get Instrument Type
+                    $.ajax({
+                        type: 'get',
+                        url: "/instrumentTypeByClass/" + data.instrumentCategorie.instrumentType.instrumentClass.id,
+                        dataType: "json",
+                        success: function (instrumentTypes) {
+                            $.each(instrumentTypes, function (key, value) {
+                                $('#instrumentTypeSelect_update')
+                                    .append($('<option>', {value: value.id})
+                                        .text(value.instrumentTypeName));
+                                $('#instrumentTypeSelect_update').val(data.instrumentCategorie.instrumentType.id)
+                            });
+                        },
+                        error: function (data) {
+                            console.log(data);
+                        }
+                    });
+
+                    // get Categorie instrument
+                    $.ajax({
+                        type: 'get',
+                        url: "/instrumentCatByInstrumentType/" + data.instrumentCategorie.instrumentType.id,
+                        dataType: "json",
+                        success: function (instrumentCat) {
+                            $.each(instrumentCat, function (key, value) {
+                                $('#instrumentCategorieSelect_update')
+                                    .append($('<option>', {value: value.id})
+                                        .text(value.category));
+                                $('#instrumentCategorieSelect_update').val(data.instrumentCategorie.id);
+                            });
+                        },
+                        error: function (data) {
+                            console.log(data);
+                        }
+                    });
+
+                    //get Fee Type
+                    $.ajax({
+                        type: 'get',
+                        url: "/feeTypesByCategorieFees/" + data.feeType.categorieFees.id,
+                        dataType: "json",
+                        success: function (feeTypes) {
+                            $.each(feeTypes, function (key, value) {
+                                $('#feeTypeSelect_update')
+                                    .append($('<option>', {value: value.id})
+                                        .text(value.typeName));
+                            });
+                            $('#feeTypeSelect_update').val(data.feeType.id);
+                        },
+                        error: function (data) {
+                            console.log(data);
+                        }
+                    });
+                    $("#ModalUpdateFeeRate").modal('show');
+
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            })
+        }
+
+        //***********************************Delete Fee Rate************************************************
+        $(document).on('click', '.showdeleteFeeRatebtn', function () {
+            var id = $(this).attr('id');
+            console.log(id);
+            var textWithId = " " + id;
+            $('.deleteMessage span').text(textWithId);
+            $('#deletebtnFeeRate').attr('href', '/gestion-commission/feeRate/' + id)
+            $('#ModalDeleteFeeRate').modal('show');
+        })
+
+    </script>
+</section>
+
+</body>
+</html>
