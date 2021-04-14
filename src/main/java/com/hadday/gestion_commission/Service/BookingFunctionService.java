@@ -13,5 +13,5 @@ public interface BookingFunctionService {
     public List<BookingFunction> findBookingFunctions();
 
     public BookingFunction addUpdateBookingFunction(BookingFunction bookingFunction);
-    public void deleteBookingFunction(Long id);
+    public BookingFunction deleteBookingFunction(Long id);
 }

@@ -17,17 +17,28 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString(exclude = "bookingInstrumentBases")
-public class FeeType implements Serializable {
+public class FeeType implements Serializable, Comparable<FeeType> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String typeName;
     @ManyToOne
     private CategorieFees categorieFees;
-    @OneToMany(mappedBy = "feeType",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "feeType", cascade = CascadeType.ALL)
     @JsonIgnore
     private Collection<BookingInstrumentBasis> bookingInstrumentBases;
     private boolean deleted;
 
+    @Override
+    public int compareTo(FeeType o) {
+        if (
+                this.getTypeName().equals(o.getTypeName()) &&
+                this.getCategorieFees().equals(o.getCategorieFees())
+        ) {
+            return 1;
+        } else {
+            return -1;
+        }
+    }
 }

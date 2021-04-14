@@ -8,11 +8,11 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface CategorieRateRepository extends JpaRepository<InstrumentCategorie, Long> {
+public interface InstrumentCategorieRepository extends JpaRepository<InstrumentCategorie, Long> {
     public List<InstrumentCategorie> findCategorieRatesByDeletedIsFalse();
 
     public InstrumentCategorie findCategorieRateByCategory(String name);
 
-    public List<InstrumentCategorie> findInstrumentCategoriesByInstrumentType(InstrumentType instrumentType);
+    public List<InstrumentCategorie> findInstrumentCategoriesByInstrumentTypeAndDeletedIsFalse(InstrumentType instrumentType);
 
 }

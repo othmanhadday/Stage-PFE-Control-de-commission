@@ -11,6 +11,12 @@
 <div layout:fragment="content">
     <div class="page-wrapper">
         <div class="container-fluid my-3">
+
+            <div class="alert alert-primary" role="alert" th:text="${success}" th:if="${success}"></div>
+            <div class="alert alert-danger" role="alert" th:text="${delete}" th:if="${delete}"></div>
+            <div class="alert alert-info" role="alert" th:text="${exist}" th:if="${exist}"></div>
+            <div class="alert alert-info" role="alert" th:text="${error}" th:if="${error}"></div>
+
             <div class="row align-items-center">
                 <div class="col-md-12">
                     <div class="card">
@@ -24,8 +30,9 @@
                                 </div>
                             </h4>
                         </div>
-                        <div class="tableFixHead">
-                            <table class="table color-table muted-table">
+                        <div class=" table-responsive">
+                            <table class="display nowrap table color-table table-hover table-striped muted-table"
+                                   id="instrumentCategorieTable">
                                 <thead>
                                 <tr>
                                     <th>#</th>
@@ -192,6 +199,10 @@
             $('#deletebtnCategorieRate').attr('href', '/gestion-commission/category-rate/' + id)
             $('#ModalDeleteCategoryRate').modal('show');
         });
+
+        $(document).ready( function () {
+            $('#instrumentCategorieTable').DataTable();
+        } );
 
     </script>
 </section>

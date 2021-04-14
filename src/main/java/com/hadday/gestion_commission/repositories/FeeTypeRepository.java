@@ -9,9 +9,9 @@ import java.util.List;
 
 @Repository
 public interface FeeTypeRepository extends JpaRepository<FeeType, Long> {
-    public FeeType findFeeTypeByTypeName(String name);
+    public List<FeeType> findFeeTypeByTypeNameAndDeletedIsFalse(String name);
 
-    public List<FeeType> findFeeTypesByCategorieFees(CategorieFees categorieFees);
+    public List<FeeType> findFeeTypesByCategorieFeesAndDeletedIsFalse(CategorieFees categorieFees);
 
     public List<FeeType> findFeeTypesByDeletedIsFalse();
 }

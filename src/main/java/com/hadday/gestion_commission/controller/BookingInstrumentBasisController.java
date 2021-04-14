@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -40,8 +41,8 @@ public class BookingInstrumentBasisController {
     public String createUpdateBookingInstrumentBasis(
             @ModelAttribute("bookingInstrument") BookingInstrumentBasisDto dto,
             Model model,
+            RedirectAttributes redirAttrs,
             BindingResult result) {
-        System.out.println(dto);
 
         if (dto.getBookFunction()==null) {
             result.rejectValue("bookFunction", null, " Booking Function field is Empty");
@@ -64,13 +65,21 @@ public class BookingInstrumentBasisController {
             model.addAttribute("feeCategories", feeCategorieTypeService.allCategorieFees());
             return "gestion-commission/mouvement/bookingFunctionInstrumentRate";
         }
-        bookingInstrumentBasisService.CreateUpdateBookingInstrumentBasis(dto);
+         BookingInstrumentBasis bookingInstrumentBasis=bookingInstrumentBasisService.CreateUpdateBookingInstrumentBasis(dto);
+
+        if(bookingInstrumentBasis !=null){
+            redirAttrs.addFlashAttribute("success", " Fée Rate a été inséré avec succès : " + bookingInstrumentBasis.getId());
+        }else{
+            redirAttrs.addFlashAttribute("exist", " Fée Rate deja existe ");
+        }
         return "redirect:/gestion-commission/mouvement-rate";
     }
 
     @GetMapping("/{id}")
-    public String deleteBookingInstrumentBasis(@PathVariable("id") Long id){
+    public String deleteBookingInstrumentBasis(@PathVariable("id") Long id,RedirectAttributes redirAttrs){
         bookingInstrumentBasisService.deleteBookingInstrumentBasis(id);
+        redirAttrs.addFlashAttribute("delete", "Fee Rate a été supprimer  avec succès ");
+
         return "redirect:/gestion-commission/mouvement-rate";
     }
 }

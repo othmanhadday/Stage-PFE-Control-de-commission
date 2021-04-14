@@ -13,8 +13,8 @@ public interface InstrumentClassBasisInstrumentRepository extends JpaRepository<
 
     public List<InstrumentClassBasisInstrument> findInstrumentClassBasisInstrumentByDeletedIsFalse();
 
-    public List<InstrumentClassBasisInstrument> findInstrumentClassBasisInstrumentsByInstrumentType(InstrumentType instrumentType);
+    public List<InstrumentClassBasisInstrument> findInstrumentClassBasisInstrumentsByInstrumentTypeAndDeletedIsFalse(InstrumentType instrumentType);
 
-    public InstrumentClassBasisInstrument findInstrumentClassBasisInstrumentByName(String name);
+    public List<InstrumentClassBasisInstrument> findInstrumentClassBasisInstrumentByName(String name);
 
 }

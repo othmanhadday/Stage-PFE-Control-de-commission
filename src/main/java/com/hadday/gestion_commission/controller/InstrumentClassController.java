@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 
@@ -34,11 +35,12 @@ public class InstrumentClassController {
     }
 
     @PostMapping
-    public String createOrUpdateInstrumentClass(@Valid @ModelAttribute("instrumentClass") InstrumentClass instrumentClass, Model model, BindingResult result) {
+    public String createOrUpdateInstrumentClass(@Valid @ModelAttribute("instrumentClass") InstrumentClass instrumentClass,
+                                                RedirectAttributes redirAttrs, Model model, BindingResult result) {
         if (instrumentClass.getInstrementClass().isEmpty()) {
             result.rejectValue("instrementClass", null, "Instrument Class field is Empty");
         }
-//        System.out.println(instrumentClass.getInstrementClass());
+
         if (result.hasErrors()) {
             model.addAttribute("instrumentClasses", instrumentClassTypeService.getAllInstrumentClass());
             model.addAttribute("instrumentTypes", instrumentClassTypeService.getAllInstrumentType());
@@ -46,13 +48,23 @@ public class InstrumentClassController {
 
             return "/gestion-commission/InstrumentClass_type";
         }
-        instrumentClassTypeService.createUpdateInstrumentClass(instrumentClass);
+        instrumentClass = instrumentClassTypeService.createUpdateInstrumentClass(instrumentClass);
+        if (instrumentClass != null) {
+            redirAttrs.addFlashAttribute("success", " Instrument Class a été inséré avec succès : " + instrumentClass.getInstrementClass());
+        } else {
+            redirAttrs.addFlashAttribute("exist", " Instrument Class déja existe " );
+        }
         return "redirect:/gestion-commission/instrument-class";
     }
 
     @GetMapping("/{id}")
-    public String deleteInstrumentType(@PathVariable("id") Long id) {
-        instrumentClassTypeService.deleteInstrumentType(id);
+    public String deleteInstrumentType(@PathVariable("id") Long id, RedirectAttributes redirAttrs) {
+       InstrumentClass instrumentClass = instrumentClassTypeService.deleteInstrumentClass(id);
+       if(instrumentClass==null){
+           redirAttrs.addFlashAttribute("error", "Vous n’avez pas le droit de supprimer cet Instrument Class");
+       }else {
+           redirAttrs.addFlashAttribute("delete", "Instrument Class a été supprimer  avec succès ");
+       }
         return "redirect:/gestion-commission/instrument-class";
     }
 }

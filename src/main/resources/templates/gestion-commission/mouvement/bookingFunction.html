@@ -11,8 +11,15 @@
 <div layout:fragment="content">
         <div class="page-wrapper">
             <div class="container-fluid my-3">
-                <div class="row align-items-center">
-                    <div class="col-md-6">
+
+                <div class="alert alert-primary" role="alert" th:text="${success}" th:if="${success}"></div>
+                <div class="alert alert-danger" role="alert" th:text="${delete}" th:if="${delete}"></div>
+                <div class="alert alert-info" role="alert" th:text="${exist}" th:if="${exist}"></div>
+                <div class="alert alert-info" role="alert" th:text="${error}" th:if="${error}"></div>
+
+
+                <div class="row ">
+                    <div class="col-lg-6">
                         <div class="card">
                             <div class="card-body">
                                 <h4 class="card-title">
@@ -25,8 +32,9 @@
                                     </div>
                                 </h4>
                             </div>
-                            <div class="tableFixHead">
-                                <table class="table color-table muted-table">
+                            <div class=" table-responsive">
+                                <table class="display nowrap table color-table table-hover table-striped muted-table"
+                                       id="bookingFunctionTable">
                                     <thead>
                                     <tr>
                                         <th>#</th>
@@ -58,7 +66,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-lg-6">
                         <div class="card">
                             <div class="card-body">
                                 <h4 class="card-title">
@@ -71,8 +79,9 @@
                                     </div>
                                 </h4>
                             </div>
-                            <div class="tableFixHead">
-                                <table class="table color-table muted-table">
+                            <div class=" table-responsive">
+                                <table class="display nowrap table color-table table-hover table-striped muted-table"
+                                       id="instrumentclassBasisTable">
                                     <thead>
                                     <tr>
                                         <th>#</th>
@@ -350,6 +359,14 @@
             $('#deletebtnInstrumentBasis').attr('href', '/gestion-commission/instrumentBasis/' + id)
             $('#ModalDeleteInstrumentBasis').modal('show');
         });
+
+        $(document).ready( function () {
+            $('#bookingFunctionTable').DataTable();
+        } );
+
+        $(document).ready( function () {
+            $('#instrumentclassBasisTable').DataTable();
+        } );
 
     </script>
 

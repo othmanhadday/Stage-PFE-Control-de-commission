@@ -1,14 +1,15 @@
 package com.hadday.gestion_commission.Service;
 
 import com.hadday.gestion_commission.entities.InstrumentClass;
+import com.hadday.gestion_commission.entities.InstrumentClassBasisInstrument;
 import com.hadday.gestion_commission.entities.InstrumentType;
-import com.hadday.gestion_commission.repositories.InstrumentClassRepository;
-import com.hadday.gestion_commission.repositories.InstrumentTypeRepository;
+import com.hadday.gestion_commission.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
 public class InstrumentClassTypeServiceImpl implements InstrumentClassTypeService {
@@ -17,6 +18,10 @@ public class InstrumentClassTypeServiceImpl implements InstrumentClassTypeServic
     private InstrumentClassRepository instrumentClassRepository;
     @Autowired
     private InstrumentTypeRepository instrumentTypeRepository;
+    @Autowired
+    private InstrumentCategorieRepository instrumentCategorieRepository;
+    @Autowired
+    private InstrumentClassBasisInstrumentRepository instrumentClassBasisInstrumentRepository;
 
     @Override
     public List<InstrumentClass> getAllInstrumentClass() {
@@ -25,14 +30,12 @@ public class InstrumentClassTypeServiceImpl implements InstrumentClassTypeServic
 
     @Override
     public InstrumentClass createUpdateInstrumentClass(InstrumentClass instrumentClass) {
-        InstrumentClass instrumentClassIsNul = instrumentClassRepository.findInstrumentClassByInstrementClass(instrumentClass.getInstrementClass());
+        InstrumentClass instrumentClassIsNul = instrumentClassRepository.findInstrumentClassByInstrementClassAndDeletedIsFalse(instrumentClass.getInstrementClass());
         if (instrumentClass.getId() == null) {
             if (instrumentClassIsNul == null) {
-                return instrumentClassRepository.save(instrumentClass);
+                instrumentClass = instrumentClassRepository.save(instrumentClass);
             } else {
-                instrumentClass.setId(instrumentClassIsNul.getId());
-                instrumentClass.setDeleted(false);
-                return instrumentClassRepository.save(instrumentClass);
+                instrumentClass = null;
             }
         } else {
             Optional<InstrumentClass> instrumentClassOptional = instrumentClassRepository.findById(instrumentClass.getId());
@@ -40,15 +43,16 @@ public class InstrumentClassTypeServiceImpl implements InstrumentClassTypeServic
                 InstrumentClass newInstrumentClass = instrumentClassOptional.get();
                 if (instrumentClassIsNul == null) {
                     newInstrumentClass.setInstrementClass(instrumentClass.getInstrementClass());
+                    newInstrumentClass.setId(instrumentClass.getId());
+                    instrumentClass = instrumentClassRepository.save(newInstrumentClass);
                 } else {
-                    newInstrumentClass.setDeleted(false);
+                    instrumentClass = null;
                 }
-                newInstrumentClass.setId(instrumentClass.getId());
-                return instrumentClassRepository.save(newInstrumentClass);
             } else {
-                return instrumentClassRepository.save(instrumentClass);
+                instrumentClass = instrumentClassRepository.save(instrumentClass);
             }
         }
+        return instrumentClass;
     }
 
     @Override
@@ -57,10 +61,14 @@ public class InstrumentClassTypeServiceImpl implements InstrumentClassTypeServic
     }
 
     @Override
-    public void deleteInstrumentClass(Long id) {
+    public InstrumentClass deleteInstrumentClass(Long id) {
         InstrumentClass instrumentClass = getInstrumentClassById(id);
-        instrumentClass.setDeleted(true);
-        instrumentClassRepository.save(instrumentClass);
+        if (instrumentTypeRepository.findInstrumentTypesByInstrumentClassAndDeletedIsFalse(instrumentClass).size() > 0) {
+            return null;
+        } else {
+            instrumentClass.setDeleted(true);
+            return instrumentClassRepository.save(instrumentClass);
+        }
     }
 
     @Override
@@ -75,42 +83,64 @@ public class InstrumentClassTypeServiceImpl implements InstrumentClassTypeServic
 
     @Override
     public InstrumentType createUpdateInstrumentType(InstrumentType instrumentType) {
-        InstrumentType instrumentTypeIsNull = instrumentTypeRepository.findInstrumentTypeByInstrumentTypeName(instrumentType.getInstrumentTypeName());
+        AtomicBoolean isEquals = new AtomicBoolean(false);
+        List<InstrumentType> instrumentTypes = instrumentTypeRepository.findInstrumentTypesByDeletedIsFalse();
+
+        InstrumentType it = instrumentType;
+        instrumentTypes.forEach(its -> {
+            if (its.compareTo(it) == 1) {
+                isEquals.set(true);
+                return;
+            }
+        });
+
         if (instrumentType.getId() == null) {
-            if (instrumentTypeIsNull == null) {
-                return instrumentTypeRepository.save(instrumentType);
+            if (isEquals.get() == false) {
+                instrumentType = instrumentTypeRepository.save(instrumentType);
+//                if instrument type = coupons o ajout un "-"
+                if (!instrumentType.getInstrumentTypeName().toUpperCase().equals("COUPONS")){
+                    instrumentClassBasisInstrumentRepository.save(new InstrumentClassBasisInstrument(null,"-",instrumentType,null,false));
+                }
             } else {
-                instrumentType.setId(instrumentTypeIsNull.getId());
-                instrumentType.setDeleted(false);
-                return instrumentTypeRepository.save(instrumentType);
+                instrumentType = null;
             }
         } else {
             Optional<InstrumentType> instrumentTypeOptional = instrumentTypeRepository.findById(instrumentType.getId());
             if (instrumentTypeOptional.isPresent()) {
                 InstrumentType newInstrumentType = instrumentTypeOptional.get();
-                if (instrumentTypeIsNull == null) {
-                    newInstrumentType.setInstrumentTypeName(instrumentType.getInstrumentTypeName());
-                } else {
-                    newInstrumentType.setDeleted(false);
-                }
-                newInstrumentType.setInstrumentTypeCode(instrumentType.getInstrumentTypeCode());
                 newInstrumentType.setId(instrumentType.getId());
-                return instrumentTypeRepository.save(newInstrumentType);
+                newInstrumentType.setInstrumentTypeName(instrumentType.getInstrumentTypeName());
+                newInstrumentType.setInstrumentTypeCode(instrumentType.getInstrumentTypeCode());
+                if (isEquals.get() == false) {
+                    instrumentType = instrumentTypeRepository.save(newInstrumentType);
+
+                } else {
+                    instrumentType = null;
+                }
             } else {
-                return instrumentType;
+                instrumentType = instrumentTypeRepository.save(instrumentType);
             }
+        }
+
+        return instrumentType;
+    }
+
+    @Override
+    public InstrumentType deleteInstrumentType(Long id) {
+        InstrumentType instrumentType = getInstrumentTypeById(id);
+        if (
+            instrumentCategorieRepository.findInstrumentCategoriesByInstrumentTypeAndDeletedIsFalse(instrumentType).size() > 0 ||
+            instrumentClassBasisInstrumentRepository.findInstrumentClassBasisInstrumentsByInstrumentTypeAndDeletedIsFalse(instrumentType).size() > 0
+        ) {
+            return null;
+        } else {
+            instrumentType.setDeleted(true);
+            return instrumentTypeRepository.save(instrumentType);
         }
     }
 
     @Override
-    public void deleteInstrumentType(Long id) {
-        InstrumentType instrumentType = getInstrumentTypeById(id);
-        instrumentType.setDeleted(true);
-        instrumentTypeRepository.save(instrumentType);
-    }
-
-    @Override
     public List<InstrumentType> getInstrumentTypeByClass(InstrumentClass instrumentClass) {
-        return instrumentTypeRepository.findInstrumentTypesByInstrumentClass(instrumentClass);
+        return instrumentTypeRepository.findInstrumentTypesByInstrumentClassAndDeletedIsFalse(instrumentClass);
     }
 }

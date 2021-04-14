@@ -27,49 +27,58 @@ public class FeeRateServiceImpl implements FeeRateService {
     }
 
     @Override
-    public void createUpdateFeeRate(FeeRateDto feeRateDto) {
+    public FeeRate createUpdateFeeRate(FeeRateDto feeRateDto) {
         AtomicBoolean isEquals = new AtomicBoolean(false);
         List<FeeRate> feeRates = feeRateRepository.findFeeRatesByDeletedIsFalse();
         FeeRate feeRate = new FeeRate();
         feeRate.setId(feeRateDto.getId());
         feeRate.setTauxMontant(feeRateDto.getTauxMontant());
-        if(feeRateDto.getInstrumentCategorie()!=null){
+        if (feeRateDto.getInstrumentCategorie() != null) {
             feeRate.setInstrumentCategorie(feeRateDto.getInstrumentCategorie());
         }
-        if(feeRateDto.getFeeType()!=null){
+        if (feeRateDto.getFeeType() != null) {
             feeRate.setFeeType(feeRateDto.getFeeType());
         }
-        if (feeRateDto.getTauxMontant()=='M'){
+        if (feeRateDto.getTauxMontant() == 'M') {
             feeRate.setMontant(Double.valueOf(feeRateDto.getMontant()));
             feeRate.setFeeRate(-1);
         }
-        if(feeRateDto.getTauxMontant()=='T'){
+        if (feeRateDto.getTauxMontant() == 'T') {
             feeRate.setFeeRate(Double.valueOf(feeRateDto.getFeeRate()));
             feeRate.setMontant(-1);
         }
 
+        FeeRate feeR = feeRate;
         feeRates.forEach(rate -> {
-            if (rate.compareTo(feeRate)==1){
+
+            if (rate.compareTo(feeR) == 1) {
                 isEquals.set(true);
             }
         });
 
-        if(feeRate.getId()==null){
-            if (isEquals.get()==false){
-                feeRateRepository.save(feeRate);
+        if (feeRate.getId() == null) {
+            if (isEquals.get() == false) {
+                feeRate = feeRateRepository.save(feeRate);
+            } else {
+                feeRate = null;
             }
-        }else {
-            Optional<FeeRate> feeRateOptional=feeRateRepository.findById(feeRate.getId());
-            if(feeRateOptional.isPresent()){
-                if (isEquals.get()==false){
-                    feeRateRepository.save(feeRate);
+        } else {
+            Optional<FeeRate> feeRateOptional = feeRateRepository.findById(feeRate.getId());
+            if (feeRateOptional.isPresent()) {
+                if (isEquals.get() == false) {
+                    feeRate = feeRateRepository.save(feeRate);
+                } else {
+                    feeRate = null;
                 }
-            }else {
-                if (isEquals.get()==false){
-                    feeRateRepository.save(feeRate);
+            } else {
+                if (isEquals.get() == false) {
+                    feeRate = feeRateRepository.save(feeRate);
+                } else {
+                    feeRate = null;
                 }
             }
         }
+        return feeRate;
     }
 
     @Override

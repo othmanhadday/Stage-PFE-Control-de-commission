@@ -4,7 +4,6 @@ import com.hadday.gestion_commission.Service.FeeCategorieTypeService;
 import com.hadday.gestion_commission.Service.FeeRateService;
 import com.hadday.gestion_commission.Service.InstrumentCategorieService;
 import com.hadday.gestion_commission.Service.InstrumentClassTypeService;
-import com.hadday.gestion_commission.entities.DTO.CategorieRateDTO;
 import com.hadday.gestion_commission.entities.DTO.FeeRateDto;
 import com.hadday.gestion_commission.entities.FeeRate;
 import com.hadday.gestion_commission.entities.InstrumentCategorie;
@@ -13,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -37,7 +37,8 @@ public class FeeRateController {
     }
 
     @PostMapping
-    public String createUpdateFeeRate(@ModelAttribute("feeRate") FeeRateDto feeRateDto, Model model, BindingResult result) {
+    public String createUpdateFeeRate(@ModelAttribute("feeRate") FeeRateDto feeRateDto,RedirectAttributes redirAttrs,
+                                      Model model, BindingResult result) {
         if (feeRateDto.getFeeType() == null) {
             result.rejectValue("feeType", null, "Fee Type Not Selected");
         }
@@ -55,13 +56,20 @@ public class FeeRateController {
             model.addAttribute("feeRates", feeRateService.findFeeRates());
             return "gestion-commission/feeRate";
         }
-        feeRateService.createUpdateFeeRate(feeRateDto);
+        FeeRate feeRate = feeRateService.createUpdateFeeRate(feeRateDto);
+        if(feeRate !=null){
+            redirAttrs.addFlashAttribute("success", " Fée Rate a été inséré avec succès : " + feeRate.getId());
+        }else{
+            redirAttrs.addFlashAttribute("exist", " Fée Rate deja existe ");
+        }
+
         return "redirect:/gestion-commission/feeRate";
     }
 
     @GetMapping("/{id}")
-    public String deleteFeeRate(@PathVariable("id") Long id) {
+    public String deleteFeeRate(@PathVariable("id") Long id, RedirectAttributes redirAttrs) {
         feeRateService.deleteFeeRate(id);
+        redirAttrs.addFlashAttribute("delete", "Fee Rate a été supprimer  avec succès ");
         return "redirect:/gestion-commission/feeRate";
     }
 }

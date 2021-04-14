@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 
@@ -19,7 +20,8 @@ public class FeeTypeController {
     private FeeCategorieTypeService feeCategorieTypeService;
 
     @PostMapping
-    public String createOrUpdateFeeCategorie(@Valid @ModelAttribute("feeType") FeeType feeType, Model model, BindingResult result) {
+    public String createOrUpdateFeeCategorie(@Valid @ModelAttribute("feeType") FeeType feeType, Model model,
+                                             BindingResult result, RedirectAttributes redirAttrs) {
         if (feeType.getTypeName().isEmpty()) {
             result.rejectValue("typeName", null, " Fee Type Name field is Empty");
         }
@@ -30,13 +32,26 @@ public class FeeTypeController {
 
             return "/gestion-commission/feesCat_feesType";
         }
-        feeCategorieTypeService.createOrUpdateFeeType(feeType);
+        feeType = feeCategorieTypeService.createOrUpdateFeeType(feeType);
+        if(feeType !=null){
+            redirAttrs.addFlashAttribute("success", " Fée Type a été inséré avec succès : " + feeType.getTypeName());
+        }else{
+            redirAttrs.addFlashAttribute("exist", " Fée Type deja existe ");
+        }
+
         return "redirect:/gestion-commission/feeCategorie";
     }
 
     @GetMapping("/{id}")
-    public String deleteFeeCategorie(@PathVariable("id") Long id) {
-        feeCategorieTypeService.deleteFeeType(id);
+    public String deleteFeeCategorie(@PathVariable("id") Long id, RedirectAttributes redirAttrs) {
+        FeeType feeType = feeCategorieTypeService.deleteFeeType(id);
+
+        if(feeType==null){
+            redirAttrs.addFlashAttribute("error", "Vous n’avez pas le droit de supprimer cet Fee Type");
+        }else {
+            redirAttrs.addFlashAttribute("delete", "Fee Type a été supprimer  avec succès ");
+        }
+
         return "redirect:/gestion-commission/feeCategorie";
     }
 }

@@ -6,18 +6,6 @@
     <meta charset="UTF-8">
     <title>Title</title>
 
-    <style>
-        .tableFixHead {
-            overflow-y: auto;
-            overflow-x: auto;
-            height: 500px;
-        }
-
-        .tableFixHead thead th {
-            position: sticky;
-            top: 0;
-        }
-    </style>
 </head>
 <body>
 
@@ -27,8 +15,14 @@
         <!-- Container fluid  -->
         <!-- ============================================================== -->
         <div class="container-fluid my-3">
-            <div class="row align-items-center">
-                <div class="col-md-6">
+
+            <div class="alert alert-primary" role="alert" th:text="${success}" th:if="${success}"></div>
+            <div class="alert alert-danger" role="alert" th:text="${delete}" th:if="${delete}"></div>
+            <div class="alert alert-danger" role="alert" th:text="${error}" th:if="${error}"></div>
+            <div class="alert alert-info" role="alert" th:text="${exist}" th:if="${exist}"></div>
+
+            <div class="row">
+                <div class="col-lg-6">
                     <div class="card">
                         <div class="card-body">
                             <h4 class="card-title">
@@ -40,8 +34,9 @@
                                 </div>
                             </h4>
                         </div>
-                        <div class="tableFixHead">
-                            <table class="table color-table muted-table">
+                        <div class=" table-responsive">
+                            <table class="display nowrap table color-table table-hover table-striped muted-table"
+                                id="FeeCategorieTable">
                                 <thead>
                                 <tr>
                                     <th>#</th>
@@ -50,12 +45,11 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-
                                 <tr th:each="feeCat : ${feeCategories}">
                                     <td th:text="${feeCat.id}"></td>
                                     <td th:text="${feeCat.categorieFeeName}"></td>
                                     <td>
-                                        <div class="btn-group btn-group-sm float-right" role="group"
+                                        <div class="btn-group btn-group-sm " role="group"
                                              aria-label="Basic example">
                                             <button class="btn btn-small btn-secondary editFeeCategoriebtn"
                                                     th:id="${feeCat.id}">
@@ -74,7 +68,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-lg-6">
                     <div class="card">
                         <div class="card-body">
                             <h4 class="card-title">
@@ -86,8 +80,9 @@
                                 </div>
                             </h4>
                         </div>
-                        <div class="tableFixHead">
-                            <table class="table color-table muted-table">
+                        <div class=" table-responsive">
+                            <table class="display nowrap table color-table table-hover table-striped muted-table"
+                                   id="FeeTypeTable">
                                 <thead>
                                 <tr>
                                     <th>#</th>
@@ -222,7 +217,8 @@
 
                                 <div class="form-group">
                                     <label for="profiles">Fee Categories : </label>
-                                    <select id="profiles" th:field="*{categorieFees}" class="form-control" name="profile">
+                                    <select id="profiles" th:field="*{categorieFees}" class="form-control"
+                                            name="profile">
                                         <option th:each="feeCat :${feeCategories}" th:value="${feeCat.id}"
                                                 th:text="${feeCat.categorieFeeName}"></option>
                                     </select>
@@ -361,6 +357,14 @@
             $('#deletebtnFeeType').attr('href', '/gestion-commission/feeType/' + id)
             $('#ModalDeleteFeeType').modal('show');
         });
+
+        $(document).ready( function () {
+            $('#FeeCategorieTable').DataTable();
+        } );
+
+        $(document).ready( function () {
+            $('#FeeTypeTable').DataTable();
+        } );
     </script>
 </section>
 </body>

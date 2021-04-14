@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 
@@ -22,7 +23,8 @@ public class InstrumentTypeController {
     private FeeCategorieTypeService feeCategorieTypeService;
 
     @PostMapping
-    public String createOrUpdateInstrumentType(@Valid @ModelAttribute("instrumentType") InstrumentType instrumentType, Model model, BindingResult result) {
+    public String createOrUpdateInstrumentType(@Valid @ModelAttribute("instrumentType") InstrumentType instrumentType, RedirectAttributes redirAttrs,
+                                               Model model, BindingResult result) {
         if (instrumentType.getInstrumentTypeName().isEmpty()) {
             result.rejectValue("instrumentTypeName", null, " Instrument Type Name field is Empty");
         }
@@ -34,14 +36,25 @@ public class InstrumentTypeController {
             return "/gestion-commission/InstrumentClass_type";
         }
 
-        instrumentClassTypeService.createUpdateInstrumentType(instrumentType);
+        instrumentType = instrumentClassTypeService.createUpdateInstrumentType(instrumentType);
+        if (instrumentType != null) {
+            redirAttrs.addFlashAttribute("success", " Instrument Type a été inséré avec succès : " + instrumentType.getInstrumentTypeName());
+        } else {
+            redirAttrs.addFlashAttribute("exist", " Instrument Type déja existe " );
+        }
         return "redirect:/gestion-commission/instrument-class";
     }
 
 
     @GetMapping("/{id}")
-    public String deleteInstrumentType(@PathVariable("id") Long id) {
-        instrumentClassTypeService.deleteInstrumentType(id);
+    public String deleteInstrumentType(@PathVariable("id") Long id,RedirectAttributes redirAttrs) {
+        InstrumentType instrumentType = instrumentClassTypeService.deleteInstrumentType(id);
+        if (instrumentType==null){
+            redirAttrs.addFlashAttribute("error", "Vous n’avez pas le droit de supprimer cet Instrument Type  ");
+        }else {
+            redirAttrs.addFlashAttribute("delete", "Instrument Type a été supprimer  avec succès ");
+        }
+
         return "redirect:/gestion-commission/instrument-class";
     }
 }

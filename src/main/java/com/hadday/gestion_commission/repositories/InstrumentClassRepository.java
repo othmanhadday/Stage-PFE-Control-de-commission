@@ -8,7 +8,7 @@ import java.util.List;
 
 @Repository
 public interface InstrumentClassRepository extends JpaRepository<InstrumentClass, Long> {
-    public InstrumentClass findInstrumentClassByInstrementClass(String namd);
+    public InstrumentClass findInstrumentClassByInstrementClassAndDeletedIsFalse(String namd);
 
     public List<InstrumentClass> findInstrumentClassesByDeletedIsFalse();
 }

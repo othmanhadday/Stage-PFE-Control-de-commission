@@ -9,10 +9,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/gestion-commission/category-rate")
-public class CategorieRateController {
+public class InstrumentCategorieController {
 
     @Autowired
     private InstrumentCategorieService instrumentCategorieService;
@@ -24,11 +25,12 @@ public class CategorieRateController {
         model.addAttribute("categorieRates", instrumentCategorieService.getCategorieRates());
         model.addAttribute("instrumentTypes", instrumentClassTypeService.getAllInstrumentType());
         model.addAttribute("categorieRate", new CategorieRateDTO());
-        return "gestion-commission/categoryRate";
+        return "/gestion-commission/instrumentCategorie";
     }
 
     @PostMapping
-    public String createUpdateCategorieRate(@ModelAttribute("categorieRate") CategorieRateDTO categorieRateDto, Model model, BindingResult result) {
+    public String createUpdateCategorieRate(@ModelAttribute("categorieRate") CategorieRateDTO categorieRateDto, Model model,
+                                            BindingResult result, RedirectAttributes redirAttrs) {
         if (categorieRateDto.getCategorieName().isEmpty()) {
             result.rejectValue("categorieName", null, "Categorie Name field is Empty");
         }
@@ -36,25 +38,38 @@ public class CategorieRateController {
         if (result.hasErrors()) {
             model.addAttribute("categorieRates", instrumentCategorieService.getCategorieRates());
             model.addAttribute("instrumentTypes", instrumentClassTypeService.getAllInstrumentType());
-            return "gestion-commission/categoryRate";
+            return "/gestion-commission/instrumentCategorie";
         }
         InstrumentCategorie instrumentCategorie = new InstrumentCategorie();
         instrumentCategorie.setId(categorieRateDto.getId());
         instrumentCategorie.setCategory(categorieRateDto.getCategorieName());
         instrumentCategorie.setInstrumentType(categorieRateDto.getInstrumentType());
-        instrumentCategorieService.createUpdateCategorieRate(instrumentCategorie);
+        instrumentCategorie = instrumentCategorieService.createUpdateCategorieRate(instrumentCategorie);
+        if (instrumentCategorie != null) {
+            redirAttrs.addFlashAttribute("success", " Instrument Categorie a été inséré avec succès : " +
+                    categorieRateDto.getCategorieName());
+        } else {
+            redirAttrs.addFlashAttribute("exist", " Instrument Categorie deja existe : " +
+                    categorieRateDto.getCategorieName());
+        }
         return "redirect:/gestion-commission/category-rate";
     }
 
     @GetMapping("/{id}")
-    public String deleteCategorieRate(@PathVariable("id") Long id){
-        instrumentCategorieService.deleteCategorieRate(id);
+    public String deleteCategorieRate(@PathVariable("id") Long id, RedirectAttributes redirAttrs) {
+        InstrumentCategorie instrumentCategorie = instrumentCategorieService.deleteCategorieRate(id);
+        if(instrumentCategorie==null){
+            redirAttrs.addFlashAttribute("error", "Vous n’avez pas le droit de supprimer cet Instrument Catégorie. ");
+        }else {
+            redirAttrs.addFlashAttribute("delete", "Instrument Categorie a été supprimer  avec succès ");
+        }
+
         return "redirect:/gestion-commission/category-rate";
     }
 }
 
 @RestController
-class CategorieRateControllerRest {
+class InstrumentCategorieControllerRest {
 
     @Autowired
     private InstrumentCategorieService instrumentCategorieService;

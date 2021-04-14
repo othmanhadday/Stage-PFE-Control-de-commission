@@ -12,7 +12,7 @@ public interface InstrumentCategorieService {
 
     public InstrumentCategorie createUpdateCategorieRate(InstrumentCategorie instrumentCategorie);
 
-    public void deleteCategorieRate(Long id);
+    public InstrumentCategorie deleteCategorieRate(Long id);
 
     public List<InstrumentCategorie> getInstrumentCatByInstrumentType(Long id);
 

@@ -11,7 +11,7 @@ public interface BookingInstrumentBasisService {
 
     public List<BookingInstrumentBasis> getAll();
 
-    public void CreateUpdateBookingInstrumentBasis(BookingInstrumentBasisDto bookingInstrumentBasisDto);
+    public BookingInstrumentBasis CreateUpdateBookingInstrumentBasis(BookingInstrumentBasisDto bookingInstrumentBasisDto);
 
     public void deleteBookingInstrumentBasis(Long id);
 }

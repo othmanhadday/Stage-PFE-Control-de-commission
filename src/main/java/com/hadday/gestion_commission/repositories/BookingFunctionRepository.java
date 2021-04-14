@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public interface BookingFunctionRepository extends JpaRepository<BookingFunction, Long> {
 
-    public BookingFunction findBookingFunctionByName(String name);
+    public BookingFunction findBookingFunctionByNameAndDeletedIsFalse(String name);
 
     public List<BookingFunction> findBookingFunctionsByDeletedIsFalse();
 }

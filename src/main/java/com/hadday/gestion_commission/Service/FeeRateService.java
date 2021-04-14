@@ -8,6 +8,6 @@ import java.util.List;
 public interface FeeRateService {
     public FeeRate findFeeRatById(Long id);
     public List<FeeRate> findFeeRates();
-    public void createUpdateFeeRate(FeeRateDto feeRateDto);
+    public FeeRate createUpdateFeeRate(FeeRateDto feeRateDto);
     public void deleteFeeRate(Long id);
 }

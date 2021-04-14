@@ -28,7 +28,7 @@ public class BookingInstrumentBasisServiceImpl implements BookingInstrumentBasis
     }
 
     @Override
-    public void CreateUpdateBookingInstrumentBasis(BookingInstrumentBasisDto dto) {
+    public BookingInstrumentBasis CreateUpdateBookingInstrumentBasis(BookingInstrumentBasisDto dto) {
         AtomicBoolean isEquals = new AtomicBoolean(false);
         List<BookingInstrumentBasis> bookingInstrumentBases = bookingInstrumentBasisRepository.findAll();
         BookingInstrumentBasis bookingInstrumentBasis = new BookingInstrumentBasis();
@@ -39,41 +39,49 @@ public class BookingInstrumentBasisServiceImpl implements BookingInstrumentBasis
         bookingInstrumentBasis.setInstrumentClassBasisInstrument(dto.getInstrumentClassBasisInstrument());
         bookingInstrumentBasis.setCreditDebit(dto.getCreditDebit());
 
+        BookingInstrumentBasis bb = bookingInstrumentBasis;
         bookingInstrumentBases.forEach(bib -> {
-            if (bib.compareTo(bookingInstrumentBasis)==1){
+            if (bib.compareTo(bb) == 1) {
                 isEquals.set(true);
                 return;
             }
         });
 
-        if (bookingInstrumentBasis.getId()==null){
-            if (isEquals.get()==false){
-                bookingInstrumentBasisRepository.save(bookingInstrumentBasis);
+        if (bookingInstrumentBasis.getId() == null) {
+            if (isEquals.get() == false) {
+                bookingInstrumentBasis = bookingInstrumentBasisRepository.save(bookingInstrumentBasis);
+            } else {
+                bookingInstrumentBasis = null;
             }
-        }else {
+        } else {
             Optional<BookingInstrumentBasis> bookingInstrumentBasisOptional = bookingInstrumentBasisRepository.findById(bookingInstrumentBasis.getId());
-            if (bookingInstrumentBasisOptional.isPresent()){
+            if (bookingInstrumentBasisOptional.isPresent()) {
                 BookingInstrumentBasis newBooking = bookingInstrumentBasisOptional.get();
                 newBooking.setId(bookingInstrumentBasis.getId());
                 newBooking.setFeeRate(bookingInstrumentBasis.getFeeRate());
-                if (bookingInstrumentBasis.getInstrumentClassBasisInstrument()!=null){
+                if (bookingInstrumentBasis.getInstrumentClassBasisInstrument() != null) {
                     newBooking.setInstrumentClassBasisInstrument(bookingInstrumentBasis.getInstrumentClassBasisInstrument());
                 }
-                if(bookingInstrumentBasis.getFeeType()!=null){
+                if (bookingInstrumentBasis.getFeeType() != null) {
                     newBooking.setFeeType(bookingInstrumentBasis.getFeeType());
                 }
-                if(bookingInstrumentBasis.getBookFunction()!=null){
+                if (bookingInstrumentBasis.getBookFunction() != null) {
                     newBooking.setBookFunction(bookingInstrumentBasis.getBookFunction());
                 }
-                if (isEquals.get()==false){
-                    bookingInstrumentBasisRepository.save(newBooking);
+                if (isEquals.get() == false) {
+                    bookingInstrumentBasis = bookingInstrumentBasisRepository.save(newBooking);
+                } else {
+                    bookingInstrumentBasis = null;
                 }
-            }else {
-                if (isEquals.get()==false){
-                    bookingInstrumentBasisRepository.save(bookingInstrumentBasis);
+            } else {
+                if (isEquals.get() == false) {
+                    bookingInstrumentBasis = bookingInstrumentBasisRepository.save(bookingInstrumentBasis);
+                } else {
+                    bookingInstrumentBasis = null;
                 }
             }
         }
+        return bookingInstrumentBasis;
     }
 
     @Override

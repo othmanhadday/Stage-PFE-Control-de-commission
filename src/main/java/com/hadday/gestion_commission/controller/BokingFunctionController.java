@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 
@@ -37,7 +38,8 @@ public class BokingFunctionController {
     }
 
     @PostMapping
-    public String createUpdateBookingFunction(@Valid @ModelAttribute("bookingFunction") BookingFunction bookingFunction, Model model, BindingResult result) {
+    public String createUpdateBookingFunction(@Valid @ModelAttribute("bookingFunction") BookingFunction bookingFunction,
+                                              RedirectAttributes redirAttrs, Model model, BindingResult result) {
         if (bookingFunction.getName().isEmpty()) {
             result.rejectValue("name", null, " Booking Function Name field is Empty");
         }
@@ -49,13 +51,25 @@ public class BokingFunctionController {
             return "/gestion-commission/mouvement/bookingFunction";
         }
 
-        bookingFunctionService.addUpdateBookingFunction(bookingFunction);
+        bookingFunction = bookingFunctionService.addUpdateBookingFunction(bookingFunction);
+        if (bookingFunction != null) {
+            redirAttrs.addFlashAttribute("success", " Booking Function a été inséré avec succès : " + bookingFunction.getName());
+        } else {
+            redirAttrs.addFlashAttribute("exist", " Booking Function déja existe ");
+        }
+
         return "redirect:/gestion-commission/bookingFunction";
     }
 
     @GetMapping("/{id}")
-    public String deleteBookingFunction(@PathVariable("id") Long id) {
-        bookingFunctionService.deleteBookingFunction(id);
+    public String deleteBookingFunction(@PathVariable("id") Long id, RedirectAttributes redirAttrs) {
+        BookingFunction bookingFunction = bookingFunctionService.deleteBookingFunction(id);
+        if(bookingFunction==null){
+            redirAttrs.addFlashAttribute("error", " Vous n’avez pas le droit de supprimer cet Booking Function. ");
+        }else {
+            redirAttrs.addFlashAttribute("delete", "Booking Function a été supprimer  avec succès ");
+        }
+
         return "redirect:/gestion-commission/bookingFunction";
     }
 }

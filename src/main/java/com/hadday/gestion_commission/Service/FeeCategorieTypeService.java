@@ -16,7 +16,7 @@ public interface FeeCategorieTypeService {
 
     public CategorieFees createOrUpdateCategorieFees(CategorieFees categorieFees);
 
-    public void deleteCategorieFee(Long id);
+    public CategorieFees deleteCategorieFee(Long id);
 
     // Fees Type
 
@@ -26,7 +26,7 @@ public interface FeeCategorieTypeService {
 
     public FeeType createOrUpdateFeeType(FeeType feeType);
 
-    public void deleteFeeType(Long id);
+    public FeeType deleteFeeType(Long id);
 
     public List<FeeType> findFeeTypeByCategorieFee(CategorieFees categorieFees);
 

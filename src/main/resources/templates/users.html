@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml"
+      layout:decorator="~{layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="page-wrapper" id="userPage">
+
+
+        <div th:if="${passwordGenerer!=null}">
+            <input type="hidden" id="passwordGenerer" th:value="${passwordGenerer}"/>
+            <input type="hidden" id="userNom" th:value="${userNom}"/>
+        </div>
+
+        <div class="container-fluid">
+            <div class="row page-titles">
+                <div class="col-md-5 align-self-center">
+                    <h4 class="text-themecolor">Basic Form</h4>
+                </div>
+                <div class="col-md-7 align-self-center text-right">
+                    <div class="d-flex justify-content-end align-items-center">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+                            <li class="breadcrumb-item active">Basic Form</li>
+                        </ol>
+                        <button type="button" class="btn btn-info d-none d-lg-block m-l-15">
+                            <i class="mdi mdi-account-multiple-plus"></i> Create New
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <div class="row my-2">
+                <button type="button" class="btn btn-info ml-auto" id="newUser">
+                    <i class="mdi mdi-account-multiple-plus"></i> Create New
+                </button>
+            </div>
+        </div>
+
+
+        <div class="col-md">
+            <div class="card">
+                <div class="card-body">
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#home" role="tab"><span
+                                class="hidden-sm-up"><i class="ti-user"></i></span> <span class="hidden-xs-down">Comptes Actifs</span></a>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#profile" role="tab"><span
+                                class="hidden-sm-up"><i class="ti-user"></i></span> <span class="hidden-xs-down">En attente d'activation</span></a>
+                        </li>
+                    </ul>
+                    <!-- Tab panes -->
+                    <div class="tab-content tabcontent-border">
+                        <div class="tab-pane active" id="home" role="tabpanel">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Nom</th>
+                                    <th>Username</th>
+                                    <th>Email</th>
+                                    <th>Roles</th>
+                                    <th>Permission</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr class="table-active" th:each="user :${usersActivated}">
+                                    <td scope="row" th:text="${user.id}"></td>
+                                    <td th:text="${user.nom}"></td>
+                                    <td th:text="${user.username}"></td>
+                                    <td th:text="${user.email}"></td>
+                                    <td>
+                                        <div th:each="role :${user.roles}">
+                                                <span th:text="${role.name}"
+                                                      class="label label-info">
+                                                </span>
+                                            <br/>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div th:each="permission:${user.permissions}">
+                                                      <span th:text="${permission.permission}" aria-hidden='true'
+                                                            class=" label label-primary">
+                                                      </span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
+                                            <button class="btn btn-dark reinitialiserPwd"
+                                                    title="Réinitialiser le mot de passe" th:id="${user.id}">
+                                                <i class="mdi mdi-account-edit"></i>
+                                            </button>
+                                            <button class="btn btn-info affectePermission"
+                                                    title="Affecter les permissions à chaque utilisateur"
+                                                    th:id="${user.id}">
+                                                <i class="mdi mdi-account-switch"></i>
+                                            </button>
+                                            <button class="btn btn-primary activateRole"
+                                                    title="Affecter les roles à chaque utilisateur" th:id="${user.id}">
+                                                <i class="mdi mdi-account-multiple"></i>
+                                            </button>
+                                            <button class="btn btn-success editBtn" title="Modifier l'utilisateur"
+                                                    th:id="${user.id}">
+                                                <i class="mdi mdi-pencil"></i>
+                                            </button>
+                                            <button class="btn btn-danger deleteBtn" title="Supprimer l'utilisateur"
+                                                    th:id="${user.id}">
+                                                <i class="mdi-delete mdi"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="tab-pane  p-20" id="profile" role="tabpanel">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Nom</th>
+                                    <th>Username</th>
+                                    <th>Email</th>
+                                    <th>Roles</th>
+                                    <th>Permission</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr class="table-active" th:each="user :${usersNotActivated}">
+                                    <td scope="row" th:text="${user.id}"></td>
+                                    <td th:text="${user.nom}"></td>
+                                    <td th:text="${user.username}"></td>
+                                    <td th:text="${user.email}"></td>
+                                    <td>
+                                        <div th:each="role :${user.roles}">
+                                                 <span th:text="${role.name}"
+                                                       class="label label-info">
+                                                 </span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div th:each="permission :${user.permissions}">
+                                            <div class="row">
+                                                     <span th:text="${permission.permission}" aria-hidden='true'
+                                                           class=" label label-primary">
+                                                     </span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
+                                            <button class="btn btn-primary activateRole" title="Activer l'utilisateur"
+                                                    th:id="${user.id}">
+                                                <i class="mdi mdi-account-outline"></i>
+                                            </button>
+                                            <button class="btn btn-success editBtn" title="Modifier l'utilisateur"
+                                                    th:id="${user.id}">
+                                                <i class="mdi-account-edit mdi"></i>
+                                            </button>
+                                            <button class="btn btn-danger deleteBtn" title="Supprimer l'utilisateur"
+                                                    th:id="${user.id}">
+                                                <i class="mdi-delete mdi"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--        Modal pour réinitialiser le mot de passe-->
+        <div class="modal bs-example-modal-lg" id="modalReinitialisePwd">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="">Réinitialiser mot de passe</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            Etes-vous sur de vouloir réinitialiser le mot de passe de cet utilisateur?
+                        </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">
+                            Non
+                        </button>
+                        <a type="submit" id="reinitialiserPwdBtn" class="btn btn-info waves-effect text-left">
+                            Soumettre
+                        </a>
+                    </div>
+                </div>
+                </form>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+
+        <!--     Modal  affecte les permissions   -->
+        <div class="modal bs-example-modal-lg" id="modalPemissionUser">
+            <div class="modal-dialog modal-lg">
+                <form th:object="${user}" method="post" th:action="@{/user/createOrUpdateUser}">
+                    <input type="hidden" th:field="*{id}" id="permission_user_id">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="myLargeModalLabel1">Affectation les permissions</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-4">
+                                    <label for="showNomPemission">Nom : </label>
+                                    <p id="showNomPemission"></p>
+                                </div>
+                                <div class="col-4">
+                                    <label for="showUsernamePermission">Username : </label>
+                                    <p id="showUsernamePermission"></p>
+                                </div>
+                                <div class="col-4">
+                                    <label for="showEmailPermission">Email : </label>
+                                    <p id="showEmailPermission"></p>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group">
+                                    <label for="permissionUpdate">Permissions</label>
+                                    <div class="col-sm-12">
+                                        <div class="custom-control  custom-checkbox"
+                                             th:each="permission :${allPermissions}">
+                                            <label>
+                                                <input th:value="${permission.id}" id="permissionUpdate"
+                                                       th:field="*{permissions}"
+                                                       type="checkbox"/>
+                                                <span th:text="${permission.permission}" th:remove="tag"> </span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">
+                                Annuler
+                            </button>
+                            <button type="submit" class="btn btn-info waves-effect text-left">
+                                Soumettre
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+
+        <!--     Modal active le compte et affecte les roles   -->
+        <div class="modal bs-example-modal-lg" id="modalActivateUser">
+            <div class="modal-dialog modal-lg">
+                <form th:object="${user}" method="post" th:action="@{/user/createOrUpdateUser}">
+                    <input type="hidden" th:field="*{id}" id="activate_user_id">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="myLargeModalLabel">Affectation de profile</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-4">
+                                    <label for="showNom">Nom : </label>
+                                    <p id="showNom"></p>
+                                </div>
+                                <div class="col-4">
+                                    <label for="showUsername">Username : </label>
+                                    <p id="showUsername"></p>
+                                </div>
+                                <div class="col-4">
+                                    <label for="showEmailPermission">Email : </label>
+                                    <p id="showEmail"></p>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="profiles">Profile : </label>
+                                <select id="profiles" th:field="*{roles}" class="form-control" name="profile">
+                                    <option th:each="role : ${allRoles}" th:value="${role.id}"
+                                            th:text="${role.name}"></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">
+                                Annuler
+                            </button>
+                            <button type="submit" class="btn btn-info waves-effect text-left">
+                                Soumettre
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+
+        <!--        modal pour edit or ajouter un nouveaux user-->
+        <div class="modal bs-example-modal-lg" id="myModalCreate">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title">Update Modal</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <form th:object="${user}" method="post" th:action="@{/user/createOrUpdateUser}">
+                        <!-- Modal body -->
+                        <div class="modal-body">
+                            <input type="hidden" th:field="*{id}" id="user_id">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="name">Name</label>
+                                        <input type="text"
+                                               th:field="*{nom}"
+                                               class="form-control" id="name"
+                                               placeholder="Enter Name">
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="userName">Username</label>
+                                        <input type="text"
+                                               th:field="*{username}"
+                                               class="form-control" id="userName"
+                                               placeholder="Enter UserName">
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="email">Email</label>
+                                        <input type="text"
+                                               th:field="*{email}"
+                                               class="form-control" id="email"
+                                               placeholder="Enter Email">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">
+                                Annuler
+                            </button>
+                            <button type="submit" class="btn btn-info waves-effect text-left">
+                                Soumettre
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Delete item  -->
+        <div id="myModalDelete" class="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="myModalLabel">Delete Modal</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    </div>
+                    <div class="modal-body">
+                        <h4 class="deleteMessage">Delete user <span></span></h4>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-info waves-effect" data-dismiss="modal">Close</button>
+                        <a type="button" id="deleteItem" class="btn btn-danger waves-effect">Delete</a>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+
+    </div>
+</div>
+
+<section layout:fragment="js">
+    <script>
+        $(document).ready(function () {
+            var pwd = $("#passwordGenerer").val();
+            var userNom = $("#userNom").val();
+            if (pwd != null && userNom != null) {
+                Swal.fire("", "username is : " + userNom + ' new password : ' + pwd, "success"
+                )
+            }
+        });
+
+        // show modal to add new user
+        $(document).on('click', '#newUser', function () {
+            $("#user_id").val("");
+            $("#name").val("");
+            $("#userName").val("");
+            $("#email").val("");
+            $('#myModalCreate').modal('show');
+        })
+
+        // show modal and update user
+        $(document).on('click', '.editBtn', function () {
+            $("#user_id").val("");
+            $("#name").val("");
+            $("#userName").val("");
+            $("#email").val("");
+            $('#myModalCreate').modal('show');
+            var id = $(this).attr('id');
+            $.ajax({
+                type: 'get',
+                url: "/user/" + id,
+                dataType: "json",
+                success: function (data) {
+                    $("#user_id").val(data.id);
+                    $("#name").val(data.nom);
+                    $("#userName").val(data.username);
+                    $("#email").val(data.email);
+                    $('#myModalCreate').modal('show');
+                },
+                error: function (data) {
+                    console.log(data);
+                }
+            });
+        });
+
+        // show modal and delete user item
+        $(document).on('click', '.deleteBtn', function () {
+            var id = $(this).attr('id');
+            var textWithId = " " + id;
+            $('.deleteMessage span').text(textWithId);
+            $('#deleteItem').attr('href', '/user/delete/' + id)
+            $('#myModalDelete').modal('show');
+        });
+
+        //Activate User
+        $(document).on('click', '.activateRole', function () {
+            var id = $(this).attr('id');
+            $.ajax({
+                type: 'get',
+                url: "/user/" + id,
+                dataType: "json",
+                success: function (data) {
+                    $("#showNom").text(data.nom);
+                    $("#showUsername").text(data.username);
+                    $("#activate_user_id").val(data.id);
+                    $('#showEmail').text(data.email);
+                    $('#modalActivateUser').modal('show');
+                },
+                error: function (data) {
+                    console.log(data);
+                }
+            });
+        });
+
+        // reinitialiser le mot de passe
+        $(document).on('click', '.reinitialiserPwd', function () {
+            var id = $(this).attr('id');
+            $('#reinitialiserPwdBtn').attr('href', "/user/reinitialiser/" + id)
+            $('#modalReinitialisePwd').modal('show');
+        });
+
+        // affecte permission to user
+        $(document).on('click', '.affectePermission', function () {
+            var id = $(this).attr('id');
+            $("input[id='permissionUpdate']").each(function (index, val) {
+                $("input[id='permissionUpdate']")[index].checked = false;
+            })
+            $.ajax({
+                type: 'get',
+                url: "/user/" + id,
+                dataType: "json",
+                success: function (data) {
+                    $("#showNomPemission").text(data.nom);
+                    $("#showUsernamePermission").text(data.username);
+                    $('#showEmailPermission').text(data.email);
+                    $("#permission_user_id").val(data.id);
+                    $('#modalPemissionUser').modal('show');
+
+                    $.each(data.permissions, function (i, v) {
+                        console.log(v);
+                        $("input[id='permissionUpdate']").each(function (index, val) {
+                            if (v.id == $(this).val()) {
+                                $("input[id='permissionUpdate']")[index].checked = true;
+                            }
+                        })
+                    })
+                },
+                error: function (data) {
+                    console.log(data);
+                }
+            });
+        })
+    </script>
+</section>
+
+</body>
+
+</html>

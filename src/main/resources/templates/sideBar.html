@@ -13,96 +13,56 @@
             <!-- Sidebar navigation-->
             <nav class="sidebar-nav">
                 <ul id="sidebarnav">
+                    <li class="nav-small-cap">--- Règles de calcul des commissions</li>
+                    <li>
+                        <a class="has-arrow waves-effect waves-dark"
+                           href="javascript:void(0)"
+                           aria-expanded="false">
+                            <i class="ti-layout-grid2"></i><span class="hide-menu">Gestion de Commission</span></a>
+                        <ul aria-expanded="false" class="collapse">
+                            <li><a th:href="@{/gestion-commission/feeCategorie}">Fee Categorie - Fee Type</a></li>
+                            <li><a th:href="@{/gestion-commission/instrument-class}">Instrument Class - Instrument
+                                Type</a></li>
+                            <li><a th:href="@{/gestion-commission/category-rate}">Instrument Categorie</a></li>
+                            <li><a th:href="@{/gestion-commission/bookingFunction}">Booking Function</a></li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <a class="has-arrow waves-effect waves-dark"
+                           href="javascript:void(0)"
+                           aria-expanded="false"><i
+                                class="mdi mdi-percent"></i><span class="hide-menu">Fee Rate</span></a>
+                        <ul aria-expanded="false" class="collapse">
+                            <li><a th:href="@{/gestion-commission/feeRate}">Droit d'Admission - Avoirs - les Comptes</a>
+                            </li>
+                            <li><a th:href="@{/gestion-commission/mouvement-rate}">Mouvement</a></li>
+                        </ul>
+                    </li>
+
+
                     <li class="nav-small-cap">--- Gestion des utilisateurs</li>
-                    <li>
-                        <a class="waves-effect waves-dark"
-                           th:href="@{/autorisation}"
-                           aria-expanded="false"><i class="fa fa-circle text-danger"></i><span class="hide-menu">Autorisation</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a class="waves-effect waves-dark"
-                           th:href="@{/user}"
-                           aria-expanded="false"><i class="fa fa-circle text-danger"></i><span class="hide-menu">utilisateurs</span>
-                        </a>
-                    </li>
-
-
-                    <li class="nav-small-cap">--- Controle de commission</li>
 
                     <li>
-                        <a class="waves-effect waves-dark"
-                           th:href="@{/control_commission/droit_admission/}"
-                           aria-expanded="false"><i class="fa fa-circle text-danger"></i><span class="hide-menu"> Droit d'admission </span>
-                        </a>
+                        <a class="has-arrow waves-effect waves-dark"
+                           href="javascript:void(0)"
+                           aria-expanded="false">
+                            <i class="mdi-account-multiple mdi"></i>
+                            <span class="hide-menu">Gestion des utilisateurs</span></a>
+                        <ul aria-expanded="false" class="collapse">
+                            <li><a th:href="@{/user}">utilisateurs</a></li>
+                            <li><a th:href="@{/autorisation}">Autorisation</a></li>
+                        </ul>
                     </li>
-
-<!--                    <li class="nav-small-cap">-&#45;&#45; Gestion de Commission</li>-->
-                    <li class="nav-small-cap m-0">--- Droit d'admission - Avois</li>
-                    <li>
-                        <a class="waves-effect waves-dark"
-                           th:href="@{/gestion-commission/feeCategorie}" aria-expanded="false">
-                            <i class="fa fa-circle text-danger"></i>
-                            <span class="hide-menu">
-                            Categorie Fees - Type Fees </span>
-                        </a>
-                    </li>
-
-                    <li>
-                        <a class="waves-effect waves-dark"
-                           th:href="@{/gestion-commission/instrument-class}" aria-expanded="false">
-                            <i class="fa fa-circle text-danger"></i>
-                            <span class="hide-menu">
-                            Instrument Class - Type  </span>
-                        </a>
-                    </li>
-
-                    <li>
-                        <a class="waves-effect waves-dark"
-                           th:href="@{/gestion-commission/category-rate}" aria-expanded="false">
-                            <i class="fa fa-circle text-danger"></i>
-                            <span class="hide-menu">
-                            Categorie - Rate  </span>
-                        </a>
-                    </li>
-
-                    <li>
-                        <a class="waves-effect waves-dark"
-                           th:href="@{/gestion-commission/bookingFunction}" aria-expanded="false">
-                            <i class="fa fa-circle text-danger"></i>
-                            <span class="hide-menu">
-                            Booking Function  </span>
-                        </a>
-                    </li>
-
-
-                    <li class="nav-small-cap ml-1">--- Fee Rate</li>
-
-                    <li>
-                        <a class="waves-effect waves-dark"
-                           th:href="@{/gestion-commission/feeRate}" aria-expanded="false">
-                            <i class="fa fa-circle text-danger"></i>
-                            <span class="hide-menu">
-                            Droit d'Admission - Avoirs - les Comptes  </span>
-                        </a>
-                    </li>
-
-                    <li>
-                        <a class="waves-effect waves-dark"
-                           th:href="@{/gestion-commission/mouvement-rate}" aria-expanded="false">
-                            <i class="fa fa-circle text-danger"></i>
-                            <span class="hide-menu">
-                            Mouvement  </span>
-                        </a>
-                    </li>
-
 
                     <li class="nav-small-cap">--- PERSONAL</li>
-                    <li sec:authorize="hasAuthority('ROLE_DASHBOARD')"><a class="has-arrow waves-effect waves-dark"
-                                                                          href="javascript:void(0)"
-                                                                          aria-expanded="false"><i
-                            class="icon-speedometer"></i><span class="hide-menu">Dashboard <span
-                            class="badge badge-pill badge-cyan ml-auto">4</span></span></a>
+                    <li sec:authorize="hasAuthority('ROLE_DASHBOARD')">
+                        <a class="has-arrow waves-effect waves-dark"
+                           href="javascript:void(0)"
+                           aria-expanded="false">
+                            <i class="icon-speedometer"></i>
+                            <span class="hide-menu">Dashboard <span
+                                    class="badge badge-pill badge-cyan ml-auto">4</span></span></a>
                         <ul aria-expanded="false" class="collapse">
                             <li><a href="index.html">Minimal </a></li>
                             <li><a href="index2.html">Analytical</a></li>

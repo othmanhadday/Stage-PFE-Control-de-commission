@@ -10,9 +10,9 @@ import java.util.List;
 @Repository
 public interface InstrumentTypeRepository extends JpaRepository<InstrumentType, Long> {
 
-    public InstrumentType findInstrumentTypeByInstrumentTypeName(String namd);
+    public InstrumentType findInstrumentTypeByInstrumentTypeNameAndDeletedIsFalse(String namd);
 
     public List<InstrumentType> findInstrumentTypesByDeletedIsFalse();
 
-    public List<InstrumentType> findInstrumentTypesByInstrumentClass(InstrumentClass instrumentClass);
+    public List<InstrumentType> findInstrumentTypesByInstrumentClassAndDeletedIsFalse(InstrumentClass instrumentClass);
 }

@@ -14,7 +14,7 @@ public interface InstrumentClassTypeService {
 
     public InstrumentClass getInstrumentClassById(Long id);
 
-    public void deleteInstrumentClass(Long id);
+    public InstrumentClass deleteInstrumentClass(Long id);
 
     public List<InstrumentType> getAllInstrumentType();
 
@@ -22,7 +22,7 @@ public interface InstrumentClassTypeService {
 
     public InstrumentType createUpdateInstrumentType(InstrumentType instrumentType);
 
-    public void deleteInstrumentType(Long id);
+    public InstrumentType deleteInstrumentType(Long id);
 
     public List<InstrumentType> getInstrumentTypeByClass(InstrumentClass instrumentClass);
 

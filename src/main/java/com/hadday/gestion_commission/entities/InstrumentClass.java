@@ -20,10 +20,10 @@ public class InstrumentClass implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String instrementClass;
     private boolean deleted;
-    @OneToMany(mappedBy = "instrumentClass",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "instrumentClass", cascade = CascadeType.ALL)
     @JsonIgnore
     private Collection<InstrumentType> instrumentTypes;
 }

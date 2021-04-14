@@ -16,15 +16,28 @@ import java.util.Collection;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString(exclude = "bookingInstruments")
-public class InstrumentClassBasisInstrument implements Serializable {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class InstrumentClassBasisInstrument implements Serializable, Comparable<InstrumentClassBasisInstrument> {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false,unique = true)
+    @Column(nullable = false)
     private String name;
     @ManyToOne
     private InstrumentType instrumentType;
-    @OneToMany(mappedBy = "instrumentClassBasisInstrument",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "instrumentClassBasisInstrument", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private Collection<BookingInstrumentBasis> bookingInstruments;
     private boolean deleted;
+
+    @Override
+    public int compareTo(InstrumentClassBasisInstrument o) {
+        if (
+                this.getName().equals(o.getName()) &&
+                        this.getInstrumentType().equals(o.getInstrumentType())
+        ) {
+            return 1;
+        } else {
+            return -1;
+        }
+    }
 }

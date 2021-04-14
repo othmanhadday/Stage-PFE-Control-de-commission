@@ -8,7 +8,7 @@ import java.util.List;
 
 @Repository
 public interface CategorieFeesRepository extends JpaRepository<CategorieFees, Long> {
-    public CategorieFees findCategorieFeesByCategorieFeeName(String name);
+    public CategorieFees findCategorieFeesByCategorieFeeNameAndDeletedIsFalse(String name);
 
     public List<CategorieFees> findCategorieFeesByDeletedIsFalse();
 }

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 
@@ -28,7 +29,8 @@ public class CategorieFeeController {
     }
 
     @PostMapping
-    public String createOrUpdateFeeCategorie(@Valid @ModelAttribute("feeCategorie") CategorieFees categorieFees, Model model, BindingResult result) {
+    public String createOrUpdateFeeCategorie(@Valid @ModelAttribute("feeCategorie") CategorieFees categorieFees, Model model,
+                                             BindingResult result, RedirectAttributes redirAttrs) {
         if (categorieFees.getCategorieFeeName().isEmpty()) {
             result.rejectValue("categorieFeeName", null, "Categorie Fees Name field is Empty");
         }
@@ -38,13 +40,24 @@ public class CategorieFeeController {
             model.addAttribute("feeType", new FeeType());
             return "/gestion-commission/feesCat_feesType";
         }
-        feeCategorieTypeService.createOrUpdateCategorieFees(categorieFees);
+        categorieFees = feeCategorieTypeService.createOrUpdateCategorieFees(categorieFees);
+        if (categorieFees != null) {
+            redirAttrs.addFlashAttribute("success", "Catégorie Fée a été inséré avec succès : " + categorieFees.getCategorieFeeName());
+        } else {
+            redirAttrs.addFlashAttribute("exist", " Catégorie Fée deja existe ");
+        }
         return "redirect:/gestion-commission/feeCategorie";
     }
 
     @GetMapping("/{id}")
-    public String deleteFeeCategorie(@PathVariable("id") Long id) {
-        feeCategorieTypeService.deleteCategorieFee(id);
+    public String deleteFeeCategorie(@PathVariable("id") Long id, RedirectAttributes redirAttrs) {
+        CategorieFees categorieFees = feeCategorieTypeService.deleteCategorieFee(id);
+        if (categorieFees==null){
+            redirAttrs.addFlashAttribute("error", "Vous n’avez pas le droit de supprimer cette Catégorie Fée.");
+        }else {
+            redirAttrs.addFlashAttribute("delete", "Catégorie Fée a été supprimer  avec succès ");
+        }
+
         return "redirect:/gestion-commission/feeCategorie";
     }
 }

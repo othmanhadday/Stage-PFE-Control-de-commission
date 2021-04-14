@@ -1,23 +1,31 @@
 package com.hadday.gestion_commission.Service;
 
 import com.hadday.gestion_commission.entities.CategorieFees;
+import com.hadday.gestion_commission.entities.FeeRate;
 import com.hadday.gestion_commission.entities.FeeType;
+import com.hadday.gestion_commission.entities.InstrumentType;
+import com.hadday.gestion_commission.repositories.BookingInstrumentBasisRepository;
 import com.hadday.gestion_commission.repositories.CategorieFeesRepository;
+import com.hadday.gestion_commission.repositories.FeeRateRepository;
 import com.hadday.gestion_commission.repositories.FeeTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
 public class FeeCategorieTypeServiceImpl implements FeeCategorieTypeService {
 
     @Autowired
     private CategorieFeesRepository categorieFeesRepository;
-
     @Autowired
     private FeeTypeRepository feeTypeRepository;
+    @Autowired
+    private BookingInstrumentBasisRepository bookingInstrumentBasisRepository;
+    @Autowired
+    private FeeRateRepository feeRateRepository;
 
     public Optional<CategorieFees> categorieFeesById(Long id) {
         return categorieFeesRepository.findById(id);
@@ -30,38 +38,42 @@ public class FeeCategorieTypeServiceImpl implements FeeCategorieTypeService {
 
     @Override
     public CategorieFees createOrUpdateCategorieFees(CategorieFees categorieFees) {
-        CategorieFees categorieFeesIsNotNull = categorieFeesRepository.findCategorieFeesByCategorieFeeName(categorieFees.getCategorieFeeName());
+        CategorieFees categorieFeesIsNotNull = categorieFeesRepository.findCategorieFeesByCategorieFeeNameAndDeletedIsFalse(categorieFees.getCategorieFeeName());
         if (categorieFees.getId() == null) {
             if (categorieFeesIsNotNull == null) {
-                return categorieFeesRepository.save(categorieFees);
+                categorieFees = categorieFeesRepository.save(categorieFees);
             } else {
-                categorieFees.setId(categorieFeesIsNotNull.getId());
-                categorieFees.setDeleted(false);
-                return categorieFeesRepository.save(categorieFees);
+                categorieFees = null;
             }
         } else {
             Optional<CategorieFees> catFee = categorieFeesRepository.findById(categorieFees.getId());
             if (catFee.isPresent()) {
                 CategorieFees newCatFee = catFee.get();
                 newCatFee.setId(categorieFees.getId());
+                newCatFee.setCategorieFeeName(categorieFees.getCategorieFeeName());
                 if (categorieFeesIsNotNull == null) {
-                    newCatFee.setCategorieFeeName(categorieFees.getCategorieFeeName());
+                    categorieFees = categorieFeesRepository.save(newCatFee);
                 } else {
-                    newCatFee.setDeleted(false);
+                    categorieFees = null;
                 }
-                return categorieFeesRepository.save(newCatFee);
             } else {
                 return categorieFeesRepository.save(categorieFees);
             }
         }
+        return categorieFees;
     }
 
 
     @Override
-    public void deleteCategorieFee(Long id) {
+    public CategorieFees deleteCategorieFee(Long id) {
         CategorieFees categorieFees = categorieFeesById(id).get();
-        categorieFees.setDeleted(true);
-        categorieFeesRepository.save(categorieFees);
+        if (feeTypeRepository.findFeeTypesByCategorieFeesAndDeletedIsFalse(categorieFees).size() > 0) {
+            return null;
+        } else {
+            categorieFees.setDeleted(true);
+            categorieFeesRepository.save(categorieFees);
+            return categorieFees;
+        }
     }
 
     @Override
@@ -76,42 +88,59 @@ public class FeeCategorieTypeServiceImpl implements FeeCategorieTypeService {
 
     @Override
     public FeeType createOrUpdateFeeType(FeeType feeType) {
-        FeeType feeTypeIsNotNull = feeTypeRepository.findFeeTypeByTypeName(feeType.getTypeName());
+
+        AtomicBoolean isEquals = new AtomicBoolean(false);
+        List<FeeType> feeTypes = feeTypeRepository.findFeeTypesByDeletedIsFalse();
+
+        FeeType fee = feeType;
+        feeTypes.forEach(its -> {
+            if (its.compareTo(fee) == 1) {
+                isEquals.set(true);
+                return;
+            }
+        });
+
         if (feeType.getId() == null) {
-            if (feeTypeIsNotNull == null) {
-                return feeTypeRepository.save(feeType);
+            if (isEquals.get() == false) {
+                feeType = feeTypeRepository.save(feeType);
             } else {
-                feeType.setId(feeTypeIsNotNull.getId());
-                feeType.setDeleted(false);
-                return feeTypeRepository.save(feeType);
+                feeType = null;
             }
         } else {
             Optional<FeeType> feeTypeOptional = feeTypeRepository.findById(feeType.getId());
             if (feeTypeOptional.isPresent()) {
                 FeeType newFeeType = feeTypeOptional.get();
                 newFeeType.setId(feeType.getId());
-                if (feeTypeIsNotNull == null) {
-                    newFeeType.setTypeName(feeType.getTypeName());
-                } else {
-                    newFeeType.setDeleted(false);
-                }
+                newFeeType.setTypeName(feeType.getTypeName());
                 newFeeType.setCategorieFees(feeType.getCategorieFees());
-                return feeTypeRepository.save(newFeeType);
+                if (isEquals.get() == false) {
+                    feeType = feeTypeRepository.save(newFeeType);
+                } else {
+                    feeType = null;
+                }
             } else {
                 return feeTypeRepository.save(feeType);
             }
         }
+        return feeType;
     }
 
     @Override
-    public void deleteFeeType(Long id) {
+    public FeeType deleteFeeType(Long id) {
         FeeType feeType = typeFeesById(id).get();
-        feeType.setDeleted(true);
-        feeTypeRepository.save(feeType);
+        if (
+                bookingInstrumentBasisRepository.findBookingInstrumentBasesByFeeTypeAndDeletedIsFalse(feeType).size() > 0 ||
+                        feeRateRepository.findFeeRatesByFeeTypeAndDeletedIsFalse(feeType).size() > 0
+        ) {
+            return null;
+        } else {
+            feeType.setDeleted(true);
+            return feeTypeRepository.save(feeType);
+        }
     }
 
     @Override
     public List<FeeType> findFeeTypeByCategorieFee(CategorieFees categorieFees) {
-        return feeTypeRepository.findFeeTypesByCategorieFees(categorieFees);
+        return feeTypeRepository.findFeeTypesByCategorieFeesAndDeletedIsFalse(categorieFees);
     }
 }
