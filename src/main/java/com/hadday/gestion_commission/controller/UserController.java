@@ -2,6 +2,7 @@ package com.hadday.gestion_commission.controller;
 
 import com.hadday.gestion_commission.PasswordEncoder;
 import com.hadday.gestion_commission.Service.UserService;
+import com.hadday.gestion_commission.entities.RoleApp;
 import com.hadday.gestion_commission.entities.UserApp;
 import com.hadday.gestion_commission.repositories.PermissionRepository;
 import com.hadday.gestion_commission.repositories.RoleRepository;
@@ -38,7 +39,7 @@ public class UserController {
         model.addAttribute("user", new UserApp());
         model.addAttribute("allRoles", roleRepository.findRoleAppsByDeletedFalse());
         model.addAttribute("allPermissions", permissionRepository.findAll());
-        return "users";
+        return "/gestion_users/users";
     }
 
     @PostMapping("/createOrUpdateUser")
@@ -73,12 +74,38 @@ public class UserController {
     public String profile(@PathVariable("username") String username, Model model) {
         UserApp user = userService.getUserByUsername(username);
         model.addAttribute("user", user);
-        return "pages-profile";
+        return "/gestion_users/pages-profile";
     }
 
     @PostMapping("/profileUpdateUser")
     public String profileUpdateUser(@ModelAttribute("user") UserApp userApp) {
         userApp = userService.addNewUser(userApp);
         return "redirect:/user/profile/" + userApp.getUsername();
+    }
+}
+
+@RestController
+class RestUserController {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private RoleRepository roleRepository;
+
+    @GetMapping("/user/{id}")
+    public Optional<UserApp> getUserById(@PathVariable Optional<Long> id) {
+        return userRepository.findById(id);
+    }
+
+    @GetMapping("/role/{id}")
+    public Optional<RoleApp> getGetById(@PathVariable Optional<Long> id) {
+        return roleRepository.findById(id);
+    }
+
+    @GetMapping("/roles/{id}")
+    public List<UserApp> getUserByRole(@PathVariable Optional<Long> id){
+        RoleApp roleApp = roleRepository.findById(id).get();
+        return userRepository.findUserAppsByRolesAndActivateTrueAndDeletedFalse(roleApp);
     }
 }

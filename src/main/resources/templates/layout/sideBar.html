@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+    </head>
+    <body>
+
+        <section th:fragment="sideBar">
+            <aside class="left-sidebar">
+                <!-- Sidebar scroll-->
+                <div class="scroll-sidebar">
+                    <!-- Sidebar navigation-->
+                    <nav class="sidebar-nav">
+                        <ul id="sidebarnav">
+                            <li class="nav-small-cap">--- Règles de calcul des commissions</li>
+                            <li>
+                                <a class="has-arrow waves-effect waves-dark"
+                                   href="javascript:void(0)"
+                                   aria-expanded="false">
+                                    <i class="ti-layout-grid2"></i>
+                                    <span class="hide-menu">Gestion de Commission</span>
+                                </a>
+                                <ul aria-expanded="false" class="collapse">
+                                    <li>
+                                        <a th:href="@{/gestion-commission/feeCategorie}">Fee Categorie - Fee Type</a>
+                                    </li>
+                                    <li>
+                                        <a th:href="@{/gestion-commission/instrument-class}">
+                                            Instrument Class - Instrument Type
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a th:href="@{/gestion-commission/category-rate}">Instrument Categorie</a>
+                                    </li>
+                                    <li>
+                                        <a th:href="@{/gestion-commission/bookingFunction}">Booking Function</a>
+                                    </li>
+                                </ul>
+                            </li>
+
+                            <li>
+                                <a class="has-arrow waves-effect waves-dark"
+                                   href="javascript:void(0)"
+                                   aria-expanded="false">
+                                    <i
+                                            class="mdi mdi-percent"></i>
+                                    <span class="hide-menu">Fee Rate</span>
+                                </a>
+                                <ul aria-expanded="false" class="collapse">
+                                    <li>
+                                        <a th:href="@{/gestion-commission/feeRate}">
+                                            Droit d'Admission - Avoirs - les Comptes
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a th:href="@{/gestion-commission/mouvement-rate}">Mouvement</a>
+                                    </li>
+                                </ul>
+                            </li>
+
+
+                            <li class="nav-small-cap">--- Gestion des utilisateurs</li>
+
+                            <li>
+                                <a class="has-arrow waves-effect waves-dark"
+                                   href="javascript:void(0)"
+                                   aria-expanded="false">
+                                    <i class="mdi-account-multiple mdi"></i>
+                                    <span class="hide-menu">Gestion des utilisateurs</span>
+                                </a>
+                                <ul aria-expanded="false" class="collapse">
+                                    <li>
+                                        <a th:href="@{/user}">utilisateurs</a>
+                                    </li>
+                                    <li>
+                                        <a th:href="@{/autorisation}">Autorisation</a>
+                                    </li>
+                                </ul>
+                            </li>
+
+                        </ul>
+                    </nav>
+                    <!-- End Sidebar navigation -->
+                </div>
+                <!-- End Sidebar scroll-->
+            </aside>
+        </section>
+    </body>
+</html>

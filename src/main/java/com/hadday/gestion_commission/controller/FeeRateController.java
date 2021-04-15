@@ -45,7 +45,7 @@ public class FeeRateController {
         if (feeRateDto.getInstrumentCategorie() == null) {
             result.rejectValue("instrumentCategorie", null, "Instrument Categorie Not Selected");
         }
-        if (feeRateDto.getFeeRate().isEmpty() && feeRateDto.getMontant().isEmpty()) {
+        if (feeRateDto.getFeeRate().isEmpty() || feeRateDto.getMontant().isEmpty()) {
             result.rejectValue("feeRate", null, "Fee Rate field is Empty");
             result.rejectValue("montant", null, "Montant field is Empty");
         }

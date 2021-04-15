@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       xmlns:sec="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml"
-      layout:decorator="~{layout.html}">
+      layout:decorator="~{layout/layout.html}">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Mouvement Rate</title>
 </head>
 <body>
 
@@ -86,7 +86,7 @@
         </div>
     </div>
 
-    <!--        modal pour  ajouter un Booking instruments-->
+    <!--        modal pour  ajouter un Mouvement Rate-->
     <div class="modal bs-example-modal-lg" id="ModalAddBookingInstrument" tabindex="-1" role="dialog"
          aria-labelledby="myModalLabel"
          aria-hidden="true">
@@ -220,14 +220,14 @@
         </div>
     </div>
 
-    <!--        Modal edit Fee Rate Booking instruments-->
+    <!--        Modal edit Fee Rate Mouvement Rate-->
     <div id="ModalEditBookingInstrumentRate" class="modal bs-example-modal-lg" tabindex="-1" role="dialog"
          aria-labelledby="myModalLabel"
          aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Edit Fee Rate</h4>
+                    <h4 class="modal-title"></h4>
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                 </div>
                 <form th:object="${bookingInstrument}" method="post" th:action="@{/gestion-commission/mouvement-rate}">
@@ -320,7 +320,7 @@
         </div>
     </div>
 
-    <!--        Modal Delete Instrument Class of Basis Instrument-->
+    <!--        Modal Delete Mouvement Rate-->
     <div id="ModalDeleteBookingInstrument" class="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
          aria-hidden="true">
         <div class="modal-dialog">
@@ -340,7 +340,7 @@
         </div>
     </div>
 
-    <!--        modal pour  Editer un Booking instruments-->
+    <!--        modal pour  Editer un Mouvement Rate-->
     <div class="modal bs-example-modal-lg" id="ModalUpdateBookingInstrument" tabindex="-1" role="dialog"
          aria-labelledby="myModalLabel"
          aria-hidden="true">
@@ -503,7 +503,7 @@
             }
         });
 
-        //Modal add new Booking instrument
+        //Modal add new mouvement rate
         $(document).on('click', '#addNewBookingInstrumentbtn', function () {
             $('#errors').empty()
             $('#errors').removeClass("alert alert-danger")
@@ -595,6 +595,8 @@
         //Modal Update  rate of Mouvement
         $(document).on('click', '.editbookingInstrumentFeeRatebtn', function () {
             var id = $(this).attr('id');
+            $('.modal-title').text("editer un Mouvement Rate");
+
             $('#bookingInstrument_id_update').val(id);
 
             $('#feeRateInputUpdate').removeClass();
@@ -628,12 +630,14 @@
         });
 
         //**************************************Update Boooking instrument basis*********************************************************************
-        //Modal Update  Booking instrument
+        //Modal Update  all mouvement
         $(document).on('click', '.editbookingInstrumentbtn', function () {
             $('#errors_update').empty()
             $('#errors_update').removeClass("alert alert-danger")
             $('#feeRateInput_update').removeClass();
             $('#feeRateInput_update').addClass("form-control");
+            $('.modal-title').text("modifier un Mouvement Rate");
+
             var id = $(this).attr('id');
             //get all Booking instrument
             $('#bookingInstrument_id_update_all').val(id);
@@ -713,6 +717,7 @@
         $(document).on('click', '.showdeletebookingInstrumentbtn', function () {
             var id = $(this).attr('id');
             var textWithId = " " + id;
+            $('.modal-title').text("Delete un Mouvement Rate");
             $('.deleteMessage span').text(textWithId);
             $('#deletebtnInstrumentBasis').attr('href', '/gestion-commission/mouvement-rate/' + id)
             $('#ModalDeleteBookingInstrument').modal('show');

@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       xmlns:sec="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml"
-      layout:decorator="~{layout.html}">
+      layout:decorator="~{layout/layout.html}">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-
+    <title>Utilisateurs</title>
 </head>
 <body>
 <div layout:fragment="content">
@@ -20,18 +19,7 @@
         <div class="container-fluid">
             <div class="row page-titles">
                 <div class="col-md-5 align-self-center">
-                    <h4 class="text-themecolor">Basic Form</h4>
-                </div>
-                <div class="col-md-7 align-self-center text-right">
-                    <div class="d-flex justify-content-end align-items-center">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
-                            <li class="breadcrumb-item active">Basic Form</li>
-                        </ol>
-                        <button type="button" class="btn btn-info d-none d-lg-block m-l-15">
-                            <i class="mdi mdi-account-multiple-plus"></i> Create New
-                        </button>
-                    </div>
+                    <h4 class="text-themecolor">utilisateurs</h4>
                 </div>
             </div>
         </div>
@@ -322,7 +310,7 @@
                 <div class="modal-content">
                     <!-- Modal Header -->
                     <div class="modal-header">
-                        <h4 class="modal-title">Update Modal</h4>
+                        <h4 class="modal-title"></h4>
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                     </div>
                     <form th:object="${user}" method="post" th:action="@{/user/createOrUpdateUser}">
@@ -414,6 +402,7 @@
             $("#name").val("");
             $("#userName").val("");
             $("#email").val("");
+            $(".modal-title").text("Create nouveau utilisateur")
             $('#myModalCreate').modal('show');
         })
 
@@ -423,6 +412,8 @@
             $("#name").val("");
             $("#userName").val("");
             $("#email").val("");
+            $(".modal-title").text("Modifier utilisateur")
+
             $('#myModalCreate').modal('show');
             var id = $(this).attr('id');
             $.ajax({
@@ -446,6 +437,7 @@
         $(document).on('click', '.deleteBtn', function () {
             var id = $(this).attr('id');
             var textWithId = " " + id;
+            $(".modal-title").text("Supprimer un utilisateur");
             $('.deleteMessage span').text(textWithId);
             $('#deleteItem').attr('href', '/user/delete/' + id)
             $('#myModalDelete').modal('show');
@@ -454,6 +446,7 @@
         //Activate User
         $(document).on('click', '.activateRole', function () {
             var id = $(this).attr('id');
+            $(".modal-title").text("Affectation les profiles");
             $.ajax({
                 type: 'get',
                 url: "/user/" + id,
@@ -474,6 +467,7 @@
         // reinitialiser le mot de passe
         $(document).on('click', '.reinitialiserPwd', function () {
             var id = $(this).attr('id');
+            $(".modal-title").text("Réinitialiser mot de passe")
             $('#reinitialiserPwdBtn').attr('href', "/user/reinitialiser/" + id)
             $('#modalReinitialisePwd').modal('show');
         });
@@ -481,6 +475,7 @@
         // affecte permission to user
         $(document).on('click', '.affectePermission', function () {
             var id = $(this).attr('id');
+            $(".modal-title").text("Affectation les permissions")
             $("input[id='permissionUpdate']").each(function (index, val) {
                 $("input[id='permissionUpdate']")[index].checked = false;
             })

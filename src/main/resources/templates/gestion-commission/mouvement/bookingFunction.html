@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       xmlns:sec="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml"
-      layout:decorator="~{layout.html}">
+      layout:decorator="~{layout/layout.html}">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Booking function</title>
 </head>
 <body>
 
@@ -283,13 +283,13 @@
             $('#ModalAddUpdateBookingFunction').modal('show');
         });
 
-        //Modal update Caegory rate
+        //Modal update Booking function
         $(document).on('click', '.editBookingFunctionbtn', function () {
             $("#errorNameBookingFunction").empty();
             $('#bookingfunctionInput').val("");
             $('#bookingfunctionInput').removeClass();
             $('#bookingfunctionInput').addClass("form-control");
-            $('.modal-title').text("Editer un Fee Type");
+            $('.modal-title').text("Editer un Booking Function");
             var id = $(this).attr('id');
             $('#bookingFunction_id').val(id);
 
@@ -313,6 +313,7 @@
             var id = $(this).attr('id');
             var textWithId = " " + id;
             $('.deleteMessage span').text(textWithId);
+            $('.modal-title').text("delete un Booking Function");
             $('#deletebtnBookingFunction').attr('href', '/gestion-commission/bookingFunction/' + id)
             $('#ModalDeleteBookingFunction').modal('show');
         });

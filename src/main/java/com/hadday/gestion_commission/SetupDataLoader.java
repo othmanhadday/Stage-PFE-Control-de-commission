@@ -74,7 +74,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         if (categorieFees == null) {
             categorieFees = new CategorieFees(null, name, false);
             categorieFees = categorieFeesRepository.save(categorieFees);
-            if (feeTypes.size() <= 0 ) {
+            if (feeTypes.size() <= 0) {
                 FeeType feeType = new FeeType(null, name, categorieFees, null, false);
                 feeTypeRepository.save(feeType);
             }

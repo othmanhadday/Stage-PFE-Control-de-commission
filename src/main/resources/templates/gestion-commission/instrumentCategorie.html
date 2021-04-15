@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       xmlns:sec="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml"
-      layout:decorator="~{layout.html}">
+      layout:decorator="~{layout/layout.html}">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Instrument Categorie</title>
 </head>
 <body>
 
@@ -22,7 +22,7 @@
                     <div class="card">
                         <div class="card-body">
                             <h4 class="card-title">
-                                Categorie Rate
+                                Instrument Categorie
                                 <div class="btn-group btn-group-sm float-right" role="group" aria-label="Basic example">
                                     <button class="btn btn-small btn-info" id="addNewCategoryRatebtn">
                                         <i class="mdi mdi-plus-circle"></i>
@@ -153,7 +153,7 @@
         $(document).ready(function () {
             var errorCat = $("#errorCategory").text();
             if (errorCat != "" || errorRate != "") {
-                $('.modal-title').text("Ajouter un nouveau Categorie Rate");
+                $('.modal-title').text("Ajouter un nouveau Instrument Categorie");
                 $('#ModalAddUpdateCategoryRate').modal('show');
             }
         });
@@ -161,7 +161,7 @@
         //Modal add new Caegory rate
         $(document).on('click', '#addNewCategoryRatebtn', function () {
             $('#categoryInput').val("");
-            $('.modal-title').text("Ajouter un nouveau Categorie Rate");
+            $('.modal-title').text("Ajouter un nouveau Instrument Categorie");
             $('#ModalAddUpdateCategoryRate').modal('show');
         });
 
@@ -171,7 +171,7 @@
             $('#categoryInput').val("");
             $('#categoryInput').removeClass();
             $('#categoryInput').addClass("form-control");
-            $('.modal-title').text("Editer un Fee Type");
+            $('.modal-title').text("Editer un Instrument Categorie");
             var id = $(this).attr('id');
             $('#categorieRate_id').val(id);
             console.log(id);

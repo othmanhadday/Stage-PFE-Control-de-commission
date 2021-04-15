@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+
+    <!-- Mirrored from eliteadmin.themedesigner.in/demos/bt4/material/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 13 Oct 2020 21:23:53 GMT -->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <!-- Tell the browser to be responsive to screen width -->
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description">
+        <meta name="author">
+        <!-- Favicon icon -->
+        <link rel="icon" type="image/png" th:href="@{/dist/assets/images/headMaroclear.png}">
+
+        <title></title>
+        <!-- This page CSS -->
+        <link th:href="@{/dist/assets/node_modules/morrisjs/morris.css}" rel="stylesheet">
+        <!--Toaster Popup message CSS -->
+        <link th:href="@{/dist/assets/node_modules/toast-master/css/jquery.toast.css}" rel="stylesheet">
+        <!-- Custom CSS -->
+        <link th:href="@{/dist/css/style.min.css}" rel="stylesheet">
+        <!--    <link th:href="@{/dist/css/pages/icon-page.css}" rel="stylesheet">-->
+
+        <!-- Dashboard 1 Page CSS -->
+        <script type='text/javascript' th:src="@{/dist/assets/node_modules/jquery/jquery-3.2.1.min.js}"></script>
+        <link th:href="@{/dist/css/pages/dashboard1.css}" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css">
+
+
+    </head>
+
+    <body class="skin-default fixed-layout">
+
+
+        <!-- ============================================================== -->
+        <!-- Preloader - style you can find in spinners.css -->
+        <!-- ============================================================== -->
+        <div class="preloader">
+            <div class="loader">
+                <div class="loader__figure"></div>
+                <p class="loader__label">Elite admin</p>
+            </div>
+        </div>
+        <!-- ============================================================== -->
+        <!-- Main wrapper - style you can find in pages.scss -->
+        <!-- ============================================================== -->
+        <div id="main-wrapper">
+            <!-- ============================================================== -->
+            <!-- Topbar header - style you can find in pages.scss -->
+            <!-- ============================================================== -->
+            <section th:insert="layout/topBar.html :: topBar"></section>
+            <!-- ============================================================== -->
+            <!-- End Topbar header -->
+            <!-- ============================================================== -->
+            <!-- ============================================================== -->
+            <!-- Left Sidebar - style you can find in sidebar.scss  -->
+            <!-- ============================================================== -->
+            <section th:insert="layout/sideBar.html  :: sideBar"></section>
+
+
+            <!-- ============================================================== -->
+            <!-- End Left Sidebar - style you can find in sidebar.scss  -->
+            <!-- ============================================================== -->
+            <!-- ============================================================== -->
+            <!-- Page wrapper  -->
+            <!-- ============================================================== -->
+
+
+            <div layout:fragment="content">
+
+            </div>
+
+            <!-- .right-sidebar -->
+            <div class="right-sidebar">
+                <div class="slimscrollright">
+                    <div class="rpanel-title">Service Panel
+                        <span>
+                            <i class="ti-close right-side-toggle"></i>
+                        </span>
+                    </div>
+                    <div class="r-panel-body">
+                        <ul id="themecolors" class="m-t-20">
+                            <li>
+                                <b>With Light sidebar</b>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)" data-skin="skin-default"
+                                   class="default-theme working">1
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)" data-skin="skin-green" class="green-theme">2</a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)" data-skin="skin-red" class="red-theme">3</a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)" data-skin="skin-blue" class="blue-theme">4</a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)" data-skin="skin-purple" class="purple-theme">5</a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)" data-skin="skin-megna" class="megna-theme">6</a>
+                            </li>
+                            <li class="d-block m-t-30">
+                                <b>With Dark sidebar</b>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)" data-skin="skin-default-dark"
+                                   class="default-dark-theme ">7
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)" data-skin="skin-green-dark" class="green-dark-theme">8</a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)" data-skin="skin-red-dark" class="red-dark-theme">9</a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)" data-skin="skin-blue-dark" class="blue-dark-theme">10</a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)" data-skin="skin-purple-dark"
+                                   class="purple-dark-theme">11
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)" data-skin="skin-megna-dark"
+                                   class="megna-dark-theme ">12
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <section layout:fragment="js"></section>
+
+            <!-- ============================================================== -->
+            <!-- End Page wrapper  -->
+            <!-- ============================================================== -->
+            <!-- ============================================================== -->
+            <!-- footer -->
+            <!-- ============================================================== -->
+            <section th:insert="layout/footer.html  :: footer"></section>
+
+            <!-- ============================================================== -->
+            <!-- End footer -->
+            <!-- ============================================================== -->
+            </section>
+            <!-- ============================================================== -->
+            <!-- End Wrapper -->
+            <!-- ============================================================== -->
+            <!-- ============================================================== -->
+            <!-- All Jquery -->
+
+            <!-- ============================================================== -->
+            <script type='text/javascript'
+                    th:src="@{/dist/assets/node_modules/jquery/jquery-3.2.1.min.js}"></script>
+            <script type='text/javascript' th:src="@{/dist/assets/node_modules/morrisjs/morris.min.js}"></script>
+            <script type="text/javascript" charset="utf8"
+                    src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
+
+
+            <!-- Bootstrap popper Core JavaScript -->
+            <script th:src="@{/dist/assets/node_modules/popper/popper.min.js}"></script>
+            <script th:src="@{/dist/assets/node_modules/bootstrap/dist/js/bootstrap.min.js}"></script>
+            <!-- slimscrollbar scrollbar JavaScript -->
+            <script th:src="@{/dist/js/perfect-scrollbar.jquery.min.js}"></script>
+            <!--Wave Effects -->
+            <script th:src="@{/dist/js/waves.js}"></script>
+            <!--Menu sidebar -->
+            <script th:src="@{/dist/js/sidebarmenu.js}"></script>
+            <!--Custom JavaScript -->
+            <script th:src="@{/dist/js/custom.min.js}"></script>
+            <!-- ============================================================== -->
+            <!-- This page plugins -->
+            <!-- ============================================================== -->
+            <!--morris JavaScript -->
+            <script th:src="@{/dist/assets/node_modules/raphael/raphael-min.js}"></script>
+            <script th:src="@{/dist/assets/node_modules/morrisjs/morris.min.js}"></script>
+            <script th:src="@{/dist/assets/node_modules/jquery-sparkline/jquery.sparkline.min.js}"></script>
+            <!-- Popup message jquery -->
+            <!--    <script th:src="@{/dist/assets/node_modules/toast-master/js/jquery.toast.js}"></script>-->
+            <!-- Chart JS -->
+            <!--    <script th:src="@{/dist/js/dashboard1.js}"></script>-->
+
+            <!-- Sweet-Alert  -->
+            <script th:src="@{/dist/assets/node_modules/sweetalert2/dist/sweetalert2.all.min.js}"></script>
+            <script th:src="@{/dist/assets/node_modules/sweetalert2/sweet-alert.init.js}"></script>
+
+            <!-- Editable -->
+            <script th:src="@{/dist/assets/node_modules/jsgrid/db.js}"></script>
+            <script type="text/javascript" th:src="@{/dist/assets/node_modules/jsgrid/jsgrid.min.js}"></script>
+            <script th:src="@{/dist/js/pages/jsgrid-init.js}"></script>
+        </div>
+
+    </body>
+
+</html>

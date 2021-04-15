@@ -35,7 +35,7 @@ public class PermissionController {
         model.addAttribute("permissionApp", new Permission());
         model.addAttribute("allRoles", roles);
         model.addAttribute("allPermissions", permissions);
-        return "permission";
+        return "/gestion_users/permission";
     }
 
     @PostMapping("/role")
