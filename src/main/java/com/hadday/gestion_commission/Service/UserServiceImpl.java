@@ -63,6 +63,9 @@ public class UserServiceImpl implements UserService {
                 if (userApp.getPermissions() != null) {
                     user.setPermissions(userApp.getPermissions());
                 }
+                if(userApp.isDeleted()  == true){
+                    user.setDeleted(false);
+                }
                 return userRepository.save(user);
             } else {
                 userApp = userRepository.save(userApp);
@@ -115,10 +118,10 @@ public class UserServiceImpl implements UserService {
         if (userApp == null) {
             throw new UsernameNotFoundException("Invalid username password");
         } else {
-            if (userApp.isActivate() == true && userApp.isDeleted() == false) {
+            if (userApp.isDeleted() == false) {
                 return new User(userApp.getUsername(), userApp.getPassword(), getAuthorities(userApp.getPermissions()));
             } else {
-                return null;
+                throw new UsernameNotFoundException("Invalid username password");
             }
         }
     }

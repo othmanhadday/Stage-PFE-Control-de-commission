@@ -66,7 +66,6 @@ public class UserController {
         }
         redirAttrs.addFlashAttribute("passwordGenerer", pwd);
         redirAttrs.addFlashAttribute("userNom", map.get(pwd).getNom());
-
         return "redirect:/user";
     }
 

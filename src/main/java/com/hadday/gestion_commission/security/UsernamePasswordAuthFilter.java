@@ -34,9 +34,11 @@ class UsernamePasswordAuthFilter
             String currentUserName = authentication.getName();
 
             UserApp userApp = userRepository.findUserAppByUsername(currentUserName);
-            if (userApp == null) {
-                userApp = new UserApp();
-                userApp.setUsername(currentUserName);
+            if (userApp == null || userApp.isDeleted() == true) {
+                userApp.setDeleted(false);
+                userApp.setActivate(false);
+                userApp.setPermissions(null);
+                userApp.setRoles(null);
                 userApp.setPassword(passwordEncoder.getBCPE().encode("maroclear"));
                 userRepository.save(userApp);
             }

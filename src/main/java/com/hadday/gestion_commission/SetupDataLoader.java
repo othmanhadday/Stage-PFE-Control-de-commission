@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -131,15 +132,14 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         createInstrumentClass("-");
         createBookingFunction("-");
 
-//        Permission readPermission = createPermission("READ_PERMISSION");
-//        Permission writePermission = createPermission("WRITE_PERMISSION");
-//
-//        List<Permission> adminPermission = Arrays.asList(readPermission, writePermission);
-//        createRole("ROLE_USER", Arrays.asList(readPermission));
-//        createRole("ROLE_ADMIN", adminPermission);
+        Permission readPermission = createPermission("READ_PERMISSION");
+        Permission writePermission = createPermission("WRITE_PERMISSION");
 
+        List<Permission> adminPermission = Arrays.asList(readPermission, writePermission);
+        createRole("ROLE_USER", Arrays.asList(readPermission));
+        createRole("ROLE_ADMIN", adminPermission);
 
-//        RoleApp adminRole = roleRepository.findRoleAppByName("ROLE_USER");
+        RoleApp adminRole = roleRepository.findRoleAppByName("ROLE_USER");
 //        UserApp user = new UserApp();
 //        user.setNom("Test");
 //        user.setPassword(passwordEncoder.encode("test"));
