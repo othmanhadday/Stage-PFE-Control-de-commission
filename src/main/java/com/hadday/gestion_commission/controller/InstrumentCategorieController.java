@@ -2,8 +2,9 @@ package com.hadday.gestion_commission.controller;
 
 import com.hadday.gestion_commission.Service.InstrumentCategorieService;
 import com.hadday.gestion_commission.Service.InstrumentClassTypeService;
+import com.hadday.gestion_commission.entities.DTO.InstrumentCategorieDTO;
 import com.hadday.gestion_commission.entities.InstrumentCategorie;
-import com.hadday.gestion_commission.entities.DTO.CategorieRateDTO;
+import com.hadday.gestion_commission.entities.InstrumentClass;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,34 +24,37 @@ public class InstrumentCategorieController {
     @GetMapping
     public String index(Model model) {
         model.addAttribute("categorieRates", instrumentCategorieService.getCategorieRates());
-        model.addAttribute("instrumentTypes", instrumentClassTypeService.getAllInstrumentType());
-        model.addAttribute("categorieRate", new CategorieRateDTO());
+        model.addAttribute("instrumentClasses", instrumentClassTypeService.getAllInstrumentClass());
+        model.addAttribute("categorieRate", new InstrumentCategorieDTO());
         return "/gestion-commission/instrumentCategorie";
     }
 
     @PostMapping
-    public String createUpdateCategorieRate(@ModelAttribute("categorieRate") CategorieRateDTO categorieRateDto, Model model,
+    public String createUpdateCategorieRate(@ModelAttribute("categorieRate") InstrumentCategorieDTO instrumentCategorieDTO, Model model,
                                             BindingResult result, RedirectAttributes redirAttrs) {
-        if (categorieRateDto.getCategorieName().isEmpty()) {
+        if (instrumentCategorieDTO.getCategorieName().isEmpty()) {
             result.rejectValue("categorieName", null, "Categorie Name field is Empty");
+        }
+        if (instrumentCategorieDTO.getInstrumentType() == null) {
+            result.rejectValue("instrumentType", null, "Instrument Type Select is Null");
+        }
+        if (instrumentCategorieDTO.getInstrumentClass() == null) {
+            result.rejectValue("instrumentClass", null, "Instrument Class Select is Null");
         }
 
         if (result.hasErrors()) {
             model.addAttribute("categorieRates", instrumentCategorieService.getCategorieRates());
-            model.addAttribute("instrumentTypes", instrumentClassTypeService.getAllInstrumentType());
+            model.addAttribute("instrumentClasses", instrumentClassTypeService.getAllInstrumentClass());
             return "/gestion-commission/instrumentCategorie";
         }
-        InstrumentCategorie instrumentCategorie = new InstrumentCategorie();
-        instrumentCategorie.setId(categorieRateDto.getId());
-        instrumentCategorie.setCategory(categorieRateDto.getCategorieName());
-        instrumentCategorie.setInstrumentType(categorieRateDto.getInstrumentType());
-        instrumentCategorie = instrumentCategorieService.createUpdateCategorieRate(instrumentCategorie);
+
+        InstrumentCategorie instrumentCategorie = instrumentCategorieService.createUpdateCategorieRate(instrumentCategorieDTO);
         if (instrumentCategorie != null) {
             redirAttrs.addFlashAttribute("success", " Instrument Categorie a été inséré avec succès : " +
-                    categorieRateDto.getCategorieName());
+                    instrumentCategorieDTO.getCategorieName());
         } else {
             redirAttrs.addFlashAttribute("exist", " Instrument Categorie deja existe : " +
-                    categorieRateDto.getCategorieName());
+                    instrumentCategorieDTO.getCategorieName());
         }
         return "redirect:/gestion-commission/category-rate";
     }

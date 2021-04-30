@@ -97,10 +97,6 @@ public class InstrumentClassTypeServiceImpl implements InstrumentClassTypeServic
         if (instrumentType.getId() == null) {
             if (isEquals.get() == false) {
                 instrumentType = instrumentTypeRepository.save(instrumentType);
-//                if instrument type = coupons o ajout un "-"
-                if (!instrumentType.getInstrumentTypeName().toUpperCase().equals("COUPONS")){
-                    instrumentClassBasisInstrumentRepository.save(new InstrumentClassBasisInstrument(null,"-",instrumentType,null,false));
-                }
             } else {
                 instrumentType = null;
             }
@@ -129,8 +125,8 @@ public class InstrumentClassTypeServiceImpl implements InstrumentClassTypeServic
     public InstrumentType deleteInstrumentType(Long id) {
         InstrumentType instrumentType = getInstrumentTypeById(id);
         if (
-            instrumentCategorieRepository.findInstrumentCategoriesByInstrumentTypeAndDeletedIsFalse(instrumentType).size() > 0 ||
-            instrumentClassBasisInstrumentRepository.findInstrumentClassBasisInstrumentsByInstrumentTypeAndDeletedIsFalse(instrumentType).size() > 0
+                instrumentCategorieRepository.findInstrumentCategoriesByInstrumentTypeAndDeletedIsFalse(instrumentType).size() > 0 ||
+                        instrumentClassBasisInstrumentRepository.findInstrumentClassBasisInstrumentsByInstrumentTypeAndDeletedIsFalse(instrumentType).size() > 0
         ) {
             return null;
         } else {

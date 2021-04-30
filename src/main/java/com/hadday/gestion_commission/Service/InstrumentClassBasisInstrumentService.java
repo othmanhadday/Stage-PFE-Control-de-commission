@@ -1,5 +1,6 @@
 package com.hadday.gestion_commission.Service;
 
+import com.hadday.gestion_commission.entities.DTO.InstrumentClassBasisInstrumentDto;
 import com.hadday.gestion_commission.entities.InstrumentClassBasisInstrument;
 import com.hadday.gestion_commission.entities.InstrumentType;
 
@@ -13,7 +14,7 @@ public interface InstrumentClassBasisInstrumentService {
 
     public List<InstrumentClassBasisInstrument> findAll();
 
-    public InstrumentClassBasisInstrument createUpdateInstrument(InstrumentClassBasisInstrument instrument);
+    public InstrumentClassBasisInstrument createUpdateInstrument(InstrumentClassBasisInstrumentDto instrumentDto);
 
     public InstrumentClassBasisInstrument deleteInstrument(Long id);
 

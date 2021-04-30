@@ -149,7 +149,18 @@
                                        th:errors="*{categorieFeeName}">Name
                                         Error</p>
                                 </div>
+
+                                <div class="form-group">
+                                    <label for="typeCommission">Type Commission : </label>
+                                    <select id="typeCommission" th:field="*{typeCommission}" class="form-control"
+                                            name="profile">
+                                        <option  value="-" >-</option>
+                                        <option th:each="type :${typeCommission}" th:value="${type}"
+                                                th:text="${type}"></option>
+                                    </select>
+                                </div>
                             </div>
+
                         </div>
                     </div>
                     <div class="modal-footer">

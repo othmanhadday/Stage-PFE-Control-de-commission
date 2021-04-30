@@ -45,7 +45,7 @@ public class FeeRateController {
         if (feeRateDto.getInstrumentCategorie() == null) {
             result.rejectValue("instrumentCategorie", null, "Instrument Categorie Not Selected");
         }
-        if (feeRateDto.getFeeRate().isEmpty() || feeRateDto.getMontant().isEmpty()) {
+        if (feeRateDto.getFeeRate().isEmpty() && feeRateDto.getMontant().isEmpty()) {
             result.rejectValue("feeRate", null, "Fee Rate field is Empty");
             result.rejectValue("montant", null, "Montant field is Empty");
         }
@@ -56,12 +56,15 @@ public class FeeRateController {
             model.addAttribute("feeRates", feeRateService.findFeeRates());
             return "gestion-commission/feeRate";
         }
+
         FeeRate feeRate = feeRateService.createUpdateFeeRate(feeRateDto);
         if(feeRate !=null){
             redirAttrs.addFlashAttribute("success", " Fée Rate a été inséré avec succès : " + feeRate.getId());
         }else{
             redirAttrs.addFlashAttribute("exist", " Fée Rate deja existe ");
         }
+
+        System.out.println(feeRate);
 
         return "redirect:/gestion-commission/feeRate";
     }

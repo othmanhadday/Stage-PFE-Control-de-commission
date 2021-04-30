@@ -38,9 +38,23 @@ public class FeeCategorieTypeServiceImpl implements FeeCategorieTypeService {
 
     @Override
     public CategorieFees createOrUpdateCategorieFees(CategorieFees categorieFees) {
-        CategorieFees categorieFeesIsNotNull = categorieFeesRepository.findCategorieFeesByCategorieFeeNameAndDeletedIsFalse(categorieFees.getCategorieFeeName());
+        AtomicBoolean isEquals = new AtomicBoolean(false);
+        List<CategorieFees> categorieFeees = categorieFeesRepository.findCategorieFeesByDeletedIsFalse();
+
+        CategorieFees categorieFee = categorieFees;
+        categorieFeees.forEach(cat -> {
+            if (cat.getTypeCommission() == null) {
+                isEquals.set(false);
+                return;
+            }
+            if (cat.compareTo(categorieFee) == 1) {
+                isEquals.set(true);
+                return;
+            }
+        });
+
         if (categorieFees.getId() == null) {
-            if (categorieFeesIsNotNull == null) {
+            if (isEquals.get() == false) {
                 categorieFees = categorieFeesRepository.save(categorieFees);
             } else {
                 categorieFees = null;
@@ -51,13 +65,14 @@ public class FeeCategorieTypeServiceImpl implements FeeCategorieTypeService {
                 CategorieFees newCatFee = catFee.get();
                 newCatFee.setId(categorieFees.getId());
                 newCatFee.setCategorieFeeName(categorieFees.getCategorieFeeName());
-                if (categorieFeesIsNotNull == null) {
+                newCatFee.setTypeCommission(categorieFees.getTypeCommission());
+                if (isEquals.get() == false) {
                     categorieFees = categorieFeesRepository.save(newCatFee);
                 } else {
                     categorieFees = null;
                 }
             } else {
-                return categorieFeesRepository.save(categorieFees);
+                categorieFees = categorieFeesRepository.save(categorieFees);
             }
         }
         return categorieFees;

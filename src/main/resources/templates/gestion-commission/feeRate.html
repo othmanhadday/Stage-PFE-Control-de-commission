@@ -37,6 +37,7 @@
                                     <th>#</th>
                                     <th>Instrument Class</th>
                                     <th>Instrument Type</th>
+                                    <th></th>
                                     <th>Categorie</th>
                                     <th>Fee Rate - Montant</th>
                                     <th>Fee Type</th>
@@ -49,6 +50,7 @@
                                     <td th:text="${feeRate.id}"></td>
                                     <td th:text="${feeRate.instrumentCategorie.instrumentType.instrumentClass.instrementClass}"></td>
                                     <td th:text="${feeRate.instrumentCategorie.instrumentType.instrumentTypeName}"></td>
+                                    <td th:text="${feeRate.instrumentCategorie.instrumentType.instrumentTypeCode}"></td>
                                     <td th:text="${feeRate.instrumentCategorie.category}"></td>
                                     <td th:if="${feeRate.feeRate >= 0 && feeRate.montant >= 0}">
                                         <span>Error</span>
@@ -121,9 +123,8 @@
                         <div class="col-12">
                             <div class="form-group">
                                 <label for="instrumentClassSelect">Instrument Class : </label>
-                                <select id="instrumentClassSelect" class="form-control"
-                                        name="profile">
-                                    <option value="" selected disabled hidden class="hide">Choisissez ici</option>
+                                <select id="instrumentClassSelect" class="form-control" th:field="*{instrumentClass}">
+                                    <option value="" selected="selected" disabled="disabled" hidden="hidden">Choisissez ici</option>
                                     <option th:each="instrumentClass :${instrumentClasses}"
                                             th:value="${instrumentClass.id}"
                                             th:text="${instrumentClass.instrementClass}"></option>
@@ -134,7 +135,7 @@
                         <div class="col-12 hide" id="instrumentTypeDiv">
                             <div class="form-group">
                                 <label for="instrumentTypeSelect">Instrument Type : </label>
-                                <select id="instrumentTypeSelect" class="form-control">
+                                <select id="instrumentTypeSelect" class="form-control" th:field="*{instrumentType}">
                                 </select>
                             </div>
                         </div>
@@ -257,7 +258,7 @@
                             <div class="form-group">
                                 <label for="instrumentClassSelect_update">Instrument Class : </label>
                                 <select id="instrumentClassSelect_update" class="form-control"
-                                        name="profile">
+                                        name="profile" th:field="*{instrumentClass}">
                                     <option value="" selected disabled hidden class="hide">Choisissez ici</option>
                                     <option th:each="instrumentClass :${instrumentClasses}"
                                             th:value="${instrumentClass.id}"
@@ -269,7 +270,7 @@
                         <div class="col-12">
                             <div class="form-group">
                                 <label for="instrumentTypeSelect_update">Instrument Type : </label>
-                                <select id="instrumentTypeSelect_update" class="form-control">
+                                <select id="instrumentTypeSelect_update" th:field="*{instrumentType}" class="form-control">
                                 </select>
                             </div>
                         </div>

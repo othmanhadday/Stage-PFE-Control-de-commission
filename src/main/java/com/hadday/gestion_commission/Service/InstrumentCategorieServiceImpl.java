@@ -1,15 +1,19 @@
 package com.hadday.gestion_commission.Service;
 
+import com.hadday.gestion_commission.entities.DTO.InstrumentCategorieDTO;
 import com.hadday.gestion_commission.entities.InstrumentCategorie;
 import com.hadday.gestion_commission.entities.InstrumentType;
 import com.hadday.gestion_commission.repositories.FeeRateRepository;
 import com.hadday.gestion_commission.repositories.InstrumentCategorieRepository;
+import com.hadday.gestion_commission.repositories.InstrumentTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 public class InstrumentCategorieServiceImpl implements InstrumentCategorieService {
@@ -18,6 +22,8 @@ public class InstrumentCategorieServiceImpl implements InstrumentCategorieServic
     private InstrumentCategorieRepository instrumentCategorieRepository;
     @Autowired
     private InstrumentClassTypeService instrumentClassTypeService;
+    @Autowired
+    private InstrumentTypeRepository instrumentTypeRepository;
     @Autowired
     private FeeRateRepository feeRateRepository;
 
@@ -32,17 +38,26 @@ public class InstrumentCategorieServiceImpl implements InstrumentCategorieServic
     }
 
     @Override
-    public InstrumentCategorie createUpdateCategorieRate(InstrumentCategorie instrumentCategorie) {
+    public InstrumentCategorie createUpdateCategorieRate(InstrumentCategorieDTO instrumentCategorieDTO) {
         AtomicBoolean isEquals = new AtomicBoolean(false);
         List<InstrumentCategorie> instrumentCategories = instrumentCategorieRepository.findCategorieRatesByDeletedIsFalse();
 
-        InstrumentCategorie instrumentCategorie1 = new InstrumentCategorie();
-        instrumentCategorie1.setCategory(instrumentCategorie.getCategory());
-        instrumentCategorie1.setId(instrumentCategorie.getId());
-        instrumentCategorie1.setInstrumentType(instrumentCategorie.getInstrumentType());
+        InstrumentCategorie instrumentCategorie = new InstrumentCategorie();
+        instrumentCategorie.setId(instrumentCategorieDTO.getId());
+        instrumentCategorie.setCategory(instrumentCategorieDTO.getCategorieName());
+        if(instrumentCategorieDTO.getInstrumentType()!=null){
+            InstrumentType instType = new InstrumentType(null, "-", "-", false, instrumentCategorieDTO.getInstrumentClass(), null);
+            if (instrumentCategorieDTO.getInstrumentType().equals("-")) {
+                instType = instrumentTypeRepository.save(instrumentTypeisExist(instType));
+            }else{
+                instType = instrumentClassTypeService.getInstrumentTypeById(Long.valueOf(instrumentCategorieDTO.getInstrumentType()));
+            }
+            instrumentCategorie.setInstrumentType(instType);
+        }
 
+        InstrumentCategorie finalInstrumentCategorie = instrumentCategorie;
         instrumentCategories.forEach(ic -> {
-            if (instrumentCategorie1.compareTo(ic) == 1) {
+            if (finalInstrumentCategorie.compareTo(ic) == 1) {
                 isEquals.set(true);
                 return;
             }
@@ -71,6 +86,25 @@ public class InstrumentCategorieServiceImpl implements InstrumentCategorieServic
             }
         }
         return instrumentCategorie;
+    }
+    @Transactional
+    public InstrumentType instrumentTypeisExist(InstrumentType instrumentType) {
+        List<InstrumentType> instrumentTypes = instrumentClassTypeService.getAllInstrumentType();
+        AtomicBoolean isEqual = new AtomicBoolean(false);
+        InstrumentType finalInstrumentType = instrumentType;
+        AtomicReference<InstrumentType> instrumentTypeExist = new AtomicReference<>();
+        instrumentTypes.forEach(instType -> {
+            if (finalInstrumentType.compareTo(instType) == 1) {
+                instrumentTypeExist.set(instType);
+                isEqual.set(true);
+            }
+        });
+
+        if (isEqual.get() == true) {
+            return instrumentTypeExist.get();
+        } else {
+            return instrumentType;
+        }
     }
 
     @Override

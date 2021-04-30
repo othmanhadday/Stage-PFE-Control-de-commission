@@ -19,12 +19,11 @@ $(document).ready(function () {
             getUpdatedItemFeeRate(id)
         }
     }
-
-
 });
 
 //**********************************ajouter nouveau fee rate***********************************
 $(document).on('click', '#addNewFeeRatebtn', function () {
+    $('#instrumentClassSelect').prepend('<option value="" selected disabled hidden>Choisissez ici</option>');
     $("#feeRateInput").val("")
     $('#errors').empty()
     $('#errors').removeClass("alert alert-danger")
@@ -54,10 +53,22 @@ $('#instrumentClassSelect').change(function () {
         dataType: "json",
         success: function (data) {
             $('#instrumentTypeDiv').removeClass("hide")
+            var count = data.length
+            if (count == 0) {
+                $('#instrumentTypeSelect')
+                    .append($('<option>', {value: "-"})
+                        .text("-"));
+            }
             $.each(data, function (key, value) {
+                count--;
+                if (count == 0 && value.instrumentTypeCode != "-") {
+                    $('#instrumentTypeSelect')
+                        .append($('<option>', {value: "-"})
+                            .text("-"));
+                }
                 $('#instrumentTypeSelect')
                     .append($('<option>', {value: value.id})
-                        .text(value.instrumentTypeName));
+                        .text(value.instrumentTypeName + " , " + value.instrumentTypeCode));
             });
         },
         error: function (data) {
@@ -71,22 +82,43 @@ $('#instrumentTypeSelect').change(function () {
     var id = $(this).val();
     $('#instrumentCategorieSelect ').empty();
     $('#instrumentCategorieSelect').prepend('<option value="" selected disabled hidden>Choisissez ici</option>');
-    $.ajax({
-        type: 'get',
-        url: "/instrumentCatByInstrumentType/" + id,
-        dataType: "json",
-        success: function (data) {
-            $('#instrumentCategorieDiv').removeClass("hide")
-            $.each(data, function (key, value) {
-                $('#instrumentCategorieSelect')
-                    .append($('<option>', {value: value.id})
-                        .text(value.category));
-            });
-        },
-        error: function (data) {
-            console.log(data);
-        }
-    });
+
+    if (id == "-") {
+        $('#instrumentCategorieDiv').removeClass("hide")
+        $('#instrumentCategorieSelect')
+            .append($('<option>', {value: "-"})
+                .text("-"));
+    } else {
+        $.ajax({
+            type: 'get',
+            url: "/instrumentCatByInstrumentType/" + id,
+            dataType: "json",
+            success: function (data) {
+                $('#instrumentCategorieDiv').removeClass("hide")
+                var count = data.length;
+                if (count == 0) {
+                    $('#instrumentCategorieSelect')
+                        .append($('<option>', {value: "-"})
+                            .text("-"));
+                }
+                $.each(data, function (key, value) {
+                    count--;
+                    if (count == 0 && value.category != "-") {
+                        $('#instrumentCategorieSelect')
+                            .append($('<option>', {value: "-"})
+                                .text("-"));
+                    }
+                    $('#instrumentCategorieSelect')
+                        .append($('<option>', {value: value.id})
+                            .text(value.category));
+                });
+            },
+            error: function (data) {
+                console.log(data);
+            }
+        });
+    }
+
 })
 
 // FeeCategorie change to show fee Type
@@ -175,10 +207,22 @@ $('#instrumentClassSelect_update').change(function () {
         url: "/instrumentTypeByClass/" + id,
         dataType: "json",
         success: function (data) {
+            var count = data.length;
+            if (count == 0) {
+                $('#instrumentTypeSelect_update')
+                    .append($('<option>', {value: "-"})
+                        .text("-"));
+            }
             $.each(data, function (key, value) {
+                count--;
+                if (count == 0 && value.instrumentTypeCode != "-") {
+                    $('#instrumentTypeSelect_update')
+                        .append($('<option>', {value: "-"})
+                            .text("-"));
+                }
                 $('#instrumentTypeSelect_update')
                     .append($('<option>', {value: value.id})
-                        .text(value.instrumentTypeName));
+                        .text(value.instrumentTypeName + " , " + value.instrumentTypeCode));
             });
         },
         error: function (data) {
@@ -192,21 +236,43 @@ $('#instrumentTypeSelect_update').change(function () {
     var id = $(this).val();
     $('#instrumentCategorieSelect_update').empty();
     $('#instrumentCategorieSelect_update').prepend('<option value="" selected disabled hidden>Choisissez ici</option>');
-    $.ajax({
-        type: 'get',
-        url: "/instrumentCatByInstrumentType/" + id,
-        dataType: "json",
-        success: function (data) {
-            $.each(data, function (key, value) {
-                $('#instrumentCategorieSelect_update')
-                    .append($('<option>', {value: value.id})
-                        .text(value.category));
-            });
-        },
-        error: function (data) {
-            console.log(data);
-        }
-    });
+
+    if (id == "-") {
+        $('#instrumentCategorieDiv_update').removeClass("hide")
+        $('#instrumentCategorieSelect_update')
+            .append($('<option>', {value: "-"})
+                .text("-"));
+    } else {
+        console.log(id);
+        $.ajax({
+            type: 'get',
+            url: "/instrumentCatByInstrumentType/" + id,
+            dataType: "json",
+            success: function (data) {
+                var count = data.length
+                if (count == 0) {
+                    $('#instrumentCategorieSelect_update')
+                        .append($('<option>', {value: "-"})
+                            .text("-"));
+                }
+                $.each(data, function (key, value) {
+                    count--;
+                    if (count == 0 && value.category != "-") {
+                        $('#instrumentCategorieSelect_update')
+                            .append($('<option>', {value: "-"})
+                                .text("-"));
+                    }
+                    $('#instrumentCategorieSelect_update')
+                        .append($('<option>', {value: value.id})
+                            .text(value.category));
+                });
+            },
+            error: function (data) {
+                console.log(data);
+            }
+        });
+    }
+
 })
 
 // FeeCategorie change to show fee Type
@@ -263,7 +329,7 @@ function getUpdatedItemFeeRate(id) {
                     $.each(instrumentTypes, function (key, value) {
                         $('#instrumentTypeSelect_update')
                             .append($('<option>', {value: value.id})
-                                .text(value.instrumentTypeName));
+                                .text(value.instrumentTypeName + " , " + value.instrumentTypeCode));
                         $('#instrumentTypeSelect_update').val(data.instrumentCategorie.instrumentType.id)
                     });
                 },
@@ -326,6 +392,6 @@ $(document).on('click', '.showdeleteFeeRatebtn', function () {
     $('#ModalDeleteFeeRate').modal('show');
 })
 
-$(document).ready( function () {
+$(document).ready(function () {
     $('#FeeRateTable').DataTable();
-} );
+});

@@ -4,6 +4,7 @@ import com.hadday.gestion_commission.Service.BookingFunctionService;
 import com.hadday.gestion_commission.Service.InstrumentClassBasisInstrumentService;
 import com.hadday.gestion_commission.Service.InstrumentClassTypeService;
 import com.hadday.gestion_commission.entities.BookingFunction;
+import com.hadday.gestion_commission.entities.DTO.InstrumentClassBasisInstrumentDto;
 import com.hadday.gestion_commission.entities.InstrumentClassBasisInstrument;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -26,19 +27,24 @@ public class InstrumentClassBasisInstrumentController {
     private BookingFunctionService bookingFunctionService;
 
     @PostMapping
-    public String createUpdateBookingFunction(@Valid @ModelAttribute("instrumentBasis") InstrumentClassBasisInstrument instrument,
+    public String createUpdateBookingFunction(@Valid @ModelAttribute("instrumentBasis") InstrumentClassBasisInstrumentDto instrumentDto,
                                               RedirectAttributes redirAttrs, Model model, BindingResult result) {
-        if (instrument.getName().isEmpty()) {
+        if (instrumentDto.getName().isEmpty()) {
             result.rejectValue("name", null, " Instrument Name field is Empty");
         }
+        if (instrumentDto.getInstrumentType()==null) {
+            result.rejectValue("instrumentType", null, " Instrument Type field is Null");
+        }
+
         if (result.hasErrors()) {
             model.addAttribute("InstrumentsBasis", icbIservice.findAll());
             model.addAttribute("bookingFunctions", bookingFunctionService.findBookingFunctions());
-            model.addAttribute("typeInstruments", instrumentClassTypeService.getAllInstrumentType());
+            model.addAttribute("instrumentClasses", instrumentClassTypeService.getAllInstrumentClass());
             model.addAttribute("bookingFunction", new BookingFunction());
             return "/gestion-commission/mouvement/bookingFunction";
         }
-        instrument = icbIservice.createUpdateInstrument(instrument);
+
+        InstrumentClassBasisInstrument instrument = icbIservice.createUpdateInstrument(instrumentDto);
         if (instrument != null) {
             redirAttrs.addFlashAttribute("success", " Instrument Class a été inséré avec succès : " + instrument.getName());
         } else {

@@ -57,6 +57,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         return permission;
     }
 
+
     @Transactional
     public RoleApp createRole(String name, Collection<Permission> permissions) {
         RoleApp role = roleRepository.findRoleAppByName(name);
@@ -73,7 +74,7 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         List<FeeType> feeTypes = feeTypeRepository.findFeeTypeByTypeNameAndDeletedIsFalse(name);
 
         if (categorieFees == null) {
-            categorieFees = new CategorieFees(null, name, false);
+            categorieFees = new CategorieFees(null, name, false, null);
             categorieFees = categorieFeesRepository.save(categorieFees);
             if (feeTypes.size() <= 0) {
                 FeeType feeType = new FeeType(null, name, categorieFees, null, false);
@@ -86,26 +87,26 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     @Transactional
     public void createInstrumentClass(String name) {
         InstrumentClass instrumentClass = instrumentClassRepository.findInstrumentClassByInstrementClassAndDeletedIsFalse(name);
-        InstrumentType instrumentType = instrumentTypeRepository.findInstrumentTypeByInstrumentTypeNameAndDeletedIsFalse(name);
-        List<InstrumentClassBasisInstrument> instruments = instrumentClassBasisInstrumentRepository.findInstrumentClassBasisInstrumentByName(name);
+//        InstrumentType instrumentType = instrumentTypeRepository.findInstrumentTypeByInstrumentTypeNameAndDeletedIsFalse(name);
+//        List<InstrumentClassBasisInstrument> instruments = instrumentClassBasisInstrumentRepository.findInstrumentClassBasisInstrumentByName(name);
 
         if (instrumentClass == null) {
             instrumentClass = new InstrumentClass();
             instrumentClass.setInstrementClass(name);
             instrumentClass = instrumentClassRepository.save(instrumentClass);
-            if (instrumentType == null) {
-                instrumentType = new InstrumentType();
-                instrumentType.setInstrumentTypeName(name);
-                instrumentType.setInstrumentTypeCode(name);
-                instrumentType.setInstrumentClass(instrumentClass);
-                instrumentType = instrumentTypeRepository.save(instrumentType);
-                if (instruments.size() <= 0) {
-                    InstrumentClassBasisInstrument instrument = new InstrumentClassBasisInstrument();
-                    instrument.setInstrumentType(instrumentType);
-                    instrument.setName(name);
-                    instrumentClassBasisInstrumentRepository.save(instrument);
-                }
-            }
+//            if (instrumentType == null) {
+//                instrumentType = new InstrumentType();
+//                instrumentType.setInstrumentTypeName(name);
+//                instrumentType.setInstrumentTypeCode(name);
+//                instrumentType.setInstrumentClass(instrumentClass);
+//                instrumentType = instrumentTypeRepository.save(instrumentType);
+//                if (instruments.size() <= 0) {
+//                    InstrumentClassBasisInstrument instrument = new InstrumentClassBasisInstrument();
+//                    instrument.setInstrumentType(instrumentType);
+//                    instrument.setName(name);
+//                    instrumentClassBasisInstrumentRepository.save(instrument);
+//                }
+//            }
         }
     }
 

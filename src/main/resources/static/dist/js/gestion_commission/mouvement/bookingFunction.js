@@ -57,6 +57,7 @@ $(document).on('click', '.showDeleteBookingfunctionbtn', function () {
 //Modal add new Instrument Basis
 $(document).on('click', '#addNewInstrumentBasisbtn', function () {
     $('#instrumentBasisInput').val("");
+    $('#instrumentClass').prepend('<option value="" selected disabled hidden>Choisissez ici</option>');
     $('.modal-title').text("Ajouter Instrument Class of Basis Instrument");
     $('#ModalAddUpdateInstrumentBasis').modal('show');
 });
@@ -78,8 +79,26 @@ $(document).on('click', '.editInstrumentBasisbtn', function () {
         success: function (data) {
             $('#instrumentBasisInput').val(data.name);
             console.log(data.instrumentType);
-            $('#profiles').val(data.instrumentType.id);
+            $('#instrumentClass').val(data.instrumentType.instrumentClass.id);
             $('#ModalAddUpdateInstrumentBasis').modal('show');
+            $('#instrumentTypeDiv').removeClass("hide")
+            // get Instrument Type
+            $.ajax({
+                type: 'get',
+                url: "/instrumentTypeByClass/" + data.instrumentType.instrumentClass.id,
+                dataType: "json",
+                success: function (instrumentTypes) {
+                    $.each(instrumentTypes, function (key, value) {
+                        $('#instrumentType')
+                            .append($('<option>', {value: value.id})
+                                .text(value.instrumentTypeName + " , " + value.instrumentTypeCode));
+                        $('#instrumentType').val(data.instrumentType.id)
+                    });
+                },
+                error: function (data) {
+                    console.log(data);
+                }
+            });
         },
         error: function (data) {
             console.log(data);
@@ -103,3 +122,40 @@ $(document).ready( function () {
 $(document).ready( function () {
     $('#instrumentclassBasisTable').DataTable();
 } );
+
+
+// class instrument change to show instrument type
+$('#instrumentClass').change(function () {
+    var id = $(this).val();
+    $('#instrumentType').empty();
+    $('#instrumentType').prepend('<option value="" selected disabled hidden>Choisissez ici</option>');
+
+    $.ajax({
+        type: 'get',
+        url: "/instrumentTypeByClass/" + id,
+        dataType: "json",
+        success: function (data) {
+            $('#instrumentTypeDiv').removeClass("hide")
+            var count = data.length
+            if (count == 0) {
+                $('#instrumentType')
+                    .append($('<option>', {value: "-"})
+                        .text("-"));
+            }
+            $.each(data, function (key, value) {
+                count--;
+                if (count == 0 && value.instrumentTypeCode != "-") {
+                    $('#instrumentType')
+                        .append($('<option>', {value: "-"})
+                            .text("-"));
+                }
+                $('#instrumentType')
+                    .append($('<option>', {value: value.id})
+                        .text(value.instrumentTypeName + " , " + value.instrumentTypeCode));
+            });
+        },
+        error: function (data) {
+            console.log(data);
+        }
+    });
+})

@@ -37,7 +37,8 @@
                                 <tr>
                                     <th>#</th>
                                     <th>Categorie</th>
-                                    <th>Instrument Type</th>
+                                    <th>Instrument Type Name , Code</th>
+                                    <th>Instrument Class</th>
                                     <th></th>
                                 </tr>
                                 </thead>
@@ -45,7 +46,11 @@
                                 <tr th:each="catRate:${categorieRates}">
                                     <td th:text="${catRate.id}"></td>
                                     <td th:text="${catRate.category}"></td>
-                                    <td th:text="${catRate.instrumentType.instrumentTypeName}"></td>
+                                    <td>
+                                        <span th:text="${catRate.instrumentType.instrumentTypeName}"></span>
+                                        <span th:text="${catRate.instrumentType.instrumentTypeCode}"></span>
+                                    </td>
+                                    <td th:text="${catRate.instrumentType.instrumentClass.instrementClass}"></td>
                                     <td>
                                         <div class="btn-group btn-group-sm float-right" role="group"
                                              aria-label="Basic example">
@@ -85,6 +90,8 @@
                     <div class="modal-body">
                         <input type="hidden" th:field="*{id}" id="categorieRate_id">
                         <p style="visibility:hidden;display: none" th:errors="*{categorieName}" id="errorCategory"></p>
+                        <p style="visibility:hidden;display: none" th:errors="*{instrumentType}" id="errorType"></p>
+                        <p style="visibility:hidden;display: none" th:errors="*{instrumentClass}" id="errorClass"></p>
                         <div class="col-12">
                             <div class="form-group">
                                 <label for="categoryInput">le nom du catégorie : </label>
@@ -101,13 +108,34 @@
 
                         <div class="col-12">
                             <div class="form-group">
-                                <label for="instrumentType">Instrument Type : </label>
-                                <select id="instrumentType" th:field="*{instrumentType}" class="form-control"
+                                <label for="instrumentClass">Instrument Classe : </label>
+                                <select id="instrumentClass"
+                                        th:classappend="${#fields.hasErrors('instrumentClass')}? 'is-invalid':''"
+                                        th:field="*{instrumentClass}" class="form-control"
                                         name="profile">
-                                    <option th:each="instrumentType :${instrumentTypes}"
-                                            th:value="${instrumentType.id}"
-                                            th:text="${instrumentType.instrumentTypeName}"></option>
+                                    <option value="" selected disabled hidden>Choisissez ici</option>
+                                    <option th:each="instrumentClass :${instrumentClasses}"
+                                            th:value="${instrumentClass.id}"
+                                            th:text="${instrumentClass.instrementClass}"></option>
                                 </select>
+                                <p class="invalid-feedback" th:if="${#fields.hasErrors('instrumentClass')}"
+                                   th:errors="*{instrumentClass}">Name
+                                    Error</p>
+                            </div>
+                        </div>
+
+
+                        <div class="col-12 hide" id="instrumentTypeDiv" >
+                            <div class="form-group">
+                                <label for="instrumentType">Instrument Type : </label>
+                                <select id="instrumentType"
+                                        th:classappend="${#fields.hasErrors('instrumentType')}? 'is-invalid':''"
+                                        th:field="*{instrumentType}" class="form-control"
+                                        name="profile">
+                                </select>
+                                <p class="invalid-feedback" th:if="${#fields.hasErrors('instrumentType')}"
+                                   th:errors="*{instrumentClass}">Name
+                                    Error</p>
                             </div>
                         </div>
 

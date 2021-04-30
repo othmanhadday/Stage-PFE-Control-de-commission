@@ -2,6 +2,7 @@ package com.hadday.gestion_commission.entities.DTO;
 
 import com.hadday.gestion_commission.entities.FeeType;
 import com.hadday.gestion_commission.entities.InstrumentCategorie;
+import com.hadday.gestion_commission.entities.InstrumentClass;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,7 +20,9 @@ import javax.persistence.ManyToOne;
 public class FeeRateDto {
     private Long id;
     private FeeType feeType;
-    private InstrumentCategorie instrumentCategorie;
+    private InstrumentClass instrumentClass;
+    private String instrumentCategorie;
+    private String instrumentType;
     private String feeRate;
     private char tauxMontant;
     private String montant;

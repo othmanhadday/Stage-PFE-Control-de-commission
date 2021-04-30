@@ -1,5 +1,6 @@
 package com.hadday.gestion_commission.controller;
 
+import com.hadday.gestion_commission.Constante.TypeCommission;
 import com.hadday.gestion_commission.Service.FeeCategorieTypeService;
 import com.hadday.gestion_commission.entities.CategorieFees;
 import com.hadday.gestion_commission.entities.FeeType;
@@ -25,6 +26,7 @@ public class CategorieFeeController {
         model.addAttribute("feeType", new FeeType());
         model.addAttribute("feeCategories", feeCategorieTypeService.allCategorieFees());
         model.addAttribute("feeTypes", feeCategorieTypeService.allTypeFees());
+        model.addAttribute("typeCommission", TypeCommission.values());
         return "/gestion-commission/feesCat_feesType";
     }
 
@@ -37,10 +39,13 @@ public class CategorieFeeController {
         if (result.hasErrors()) {
             model.addAttribute("feeCategories", feeCategorieTypeService.allCategorieFees());
             model.addAttribute("feeTypes", feeCategorieTypeService.allTypeFees());
+            model.addAttribute("typeCommission", TypeCommission.values());
             model.addAttribute("feeType", new FeeType());
             return "/gestion-commission/feesCat_feesType";
         }
+        System.out.println(categorieFees);
         categorieFees = feeCategorieTypeService.createOrUpdateCategorieFees(categorieFees);
+
         if (categorieFees != null) {
             redirAttrs.addFlashAttribute("success", "Catégorie Fée a été inséré avec succès : " + categorieFees.getCategorieFeeName());
         } else {

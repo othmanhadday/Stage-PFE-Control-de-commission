@@ -1,5 +1,6 @@
 package com.hadday.gestion_commission.controller;
 
+import com.hadday.gestion_commission.Constante.TypeCommission;
 import com.hadday.gestion_commission.Service.FeeCategorieTypeService;
 import com.hadday.gestion_commission.entities.CategorieFees;
 import com.hadday.gestion_commission.entities.FeeType;
@@ -28,6 +29,7 @@ public class FeeTypeController {
         if (result.hasErrors()) {
             model.addAttribute("feeCategories", feeCategorieTypeService.allCategorieFees());
             model.addAttribute("feeTypes", feeCategorieTypeService.allTypeFees());
+            model.addAttribute("typeCommission", TypeCommission.values());
             model.addAttribute("feeCategorie", new CategorieFees());
 
             return "/gestion-commission/feesCat_feesType";

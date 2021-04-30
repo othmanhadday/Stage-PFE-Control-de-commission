@@ -43,7 +43,7 @@ public class BookingInstrumentBasisController {
             Model model,
             RedirectAttributes redirAttrs,
             BindingResult result) {
-
+        System.out.println(dto);
         if (dto.getBookFunction()==null) {
             result.rejectValue("bookFunction", null, " Booking Function field is Empty");
         }

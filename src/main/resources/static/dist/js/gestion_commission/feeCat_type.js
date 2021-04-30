@@ -33,6 +33,11 @@ $(document).on('click', '.editFeeCategoriebtn', function () {
         dataType: "json",
         success: function (data) {
             $('#feeCategorieNameInput').val(data.categorieFeeName);
+            if(data.typeCommission!=null){
+                $('#typeCommission').val(data.typeCommission)
+            }else {
+                $('#typeCommission').val("-")
+            }
             $('#ModalAddUpdateFeeCategorie').modal('show');
         },
         error: function (data) {
@@ -73,7 +78,6 @@ $(document).on('click', '.editFeeTypebtn', function () {
         url: "/feeType/" + id,
         dataType: "json",
         success: function (data) {
-            console.log(data);
             $('#profiles').val(data.categorieFees.id)
             $('#feeTypeNameInput').val(data.typeName);
             $('#ModalAddUpdateFeeType').modal('show');

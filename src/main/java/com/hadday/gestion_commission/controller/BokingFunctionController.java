@@ -4,6 +4,7 @@ import com.hadday.gestion_commission.Service.BookingFunctionService;
 import com.hadday.gestion_commission.Service.InstrumentClassBasisInstrumentService;
 import com.hadday.gestion_commission.Service.InstrumentClassTypeService;
 import com.hadday.gestion_commission.entities.BookingFunction;
+import com.hadday.gestion_commission.entities.DTO.InstrumentClassBasisInstrumentDto;
 import com.hadday.gestion_commission.entities.InstrumentClass;
 import com.hadday.gestion_commission.entities.InstrumentClassBasisInstrument;
 import com.hadday.gestion_commission.entities.InstrumentType;
@@ -30,10 +31,10 @@ public class BokingFunctionController {
     @GetMapping
     public String index(Model model) {
         model.addAttribute("bookingFunctions", bookingFunctionService.findBookingFunctions());
-        model.addAttribute("typeInstruments", instrumentClassTypeService.getAllInstrumentType());
+        model.addAttribute("instrumentClasses", instrumentClassTypeService.getAllInstrumentClass());
         model.addAttribute("InstrumentsBasis", icbIservice.findAll());
         model.addAttribute("bookingFunction", new BookingFunction());
-        model.addAttribute("instrumentBasis", new InstrumentClassBasisInstrument());
+        model.addAttribute("instrumentBasis", new InstrumentClassBasisInstrumentDto());
         return "gestion-commission/mouvement/bookingFunction";
     }
 
@@ -46,8 +47,8 @@ public class BokingFunctionController {
         if (result.hasErrors()) {
             model.addAttribute("bookingFunctions", bookingFunctionService.findBookingFunctions());
             model.addAttribute("InstrumentsBasis", icbIservice.findAll());
-            model.addAttribute("instrumentBasis", new InstrumentClassBasisInstrument());
-            model.addAttribute("typeInstruments", instrumentClassTypeService.getAllInstrumentType());
+            model.addAttribute("instrumentBasis", new InstrumentClassBasisInstrumentDto());
+            model.addAttribute("instrumentClasses", instrumentClassTypeService.getAllInstrumentClass());
             return "/gestion-commission/mouvement/bookingFunction";
         }
 

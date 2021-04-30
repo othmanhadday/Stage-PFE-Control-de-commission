@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      xmlns:sec="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:sec="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.w3.org/1999/xhtml"
       layout:decorator="~{layout/layout.html}">
 <head>
     <meta charset="UTF-8">
@@ -113,7 +114,9 @@
                         <div class="col-12">
                             <div class="form-group">
                                 <label for="instrumentClassSelect">Instrument Class : </label>
-                                <select id="instrumentClassSelect" class="form-control"
+                                <select id="instrumentClassSelect"
+                                        th:field="*{instrumentClass}"
+                                        class="form-control"
                                         name="profile">
                                     <option value="" selected disabled hidden class="hide">Choisissez ici</option>
                                     <option th:each="instrumentClass :${instrumentClasses}"
@@ -126,7 +129,9 @@
                         <div class="col-12 hide" id="instrumentTypeDiv">
                             <div class="form-group">
                                 <label for="instrumentTypeSelect">Instrument Type : </label>
-                                <select id="instrumentTypeSelect" class="form-control">
+                                <select id="instrumentTypeSelect"
+                                        th:field="*{instrumentType}"
+                                        class="form-control">
                                 </select>
                             </div>
                         </div>
@@ -175,7 +180,7 @@
 
                         <div class="col-12 hide" id="feeRatediv">
                             <div class="form-group">
-                                <label for="feeRateInput">Fee Rate : </label>
+                                <label for="feeRateInput"> Rate : </label>
                                 <input type="number" step="any"
                                        th:field="*{feeRate}"
                                        th:classappend="${#fields.hasErrors('feeRate')}? 'is-invalid':''"
@@ -290,7 +295,8 @@
                         </div>
                         <input type="hidden" th:field="*{id}" id="bookingInstrument_id_update">
                         <input type="hidden" th:field="*{bookFunction}" id="bookFunction_update">
-                        <input type="hidden" th:field="*{instrumentClassBasisInstrument}" id="instrumentClassBasisInstrument_update">
+                        <input type="hidden" th:field="*{instrumentClassBasisInstrument}"
+                               id="instrumentClassBasisInstrument_update">
                         <input type="hidden" th:field="*{feeType}" id="feeType_update">
                         <input type="hidden" th:field="*{creditDebit}" id="creditDebit_update">
                         <div class="row">
@@ -365,7 +371,9 @@
                         <div class="col-12">
                             <div class="form-group">
                                 <label for="instrumentClassSelect">Instrument Class : </label>
-                                <select id="instrumentClassSelect_update" class="form-control"
+                                <select id="instrumentClassSelect_update"
+                                        th:field="*{instrumentClass}"
+                                        class="form-control"
                                         name="profile">
                                     <option value="" selected disabled hidden class="hide">Choisissez ici</option>
                                     <option th:each="instrumentClass :${instrumentClasses}"
@@ -378,7 +386,8 @@
                         <div class="col-12">
                             <div class="form-group">
                                 <label for="instrumentTypeSelect">Instrument Type : </label>
-                                <select id="instrumentTypeSelect_update" class="form-control">
+                                <select id="instrumentTypeSelect_update"
+                                        th:field="*{instrumentType}" class="form-control">
                                     <option th:each="instrumentClass :${instrumentClasses}"
                                             th:value="${instrumentClass.id}"
                                             th:text="${instrumentClass.instrementClass}"></option>
@@ -431,7 +440,7 @@
 
                         <div class="col-12">
                             <div class="form-group">
-                                <label for="feeRateInput">Fee Rate : </label>
+                                <label for="feeRateInput"> Rate : </label>
                                 <input type="number" step="any"
                                        th:field="*{feeRate}"
                                        th:classappend="${#fields.hasErrors('feeRate')}? 'is-invalid':''"
@@ -480,7 +489,8 @@
 </div>
 
 <section layout:fragment="js">
-    <script type='text/javascript' th:src="@{/dist/js/gestion_commission/mouvement/bookingFunctionInstrumentRate.js}"></script>
+    <script type='text/javascript'
+            th:src="@{/dist/js/gestion_commission/mouvement/bookingFunctionInstrumentRate.js}"></script>
 </section>
 
 </body>
