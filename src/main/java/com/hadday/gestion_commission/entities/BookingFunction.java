@@ -15,14 +15,16 @@ import java.util.Collection;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString(exclude = "bookingInstruments")
-public class BookingFunction implements Serializable {
+public class BookingFunction extends Auditable<String> implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(unique = true)
+    private int codeBooking;
     @Column(nullable = false)
     private String name;
     private boolean deleted;
-    @OneToMany(mappedBy = "bookFunction",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "bookFunction", cascade = CascadeType.ALL)
     @JsonIgnore
     private Collection<BookingInstrumentBasis> bookingInstruments;
 }

@@ -17,7 +17,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString(exclude = "bookingInstrumentBases")
-public class FeeType implements Serializable, Comparable<FeeType> {
+public class FeeType extends Auditable<String> implements Serializable, Comparable<FeeType> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

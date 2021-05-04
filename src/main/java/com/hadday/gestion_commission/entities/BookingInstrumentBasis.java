@@ -14,7 +14,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class BookingInstrumentBasis implements Serializable, Comparable<BookingInstrumentBasis> {
+public class BookingInstrumentBasis extends Auditable<String> implements Serializable, Comparable<BookingInstrumentBasis> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

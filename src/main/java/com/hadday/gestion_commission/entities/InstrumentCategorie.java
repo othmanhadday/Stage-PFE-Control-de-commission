@@ -13,7 +13,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class InstrumentCategorie implements Serializable,Comparable<InstrumentCategorie> {
+public class InstrumentCategorie extends Auditable<String> implements Serializable,Comparable<InstrumentCategorie> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

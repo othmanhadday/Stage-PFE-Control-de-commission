@@ -16,7 +16,7 @@ import java.util.Collection;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString(exclude = "bookingInstruments")
-public class InstrumentClassBasisInstrument implements Serializable, Comparable<InstrumentClassBasisInstrument> {
+public class InstrumentClassBasisInstrument extends Auditable<String> implements Serializable, Comparable<InstrumentClassBasisInstrument> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

@@ -13,7 +13,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class CategorieFees implements Serializable, Comparable<CategorieFees> {
+public class CategorieFees extends Auditable<String> implements Serializable, Comparable<CategorieFees> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
