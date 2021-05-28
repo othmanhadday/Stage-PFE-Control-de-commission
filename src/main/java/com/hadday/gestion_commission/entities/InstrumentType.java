@@ -14,8 +14,8 @@ import java.util.Collection;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString(exclude = "instrumentClassBasisInstruments")
-public class InstrumentType extends Auditable<String> implements Serializable, Comparable<InstrumentType> {
+@ToString
+public class InstrumentType implements Serializable, Comparable<InstrumentType> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -27,7 +27,13 @@ public class InstrumentType extends Auditable<String> implements Serializable, C
     private InstrumentClass instrumentClass;
     @OneToMany(mappedBy = "instrumentType", cascade = CascadeType.ALL)
     @JsonIgnore
+    @ToString.Exclude
     private Collection<InstrumentClassBasisInstrument> instrumentClassBasisInstruments;
+
+    @OneToMany(mappedBy = "instrumentType", cascade = CascadeType.ALL)
+    @JsonIgnore
+    @ToString.Exclude
+    private Collection<InstrumentCategorie> instrumentCategories;
 
     @Override
     public int compareTo(InstrumentType o) {

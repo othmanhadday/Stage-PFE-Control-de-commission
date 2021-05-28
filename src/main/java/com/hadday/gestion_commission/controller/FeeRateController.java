@@ -33,12 +33,18 @@ public class FeeRateController {
         model.addAttribute("instrumentClasses", instrumentClassTypeService.getAllInstrumentClass());
         model.addAttribute("feeCategories", feeCategorieTypeService.allCategorieFees());
         model.addAttribute("feeRates", feeRateService.findFeeRates());
+        System.out.println(feeRateService.findFeeRates());
         return "gestion-commission/feeRate";
     }
 
     @PostMapping
     public String createUpdateFeeRate(@ModelAttribute("feeRate") FeeRateDto feeRateDto,RedirectAttributes redirAttrs,
                                       Model model, BindingResult result) {
+
+        System.out.println(feeRateDto);
+        feeRateDto.setFeeRate("");
+        feeRateDto.setMontant("");
+
         if (feeRateDto.getFeeType() == null) {
             result.rejectValue("feeType", null, "Fee Type Not Selected");
         }
@@ -56,15 +62,12 @@ public class FeeRateController {
             model.addAttribute("feeRates", feeRateService.findFeeRates());
             return "gestion-commission/feeRate";
         }
-
         FeeRate feeRate = feeRateService.createUpdateFeeRate(feeRateDto);
         if(feeRate !=null){
             redirAttrs.addFlashAttribute("success", " Fée Rate a été inséré avec succès : " + feeRate.getId());
         }else{
             redirAttrs.addFlashAttribute("exist", " Fée Rate deja existe ");
         }
-
-        System.out.println(feeRate);
 
         return "redirect:/gestion-commission/feeRate";
     }

@@ -10,5 +10,7 @@ import java.util.List;
 public interface CategorieFeesRepository extends JpaRepository<CategorieFees, Long> {
     public CategorieFees findCategorieFeesByCategorieFeeNameAndDeletedIsFalse(String name);
 
+    public List<CategorieFees> findCategorieFeesByTypeCommissionAndDeletedIsFalse(String typeCommission);
+
     public List<CategorieFees> findCategorieFeesByDeletedIsFalse();
 }

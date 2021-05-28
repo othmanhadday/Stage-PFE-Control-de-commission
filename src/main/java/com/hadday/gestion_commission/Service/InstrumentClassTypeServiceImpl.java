@@ -29,6 +29,11 @@ public class InstrumentClassTypeServiceImpl implements InstrumentClassTypeServic
     }
 
     @Override
+    public InstrumentClass getInstrumentByName(String instrumentClass) {
+        return instrumentClassRepository.findInstrumentClassByInstrementClassAndDeletedIsFalse(instrumentClass);
+    }
+
+    @Override
     public InstrumentClass createUpdateInstrumentClass(InstrumentClass instrumentClass) {
         InstrumentClass instrumentClassIsNul = instrumentClassRepository.findInstrumentClassByInstrementClassAndDeletedIsFalse(instrumentClass.getInstrementClass());
         if (instrumentClass.getId() == null) {

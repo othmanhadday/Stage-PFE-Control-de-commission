@@ -92,6 +92,11 @@ public class FeeCategorieTypeServiceImpl implements FeeCategorieTypeService {
     }
 
     @Override
+    public List<CategorieFees> findCategoirieByTypeCommission(String type) {
+        return categorieFeesRepository.findCategorieFeesByTypeCommissionAndDeletedIsFalse(type);
+    }
+
+    @Override
     public Optional<FeeType> typeFeesById(Long id) {
         return feeTypeRepository.findById(id);
     }

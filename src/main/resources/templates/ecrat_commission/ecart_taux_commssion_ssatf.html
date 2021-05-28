@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml"
+      layout:decorator="~{layout/layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div layout:fragment="content">
+    <div class="page-wrapper">
+
+        <div class="container-fluid">
+            <div class="row page-titles">
+                <div class="col-md-5 align-self-center">
+                    <h4 class="text-themecolor">Profiles</h4>
+                </div>
+            </div>
+
+            <div class="container-fluid">
+                <div class="row my-2">
+                    <button type="button" id="newRole" class="btn btn-info ml-auto">
+                        <i class="mdi mdi-account-multiple-plus"></i> Create New
+                    </button>
+                </div>
+            </div>
+
+            <!--                Role card -->
+            <div class="row">
+                <!-- column -->
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title">Role Table</h4>
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>type_commission</th>
+                                        <th>Instrument Class</th>
+                                        <th>Instrument type</th>
+                                        <th>Instrument Categorie</th>
+                                        <!--                                        <th>Permission</th>-->
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="ecart: ${ecartTaux}">
+                                        <td th:text="${ecart.id}"></td>
+                                        <td th:text="${ecart.typeCommission}"></td>
+                                        <td th:text="${ecart.ssatf.CLASSID}"></td>
+                                        <td th:text="${ecart.ssatf.INSTRTYPE}"></td>
+                                        <td th:text="${ecart.ssatf.INSTRCTGRY}"></td>
+
+                                        <!--                                        <td>-->
+                                        <!--                                            <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">-->
+                                        <!--                                                <button class="btn btn-success editRole" th:id="${role.id}">-->
+                                        <!--                                                    <i class="mdi-account-edit mdi"></i>-->
+                                        <!--                                                </button>-->
+                                        <!--                                                <button class="btn btn-danger deleteRole" th:id="${role.id}">-->
+                                        <!--                                                    <i class="mdi-delete mdi"></i>-->
+                                        <!--                                                </button>-->
+                                        <!--                                                <button class="btn btn-primary roleUsers" th:id="${role.id}">-->
+                                        <!--                                                    <i class="mdi-format-list-bulleted mdi"></i>-->
+                                        <!--                                                </button>-->
+                                        <!--                                            </div>-->
+                                        <!--                                        </td>-->
+                                    </tr>
+                                    </tbody>
+                                </table>
+
+                                <div class="container">
+                                    <ul class="nav nav-pills">
+                                        <li th:each="p,status:${pages}" class="nav-item">
+
+                                                <a th:href="@{/ecart/droitAdmission(page=${status.index})}"
+                                                   th:classappend="${currentPage == status.index}? 'active':''"
+                                                   class="nav-link " th:text="${status.index+1}"></a>
+
+                                        </li>
+                                    </ul>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<section layout:fragment="js">
+    <!--    <script type='text/javascript' th:src="@{/dist/js/gestion_users/permission.js}"></script>-->
+</section>
+</body>
+</html>

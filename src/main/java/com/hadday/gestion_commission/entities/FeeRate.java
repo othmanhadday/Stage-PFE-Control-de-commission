@@ -28,10 +28,7 @@ public class FeeRate extends Auditable<String> implements Serializable, Comparab
     @Override
     public int compareTo(FeeRate o) {
         if (this.getInstrumentCategorie().equals(o.getInstrumentCategorie()) &&
-            this.getFeeType().equals(o.getFeeType()) &&
-                this.getTauxMontant()==o.getTauxMontant() &&
-                this.getFeeRate() == o.getFeeRate() &&
-                this.getMontant() == o.getMontant()
+                this.getTauxMontant()==o.getTauxMontant()
         ){
             return 1;
         }else {

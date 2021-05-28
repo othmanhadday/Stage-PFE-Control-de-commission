@@ -13,6 +13,8 @@ $(document).ready(function () {
 //********************Categorie Fee************************
 //Modal add new Categorie Fee
 $(document).on('click', '#addNewFeeCategoriebtn', function () {
+    $('#feeCategorie_id').val("");
+    $('#typeCommission').val("-")
     $('#feeCategorieNameInput').val("");
     $('.modal-FeeCategorie-title').text("Ajouter un nouveau Fee Categorie");
     $('#ModalAddUpdateFeeCategorie').modal('show');

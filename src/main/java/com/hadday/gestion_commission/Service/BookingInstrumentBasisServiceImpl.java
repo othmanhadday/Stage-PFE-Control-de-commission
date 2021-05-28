@@ -47,7 +47,7 @@ public class BookingInstrumentBasisServiceImpl implements BookingInstrumentBasis
         bookingInstrumentBasis.setFeeType(dto.getFeeType());
         bookingInstrumentBasis.setCreditDebit(dto.getCreditDebit());
         if (dto.getInstrumentClassBasisInstrument() != null) {
-            InstrumentType instType = new InstrumentType(null, "-", "-", false, dto.getInstrumentClass(), null);
+            InstrumentType instType = new InstrumentType(null, "-", "-", false, dto.getInstrumentClass(), null,null);
             if (dto.getInstrumentType() != null) {
                 if (dto.getInstrumentType().equals("-")) {
                     System.out.println("new type");

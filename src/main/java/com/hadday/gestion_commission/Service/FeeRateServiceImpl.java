@@ -45,7 +45,7 @@ public class FeeRateServiceImpl implements FeeRateService {
         feeRate.setTauxMontant(feeRateDto.getTauxMontant());
 
         if (feeRateDto.getInstrumentCategorie() != null) {
-            InstrumentType instType = new InstrumentType(null, "-", "-", false, feeRateDto.getInstrumentClass(), null);
+            InstrumentType instType = new InstrumentType(null, "-", "-", false, feeRateDto.getInstrumentClass(),null, null);
             if (feeRateDto.getInstrumentType() != null) {
                 if (feeRateDto.getInstrumentType().equals("-")) {
                     instType = instrumentTypeRepository.save(instrumentTypeisExist(instType));
@@ -53,7 +53,7 @@ public class FeeRateServiceImpl implements FeeRateService {
                     instType = instrumentTypeRepository.findById(Long.valueOf(feeRateDto.getInstrumentType())).get();
                 }
             }
-            InstrumentCategorie instrumentCategorie = new InstrumentCategorie(null, "-", false, instType);
+            InstrumentCategorie instrumentCategorie = new InstrumentCategorie(null, "-", false, instType,null);
             if (feeRateDto.getInstrumentCategorie().equals("-")) {
                 instrumentCategorie = instrumentCategorieRepository.save(instrumentCategorieisExist(instrumentCategorie));
             } else {
@@ -151,5 +151,11 @@ public class FeeRateServiceImpl implements FeeRateService {
         feeRate.setDeleted(true);
         feeRateRepository.save(feeRate);
     }
+
+    @Override
+    public FeeRate getFeeRate(String className, String type, String cate) {
+        return feeRateRepository.findFeeRate(className,type,cate,"Avoirs");
+    }
+
 
 }

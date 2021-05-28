@@ -51,7 +51,7 @@ public class InstrumentClassBasisInstrumentServiceImpl implements InstrumentClas
         instrument.setId(instrumentDto.getId());
         instrument.setName(instrumentDto.getName());
         if (instrumentDto.getInstrumentType()!=null){
-            InstrumentType instType = new InstrumentType(null, "-", "-", false, instrumentDto.getInstrumentClass(), null);
+            InstrumentType instType = new InstrumentType(null, "-", "-", false, instrumentDto.getInstrumentClass(), null,null);
             if (instrumentDto.getInstrumentType().equals("-")) {
                 instType = instrumentTypeRepository.save(instrumentTypeisExist(instType));
             }else{

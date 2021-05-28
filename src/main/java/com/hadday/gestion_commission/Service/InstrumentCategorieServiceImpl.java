@@ -46,7 +46,7 @@ public class InstrumentCategorieServiceImpl implements InstrumentCategorieServic
         instrumentCategorie.setId(instrumentCategorieDTO.getId());
         instrumentCategorie.setCategory(instrumentCategorieDTO.getCategorieName());
         if(instrumentCategorieDTO.getInstrumentType()!=null){
-            InstrumentType instType = new InstrumentType(null, "-", "-", false, instrumentCategorieDTO.getInstrumentClass(), null);
+            InstrumentType instType = new InstrumentType(null, "-", "-", false, instrumentCategorieDTO.getInstrumentClass(),null, null);
             if (instrumentCategorieDTO.getInstrumentType().equals("-")) {
                 instType = instrumentTypeRepository.save(instrumentTypeisExist(instType));
             }else{
@@ -121,6 +121,11 @@ public class InstrumentCategorieServiceImpl implements InstrumentCategorieServic
     @Override
     public List<InstrumentCategorie> getInstrumentCatByInstrumentType(Long id) {
         InstrumentType instrumentType = instrumentClassTypeService.getInstrumentTypeById(id);
+        return instrumentCategorieRepository.findInstrumentCategoriesByInstrumentTypeAndDeletedIsFalse(instrumentType);
+    }
+
+    @Override
+    public List<InstrumentCategorie> getInstrumentCatByInstrumentType(InstrumentType instrumentType) {
         return instrumentCategorieRepository.findInstrumentCategoriesByInstrumentTypeAndDeletedIsFalse(instrumentType);
     }
 }

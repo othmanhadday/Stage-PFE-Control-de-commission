@@ -9,6 +9,7 @@ import java.util.List;
 
 @Repository
 public interface InstrumentCategorieRepository extends JpaRepository<InstrumentCategorie, Long> {
+
     public List<InstrumentCategorie> findCategorieRatesByDeletedIsFalse();
 
     public InstrumentCategorie findCategorieRateByCategory(String name);

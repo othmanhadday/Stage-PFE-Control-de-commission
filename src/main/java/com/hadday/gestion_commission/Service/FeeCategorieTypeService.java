@@ -18,6 +18,8 @@ public interface FeeCategorieTypeService {
 
     public CategorieFees deleteCategorieFee(Long id);
 
+    public List<CategorieFees> findCategoirieByTypeCommission(String type);
+
     // Fees Type
 
     public Optional<FeeType> typeFeesById(Long id);

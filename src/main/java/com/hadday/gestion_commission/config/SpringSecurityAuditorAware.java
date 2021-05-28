@@ -11,7 +11,7 @@ public class SpringSecurityAuditorAware implements AuditorAware<String> {
 
             return SecurityContextHolder.getContext().getAuthentication() != null
                     ? Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication().getName())
-                    :Optional.ofNullable("System");
+                    : Optional.ofNullable("System");
 
     }
 }

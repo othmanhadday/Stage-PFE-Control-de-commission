@@ -10,6 +10,8 @@ public interface InstrumentClassTypeService {
 
     public List<InstrumentClass> getAllInstrumentClass();
 
+    public InstrumentClass getInstrumentByName(String instrumentClass);
+
     public InstrumentClass createUpdateInstrumentClass(InstrumentClass instrumentClass);
 
     public InstrumentClass getInstrumentClassById(Long id);
