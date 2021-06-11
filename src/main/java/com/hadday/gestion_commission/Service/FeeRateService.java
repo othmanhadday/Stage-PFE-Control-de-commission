@@ -14,6 +14,8 @@ public interface FeeRateService {
 
     public void deleteFeeRate(Long id);
 
-    public FeeRate getFeeRate(String className, String type, String cate);
+    public FeeRate getFeeRate(String className, String type, String cate,String typeCommission);
+
+    public FeeRate getFeeRate(String className, String type, String cate,String typeCommission,String feeType);
 
 }

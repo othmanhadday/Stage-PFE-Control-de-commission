@@ -14,6 +14,7 @@
                     <nav class="sidebar-nav">
                         <ul id="sidebarnav">
                             <li class="nav-small-cap">--- Taux des commissions</li>
+
                             <li>
                                 <a class="has-arrow waves-effect waves-dark"
                                    href="javascript:void(0)"
@@ -59,7 +60,28 @@
                                 </ul>
                             </li>
 
-
+                            <li>
+                                <a class="has-arrow waves-effect waves-dark"
+                                   href="javascript:void(0)"
+                                   aria-expanded="false">
+                                    <i class="mdi-account-multiple mdi"></i>
+                                    <span class="hide-menu">Ecart taux commission</span>
+                                </a>
+                                <ul aria-expanded="false" class="collapse">
+                                    <li>
+                                        <a th:href="@{/ecart/droitAdmission}">Droit d'Admission</a>
+                                    </li>
+                                    <li>
+                                        <a th:href="@{/ecart/avoirs}">Avoirs</a>
+                                    </li>
+                                    <li>
+                                        <a th:href="@{/ecart/compte}">Comptes</a>
+                                    </li>
+                                    <!--                                    <li>-->
+                                    <!--                                        <a th:href="@{/ecart/mouvement}">Mouvement</a>-->
+                                    <!--                                    </li>-->
+                                </ul>
+                            </li>
 
 
                             <li class="nav-small-cap">--- Gestion des utilisateurs</li>
@@ -82,31 +104,21 @@
                             </li>
 
 
-                            <li class="nav-small-cap">--- Ecart AllFees</li>
+                            <li class="nav-small-cap">--- All Fees</li>
 
                             <li>
-                                <a class="has-arrow waves-effect waves-dark"
-                                   href="javascript:void(0)"
-                                   aria-expanded="false">
-                                    <i class="mdi-account-multiple mdi"></i>
-                                    <span class="hide-menu">Ecart taux commission</span>
+                                <a th:href="@{/ecart_allFees/}">
+                                    <i class="mdi-account-multiple mdi text-danger"></i>
+                                    <span class="hide-menu">Ecart AllFees</span>
                                 </a>
-                                <ul aria-expanded="false" class="collapse">
-                                    <li>
-                                        <a th:href="@{/ecart/droitAdmission}">Droit d'Admission </a>
-                                    </li>
-                                    <li>
-                                        <a th:href="@{/ecart/avoirs}">Avoirs</a>
-                                    </li>
-                                    <li>
-                                        <a th:href="@{/ecart/compte}">Comptes</a>
-                                    </li>
-                                    <li>
-                                        <a th:href="@{/ecart/mouvement}">Mouvement</a>
-                                    </li>
-                                </ul>
                             </li>
 
+                            <li>
+                                <a th:href="@{/allFees/}">
+                                    <i class="mdi-account-multiple mdi text-danger"></i>
+                                    <span class="hide-menu"> AllFees</span>
+                                </a>
+                            </li>
 
 
                         </ul>

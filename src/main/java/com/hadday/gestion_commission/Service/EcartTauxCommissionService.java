@@ -24,6 +24,10 @@ public interface EcartTauxCommissionService {
 
     public EcartCommission calculatEcartCommissionToAllFees(EcartCommission ecartCommission, FeeRate feeRate);
 
-    public void calculateAllEcartCommissionToAllFees(Page<EcartCommission> ecartCommissions);
+    public void calculateAllEcartCommissionToAllFeesAvoirs(Page<EcartCommission> ecartCommissions);
+
+    public void calculateAllEcartCommissionToAllFeesDroitAdmission(Page<EcartCommission> ecartCommissions);
+
+    public void calculateAllEcartCommissionToAllFeesCompte(Page<EcartCommission> ecartCommissions);
 
 }

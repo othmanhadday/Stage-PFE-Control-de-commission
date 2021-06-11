@@ -65,6 +65,7 @@ public class FeeRateServiceImpl implements FeeRateService {
             feeRate.setFeeType(feeRateDto.getFeeType());
         }
         if (feeRateDto.getTauxMontant() == 'M') {
+            System.out.println(feeRateDto.getMontant());
             feeRate.setMontant(Double.valueOf(feeRateDto.getMontant()));
             feeRate.setFeeRate(-1);
         }
@@ -153,8 +154,13 @@ public class FeeRateServiceImpl implements FeeRateService {
     }
 
     @Override
-    public FeeRate getFeeRate(String className, String type, String cate) {
-        return feeRateRepository.findFeeRate(className,type,cate,"Avoirs");
+    public FeeRate getFeeRate(String className, String type, String cate,String typeCommission) {
+        return feeRateRepository.findFeeRate(className,type,cate,typeCommission);
+    }
+
+    @Override
+    public FeeRate getFeeRate(String className, String type, String cate, String typeCommission, String feeType) {
+        return feeRateRepository.findFeeRate(className,type,cate,typeCommission,feeType);
     }
 
 

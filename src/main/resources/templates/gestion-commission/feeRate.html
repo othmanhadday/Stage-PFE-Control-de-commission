@@ -46,12 +46,12 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr th:each="feeRate:${feeRates}">
+                                <tr th:each="feeRate:${feeRates}" >
                                     <td th:text="${feeRate.id}"></td>
-                                    <td th:text="${feeRate.instrumentCategorie.instrumentType.instrumentClass.instrementClass}"></td>
-                                    <td th:text="${feeRate.instrumentCategorie.instrumentType.instrumentTypeName}"></td>
-                                    <td th:text="${feeRate.instrumentCategorie.instrumentType.instrumentTypeCode}"></td>
-                                    <td th:text="${feeRate.instrumentCategorie.category}"></td>
+                                    <td th:text="${feeRate.instrumentCategorie?.instrumentType?.instrumentClass?.instrementClass}"></td>
+                                    <td th:text="${feeRate.instrumentCategorie?.instrumentType?.instrumentTypeName}"></td>
+                                    <td th:text="${feeRate.instrumentCategorie?.instrumentType?.instrumentTypeCode}"></td>
+                                    <td th:text="${feeRate.instrumentCategorie?.category}"></td>
                                     <td th:if="${feeRate.feeRate >= 0 && feeRate.montant >= 0}">
                                         <span>Error</span>
                                     </td>

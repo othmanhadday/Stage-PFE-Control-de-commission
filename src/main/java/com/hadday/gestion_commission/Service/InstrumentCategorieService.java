@@ -20,4 +20,6 @@ public interface InstrumentCategorieService {
 
     public List<InstrumentCategorie> getInstrumentCatByInstrumentType(InstrumentType instrumentType);
 
+    public InstrumentCategorie getInstrumentCatByInstrumentTypeAndCategory(InstrumentType instrumentType,String instrCategory);
+
 }

@@ -87,6 +87,7 @@ public class InstrumentCategorieServiceImpl implements InstrumentCategorieServic
         }
         return instrumentCategorie;
     }
+
     @Transactional
     public InstrumentType instrumentTypeisExist(InstrumentType instrumentType) {
         List<InstrumentType> instrumentTypes = instrumentClassTypeService.getAllInstrumentType();
@@ -127,5 +128,10 @@ public class InstrumentCategorieServiceImpl implements InstrumentCategorieServic
     @Override
     public List<InstrumentCategorie> getInstrumentCatByInstrumentType(InstrumentType instrumentType) {
         return instrumentCategorieRepository.findInstrumentCategoriesByInstrumentTypeAndDeletedIsFalse(instrumentType);
+    }
+
+    @Override
+    public InstrumentCategorie getInstrumentCatByInstrumentTypeAndCategory(InstrumentType instrumentType, String instrCategory) {
+        return instrumentCategorieRepository.findInstrumentCategoriesByInstrumentTypeAndCategoryAndDeletedIsFalse(instrumentType,instrCategory);
     }
 }

@@ -20,7 +20,7 @@
 
 
             <div class="container-fluid">
-                <form  method="post" th:action="@{/ecart/calculate_all_ecart_commission}">
+                <form  method="post" th:action="@{/ecart/calculate_all_ecart_commission_Avoirs}">
                     <input type="hidden" name="currentPage" th:value="${currentPage}">
                     <div class="row my-2">
                         <button type="submit" class="btn btn-info ml-auto" id="newUser">
@@ -36,26 +36,36 @@
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-body">
-                            <h4 class="card-title">Role Table</h4>
+                            <h4 class="card-title">Taux de Commission Avoirs n'existe pas </h4>
                             <div class="table-responsive">
                                 <table class="table table-hover">
                                     <thead>
                                     <tr>
                                         <th>#</th>
-                                        <th>type_commission</th>
+                                        <th>Code Mandant</th>
+                                        <th>Code Mandataire</th>
+                                        <th>ISIN</th>
                                         <th>Instrument Class</th>
                                         <th>Instrument type</th>
                                         <th>Instrument Categorie</th>
+                                        <th>Price</th>
+                                        <th>Quantite</th>
+                                        <th>Date</th>
                                         <!--                                        <th>Permission</th>-->
                                     </tr>
                                     </thead>
                                     <tbody>
                                     <tr th:each="ecart: ${ecartTaux}">
                                         <td th:text="${ecart.id}"></td>
-                                        <td th:text="${ecart.typeCommission}"></td>
+                                        <td th:text="${ecart.RelevesoldesAvoirs.CODE_MANDANT}"></td>
+                                        <td th:text="${ecart.RelevesoldesAvoirs.CODE_MANDATAIRE}"></td>
+                                        <td th:text="${ecart.RelevesoldesAvoirs.CODE_VALEUR}"></td>
                                         <td th:text="${ecart.RelevesoldesAvoirs.CLASS}"></td>
                                         <td th:text="${ecart.RelevesoldesAvoirs.TYPE}"></td>
                                         <td th:text="${ecart.RelevesoldesAvoirs.INSTRCTGRY}"></td>
+                                        <td th:text="${ecart.RelevesoldesAvoirs.Price}"></td>
+                                        <td th:text="${ecart.RelevesoldesAvoirs.QUANTITE}"></td>
+                                        <td th:text="${ecart.RelevesoldesAvoirs.DATE_MAJ}"></td>
 
                                         <td>
                                             <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
@@ -336,14 +346,11 @@
 
 
         $(document).on('click', '.addFeeRate', function () {
-
             var id = $(this).attr('id');
             console.log(id);
             getData(id)
 
-
         });
-
 
         // FeeCategorie change to show fee Type
         $('#feeCategorieSelect').change(function () {
@@ -402,7 +409,7 @@
 
             $.ajax({
                 type: 'get',
-                url: "/findEcartAndFeeRateById/" + id,
+                url: "/findEcartAndFeeRateAvoirsById/" + id,
                 dataType: "json",
                 success: function (data) {
                     $('#ecartId').val(id)

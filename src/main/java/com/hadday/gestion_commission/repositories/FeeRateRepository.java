@@ -29,4 +29,14 @@ public interface FeeRateRepository extends JpaRepository<FeeRate, Long> {
             @Param("typeCommission") String typeCommission
     );
 
+
+    @Query(value = Queries.Compte_Query)
+    public FeeRate findFeeRate(
+            @Param("className") String className,
+            @Param("typeCode") String typeCode,
+            @Param("category") String category,
+            @Param("typeCommission") String typeCommission,
+            @Param("feeType") String feeType
+    );
+
 }

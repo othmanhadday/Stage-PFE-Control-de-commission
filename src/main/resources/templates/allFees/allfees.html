@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml"
+      layout:decorator="~{layout/layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="page-wrapper">
+
+        <div class="container-fluid" id="myDivPage">
+
+            <div class="alert alert-primary" role="alert" th:text="${success}" th:if="${success}"></div>
+            <div class="alert alert-danger" role="alert" th:text="${delete}" th:if="${delete}"></div>
+            <div class="alert alert-info" role="alert" th:text="${exist}" th:if="${exist}"></div>
+
+            <div class="container-fluid">
+                <div class="row my-2">
+
+                    <div th:switch="${#httpServletRequest.requestURI}">
+                        <a th:case="'/allFees/'" th:href="@{/allFees/export/excel}" class="btn btn-success ml-auto">
+                            Export Excel
+                        </a>
+                    </div>
+
+                    <button class="btn btn-info ml-auto" id="searchBtn">
+                        <i class="icons icons-Calculator"></i> Search
+                    </button>
+                </div>
+            </div>
+
+
+            <div class="row hide" id="searchForm">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <form method="get" th:action="@{/allFees/searchDate}">
+
+                                <ul class="alert alert-danger" th:if="${errors}">
+                                    <input type="hidden" id="errors" th:value="${errors}">
+
+                                    <li th:each="key: ${errors}">
+                                        <span th:text="${key}"></span>
+                                    </li>
+                                </ul>
+                                <input type="hidden" name="currentPage" th:value="0">
+
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="startDate">Du : </label>
+                                        <input type="date" name="firstDate" class="form-control" id="startDate">
+                                    </div>
+                                </div>
+
+
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="endDate">Au : </label>
+                                        <input type="date" name="secondDate" class="form-control" id="endDate">
+                                    </div>
+                                </div>
+
+                                <div class="text-right">
+                                    <button type="button" id="hideFormSearch"
+                                            class="btn btn-danger waves-effect text-left">
+                                        Annuler
+                                    </button>
+
+                                    <button type="submit" class="btn btn-info waves-effect text-left">
+                                        Soumettre
+                                    </button>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <!-- column -->
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title">All Fees</h4>
+                            <div class="table-responsive">
+
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>ISIN</th>
+                                            <th>BPID_RECIPIENT</th>
+                                            <th>BPID_LIABLE</th>
+                                            <th>Quantite</th>
+                                            <th>Prix</th>
+                                            <th>Fee Categorie</th>
+                                            <th>Fee Type</th>
+                                            <th>Montant</th>
+                                            <th>Date</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr th:each="fee: ${allfees}">
+                                            <td th:text="${fee.ISIN}"></td>
+                                            <td th:text="${fee.COM_SEQ}"></td>
+                                            <td th:text="${fee.BPID_RECIPIENT}"></td>
+                                            <td th:text="${fee.BPID_LIABLE}"></td>
+                                            <td th:text="${fee.FEEBASIS}"></td>
+                                            <td th:text="${fee.PRICE}"></td>
+                                            <td th:text="${fee.FEECATEGORY}"></td>
+                                            <td th:text="${fee.FEETYPE}"></td>
+                                            <td th:text="${fee.AMOUNT}"></td>
+                                            <td th:text="${fee.DATE}"></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+
+                                    <div class="container" th:switch="${#httpServletRequest.requestURI}">
+                                        <ul class="nav nav-pills" th:case="'/allFees/searchDate'">
+                                            <li th:each="p,s:${pages}" class="nav-item">
+                                                <a th:href="@{/allFees/searchDates(currentPage=${s.index},firstDate=${firstDate},secondDate=${secondDate})}"
+                                                   th:classappend="${#strings.contains(currentPage,s.index)} ? 'active' : ''"
+                                                   class="nav-link " th:text="${s.index+1}"></a>
+                                            </li>
+                                        </ul>
+
+                                        <ul class="nav nav-pills" th:case="'/allFees/'">
+                                            <li th:each="p,status:${pages}" class="nav-item">
+                                                <a th:href="@{/allFees/(page=${status.index})}"
+                                                   th:classappend="${currentPage == status.index}? 'active':''"
+                                                   class="nav-link " th:text="${status.index+1}"></a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section layout:fragment="js">
+
+    <script>
+
+        $(document).ready(function () {
+            var error = $('#errors').val();
+            console.log(error);
+            if (error != "" && error != null) {
+                $("#searchForm").slideDown("slow")
+            }
+        })
+
+        $(document).on('click', '#searchBtn', function () {
+            $("#searchForm").slideDown("slow");
+        })
+
+        $(document).on('click', '#hideFormSearch', function () {
+            $("#searchForm").slideUp("slow");
+        })
+    </script>
+
+</section>
+</body>
+</html>

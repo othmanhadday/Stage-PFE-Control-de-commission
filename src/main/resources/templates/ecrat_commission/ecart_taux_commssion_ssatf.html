@@ -12,18 +12,22 @@
     <div class="page-wrapper">
 
         <div class="container-fluid">
-            <div class="row page-titles">
-                <div class="col-md-5 align-self-center">
-                    <h4 class="text-themecolor">Profiles</h4>
-                </div>
-            </div>
+
+
+            <div class="alert alert-primary" role="alert" th:text="${success}" th:if="${success}"></div>
+            <div class="alert alert-danger" role="alert" th:text="${delete}" th:if="${delete}"></div>
+            <div class="alert alert-info" role="alert" th:text="${exist}" th:if="${exist}"></div>
+
 
             <div class="container-fluid">
-                <div class="row my-2">
-                    <button type="button" id="newRole" class="btn btn-info ml-auto">
-                        <i class="mdi mdi-account-multiple-plus"></i> Create New
-                    </button>
-                </div>
+                <form  method="post" th:action="@{/ecart/calculate_all_ecart_commission_DroitAdmission}">
+                    <input type="hidden" name="currentPage" th:value="${currentPage}">
+                    <div class="row my-2">
+                        <button type="submit" class="btn btn-info ml-auto" id="newUser">
+                            <i class="icons icons-Calculator"></i> Calculate All
+                        </button>
+                    </div>
+                </form>
             </div>
 
             <!--                Role card -->
@@ -32,40 +36,44 @@
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-body">
-                            <h4 class="card-title">Role Table</h4>
+                            <h4 class="card-title">Taux de Commission Droit d'admission n'existe pas</h4>
                             <div class="table-responsive">
                                 <table class="table table-hover">
                                     <thead>
                                     <tr>
                                         <th>#</th>
-                                        <th>type_commission</th>
+                                        <th>ISIN</th>
                                         <th>Instrument Class</th>
                                         <th>Instrument type</th>
                                         <th>Instrument Categorie</th>
+                                        <th>Price</th>
+                                        <th>Quantite</th>
+                                        <th>Date</th>
                                         <!--                                        <th>Permission</th>-->
                                     </tr>
                                     </thead>
                                     <tbody>
                                     <tr th:each="ecart: ${ecartTaux}">
                                         <td th:text="${ecart.id}"></td>
-                                        <td th:text="${ecart.typeCommission}"></td>
-                                        <td th:text="${ecart.ssatf.CLASSID}"></td>
-                                        <td th:text="${ecart.ssatf.INSTRTYPE}"></td>
-                                        <td th:text="${ecart.ssatf.INSTRCTGRY}"></td>
+                                        <td th:text="${ecart.ssatf.securityid}"></td>
+                                        <td th:text="${ecart.ssatf?.CLASSID}"></td>
+                                        <td th:text="${ecart.ssatf?.INSTRTYPE}"></td>
+                                        <td th:text="${ecart.ssatf?.INSTRCTGRY}"></td>
+                                        <td th:text="${ecart.ssatf.tradeprice}"></td>
+                                        <td th:text="${ecart.ssatf.quantity}"></td>
+                                        <td th:text="${ecart.ssatf.tradedate}"></td>
 
-                                        <!--                                        <td>-->
-                                        <!--                                            <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">-->
-                                        <!--                                                <button class="btn btn-success editRole" th:id="${role.id}">-->
-                                        <!--                                                    <i class="mdi-account-edit mdi"></i>-->
-                                        <!--                                                </button>-->
-                                        <!--                                                <button class="btn btn-danger deleteRole" th:id="${role.id}">-->
-                                        <!--                                                    <i class="mdi-delete mdi"></i>-->
-                                        <!--                                                </button>-->
-                                        <!--                                                <button class="btn btn-primary roleUsers" th:id="${role.id}">-->
-                                        <!--                                                    <i class="mdi-format-list-bulleted mdi"></i>-->
-                                        <!--                                                </button>-->
-                                        <!--                                            </div>-->
-                                        <!--                                        </td>-->
+                                        <td>
+                                            <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
+                                                <button class="btn btn-success addFeeRate" th:id="${ecart.id}">
+                                                    <i class="icons icons-Add"></i>
+                                                </button>
+                                                <button class="btn btn-primary recalculate" th:id="${ecart.id}">
+                                                    <i class="icons icons-Calculator"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+
                                     </tr>
                                     </tbody>
                                 </table>
@@ -74,9 +82,9 @@
                                     <ul class="nav nav-pills">
                                         <li th:each="p,status:${pages}" class="nav-item">
 
-                                                <a th:href="@{/ecart/droitAdmission(page=${status.index})}"
-                                                   th:classappend="${currentPage == status.index}? 'active':''"
-                                                   class="nav-link " th:text="${status.index+1}"></a>
+                                            <a th:href="@{/ecart/droitAdmission(page=${status.index})}"
+                                               th:classappend="${currentPage == status.index}? 'active':''"
+                                               class="nav-link " th:text="${status.index+1}"></a>
 
                                         </li>
                                     </ul>
@@ -89,11 +97,344 @@
             </div>
         </div>
     </div>
+
+    <!--        modal pour ajouter Fee Rate from ecart-->
+    <div class="modal bs-example-modal-lg" id="ModalAddFeeRate">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-FeeCategorie-title"></h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <form th:object="${feeRate}" method="post" th:action="@{/ecart/droitAdmission}">
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <input type="hidden" th:field="*{id}" id="ecart_id">
+                        <input type="hidden" name="currentPage" th:value="${currentPage}">
+
+                        <ul class="alert alert-danger" id="errors" th:if="${#fields.hasErrors()}">
+                            <li type="hidden" th:errors="*{feeType}" id="errorFeeType"></li>
+                            <li type="hidden" th:errors="*{feeRate}" id="errorFeeRate"></li>
+                        </ul>
+
+                        <div class="row">
+
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="instrumentClassSelect">Instrument Class</label>
+                                    <select id="instrumentClassSelect" class="form-control"
+                                            th:field="*{instrumentClass}" readonly>
+                                    </select>
+                                </div>
+                            </div>
+
+
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="instTypeInput">Instrument Type</label>
+                                    <input type="text"
+                                           th:field="*{instrumentType}" readonly
+                                           class="form-control" id="instTypeInput"
+                                           placeholder="Enter Instrument Type">
+                                </div>
+                            </div>
+
+
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="instCatInput">Instrument Categorie</label>
+                                    <input type="text" readonly
+                                           th:field="*{instrumentCategorie}"
+                                           class="form-control" id="instCatInput"
+                                           placeholder="Enter Instrument Categorie">
+                                </div>
+                            </div>
+
+                            <div class="col-12 " id="feeCategorieDiv">
+                                <div class="form-group">
+                                    <label for="feeCategorieSelect">Fee Categories : </label>
+                                    <select id="feeCategorieSelect" class="form-control">
+                                        <option value="" selected disabled hidden>Choisissez ici</option>
+                                        <option th:each="feeCat :${categorieFees}"
+                                                th:value="${feeCat.id}"
+                                                th:text="${feeCat.categorieFeeName}"></option>
+                                    </select>
+                                </div>
+                            </div>
+
+
+                            <div class="col-12 hide" id="feeTypeDiv">
+                                <div class="form-group">
+                                    <label for="feeTypeSelect">Fee Type : </label>
+                                    <option value="" selected disabled hidden>Choisissez ici</option>
+                                    <select th:field="*{feeType}" id="feeTypeSelect" class="form-control">
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group " id="TauxMontantDiv">
+                                <label>Taux/Montant</label>
+                                <div class="row">
+                                    <div class="custom-control  custom-checkbox">
+                                        <label>
+                                            <input th:value="T" th:field="*{tauxMontant}" class="tauxMontant"
+                                                   name="tauxMontant" type="radio" checked/>
+                                            <span th:remove="tag"> Taux </span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col-12" id="feeRatediv">
+                                <div class="form-group">
+                                    <label for="feeRateInput">Fee Rate : </label>
+                                    <input type="number" step="any"
+                                           th:field="*{feeRate}"
+                                           th:classappend="${#fields.hasErrors('feeRate')}? 'is-invalid':''"
+                                           class="form-control" id="feeRateInput"
+                                           placeholder="Entrer Fee Rate">
+                                    <p class="invalid-feedback" th:if="${#fields.hasErrors('feeRate')}"
+                                       th:errors="*{feeRate}">Name
+                                        Error</p>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">
+                            Annuler
+                        </button>
+                        <button type="submit" class="btn btn-info waves-effect text-left">
+                            Soumettre
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!--        modal pour recalculate ecart and add it to all fees generated -->
+    <div class="modal bs-example-modal-lg" id="ModalRecalculatEcart">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-FeeCategorie-title"></h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <form th:object="${ecart}" method="post" th:action="@{/ecart/calculate_ecart_commission}">
+                    <div class="modal-body">
+                        <div class="row">
+
+                            <input type="hidden" th:field="*{ssatf}" id="ssatf">
+                            <input type="hidden" th:field="*{id}" id="ecartId">
+                            <input type="hidden" name="feeRate" id="feeRate">
+                            <input type="hidden" name="currentPage" th:value="${currentPage}">
+
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="instClassInput">Instrument Class</label>
+                                    <input type="text"
+                                           th:field="*{instClass}" readonly
+                                           class="form-control" id="instClassInput"
+                                           placeholder="Enter Instrument Class">
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="instsTypeInput">Instrument Type</label>
+                                    <input type="text"
+                                           th:field="*{instType}" readonly
+                                           class="form-control" id="instsTypeInput"
+                                           placeholder="Enter Instrument Type">
+                                </div>
+                            </div>
+
+
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="instsCatInput">Instrument Categorie</label>
+                                    <input type="text" readonly
+                                           th:field="*{instCat}"
+                                           class="form-control" id="instsCatInput"
+                                           placeholder="Enter Instrument Categorie">
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="quantiteInput">Quantite</label>
+                                    <input type="text" readonly
+                                           name="quantite"
+                                           class="form-control" id="quantiteInput">
+                                </div>
+                            </div>
+
+
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="prixInput">Prix</label>
+                                    <input type="text" readonly
+                                           name="prix"
+                                           class="form-control" id="prixInput">
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="tauxInput">Taux</label>
+                                    <input type="text" readonly
+                                           name="taux"
+                                           class="form-control" id="tauxInput">
+                                </div>
+                            </div>
+
+                            <div class="col-12 hide" id="result">
+                                <div class="form-group">
+                                    <label for="commissionInput">Commission</label>
+                                    <input type="text" readonly
+                                           name="commission"
+                                           class="form-control" id="commissionInput">
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">
+                                Annuler
+                            </button>
+                            <button type="submit" class="btn btn-info waves-effect text-left">
+                                Soumettre
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 
 <section layout:fragment="js">
     <!--    <script type='text/javascript' th:src="@{/dist/js/gestion_users/permission.js}"></script>-->
+
+    <script>
+
+        var instClass = null;
+        $(document).ready(function () {
+            var id = $('#ecart_id').val();
+            console.log(id);
+
+            var errorFeeType = $("#errorFeeType").text();
+            var errorFeeRate = $("#errorFeeRate").text();
+
+            if (errorFeeType != "" || errorFeeRate != "") {
+                getData(id)
+                $('#ModalAddFeeRate').modal('show');
+            }
+        });
+
+        $(document).on('click', '.addFeeRate', function () {
+            var id = $(this).attr('id');
+            console.log(id);
+            getData(id)
+        });
+
+        function getData(id) {
+            $.ajax({
+                type: 'get',
+                url: "/findEcartById/" + id,
+                dataType: "json",
+                success: function (data) {
+                    $('#ecart_id').val(id)
+                    console.log(data[1]);
+                    console.log(data[2].instrementClass);
+                    instClass = data[2];
+                    $('#instrumentClassSelect')
+                        .append($('<option>', {value: data[2].id})
+                            .text(data[2].instrementClass));
+
+                    $('#instTypeInput').val(data[1].instType);
+                    $('#instCatInput').val(data[1].instCat);
+
+                    $('#ModalAddFeeRate').modal('show');
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            });
+        }
+
+
+        // FeeCategorie change to show fee Type
+        $('#feeCategorieSelect').change(function () {
+            var id = $(this).val();
+            $('#feeTypeSelect ').empty();
+            $('#feeTypeSelect').prepend('<option value="" selected disabled hidden>Choisissez ici</option>');
+            $('#TauxMontantDiv').removeClass('hide');
+            $.ajax({
+                type: 'get',
+                url: "/feeTypesByCategorieFees/" + id,
+                dataType: "json",
+                success: function (data) {
+                    $('#feeTypeDiv').removeClass("hide")
+                    $.each(data, function (key, value) {
+                        $('#feeTypeSelect')
+                            .append($('<option>', {value: value.id})
+                                .text(value.typeName));
+                    });
+                },
+                error: function (data) {
+                    console.log(data);
+                }
+            });
+        })
+
+        $(document).on('click', ".recalculate", function () {
+            $('#result').addClass('hide');
+
+            var id = $(this).attr('id');
+
+            $.ajax({
+                type: 'get',
+                url: "/findEcartAndFeeRateDAById/" + id,
+                dataType: "json",
+                success: function (data) {
+                    console.log(data);
+                    $('#ecartId').val(id)
+                    $('#ssatf').val(data[1].ssatf.id)
+                    $('#instClassInput').val(data[1].instClass)
+                    $('#instsTypeInput').val(data[1].instType);
+                    $('#instsCatInput').val(data[1].instCat);
+                    $('#quantiteInput').val(data[1].ssatf.quantity)
+                    $('#prixInput').val(data[1].ssatf.tradeprice)
+                    if (data[2] == null) {
+                        $('#tauxInput').val("Taux de ommission n'existe pas")
+                    } else {
+                        $('#tauxInput').val(data[2].feeRate)
+                        $('#result').removeClass('hide');
+                        $('#feeRate').val(JSON.stringify(data[2]))
+                        var commission = data[1].ssatf.quantity * data[1].ssatf.tradeprice * (data[2].feeRate / 360)
+                        $('#commissionInput').val(commission);
+                    }
+
+                    $('#ModalRecalculatEcart').modal('show')
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            });
+        })
+
+    </script>
+
 </section>
 </body>
 </html>

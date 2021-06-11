@@ -16,4 +16,6 @@ public interface InstrumentCategorieRepository extends JpaRepository<InstrumentC
 
     public List<InstrumentCategorie> findInstrumentCategoriesByInstrumentTypeAndDeletedIsFalse(InstrumentType instrumentType);
 
+    public InstrumentCategorie findInstrumentCategoriesByInstrumentTypeAndCategoryAndDeletedIsFalse(InstrumentType instrumentType, String instrCatgory);
+
 }

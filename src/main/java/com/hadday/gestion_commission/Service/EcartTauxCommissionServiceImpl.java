@@ -48,47 +48,16 @@ public class EcartTauxCommissionServiceImpl implements EcartTauxCommissionServic
         feeRate.setTauxMontant(feeRateDto.getTauxMontant());
 
 
-        AtomicReference<InstrumentCategorie> instrumentCategorie = new AtomicReference<>();
-        AtomicReference<InstrumentType> instrumentType = new AtomicReference<>();
         //get instrument type by instrument class
-        List<InstrumentType> instrumentTypes = instrumentClassTypeService.getInstrumentTypeByClass(feeRateDto.getInstrumentClass());
-        instrumentTypes.forEach(it -> {
-            if (!it.getInstrumentTypeCode().equals(feeRateDto.getInstrumentType())) {
-                InstrumentType instrumentTyp = new InstrumentType();
-                instrumentTyp.setInstrumentClass(feeRateDto.getInstrumentClass());
-                instrumentTyp.setInstrumentTypeCode(feeRateDto.getInstrumentType());
-                instrumentTyp.setInstrumentTypeName("-");
-                instrumentTyp = instrumentClassTypeService.createUpdateInstrumentType(instrumentTyp);
-                if (instrumentTyp != null) {
-                    InstrumentCategorie instrumentCat = new InstrumentCategorie();
-                    instrumentCat.setCategory(feeRateDto.getInstrumentCategorie());
-                    instrumentCat.setInstrumentType(instrumentTyp);
-                    instrumentCategorie.set(instrumentCategorieRepository.save(instrumentCat));
-                }
 
-            } else {
-                instrumentType.set(it);
-                //get instrument categorie by instrument class
-                List<InstrumentCategorie> instrumentCategories = instrumentCategorieService.getInstrumentCatByInstrumentType(it);
-                instrumentCategories.forEach(ic -> {
-                    if (ic.getCategory().equals(feeRateDto.getInstrumentCategorie())) {
-                        instrumentCategorie.set(ic);
-                    } else {
-                        InstrumentCategorieDTO instrumentCategorieDTO = new InstrumentCategorieDTO();
-                        instrumentCategorieDTO.setCategorieName(feeRateDto.getInstrumentCategorie());
-                        instrumentCategorieDTO.setInstrumentType(instrumentType.get().getId().toString());
+        InstrumentCategorie instrumentCategorie = searchForInstrTypeAndCategorie(feeRateDto);
+        feeRate.setInstrumentCategorie(instrumentCategorie);
 
-                        instrumentCategorie.set(instrumentCategorieService.createUpdateCategorieRate(instrumentCategorieDTO));
-                    }
-                });
-            }
-        });
-
-        feeRate.setInstrumentCategorie(instrumentCategorie.get());
 
         if (feeRateDto.getFeeType() != null) {
             feeRate.setFeeType(feeRateDto.getFeeType());
         }
+
 
         if (feeRateDto.getTauxMontant() == 'M') {
             feeRate.setMontant(Double.valueOf(feeRateDto.getMontant()));
@@ -100,8 +69,8 @@ public class EcartTauxCommissionServiceImpl implements EcartTauxCommissionServic
             feeRate.setMontant(-1);
         }
 
-        if (feeRate!=null){
-            FeeRate feeR = feeRate;
+        FeeRate feeR = feeRate;
+        if (feeR != null) {
             feeRates.forEach(rate -> {
                 if (rate.compareTo(feeR) == 1) {
                     isEquals.set(true);
@@ -118,6 +87,38 @@ public class EcartTauxCommissionServiceImpl implements EcartTauxCommissionServic
             }
         }
         return feeRate;
+    }
+
+    public InstrumentCategorie searchForInstrTypeAndCategorie(FeeRateDto feeRateDto) {
+
+        AtomicReference<InstrumentCategorie> instrumentCategorie = new AtomicReference<>();
+        AtomicReference<InstrumentType> instrumentType = new AtomicReference<>();
+        List<InstrumentType> instrumentTypes = instrumentClassTypeService.getInstrumentTypeByClassAndTypeCode(feeRateDto.getInstrumentClass(), feeRateDto.getInstrumentType());
+
+        if (instrumentTypes.size() <= 0) {
+            InstrumentType instrumentTyp = new InstrumentType();
+            instrumentTyp.setInstrumentClass(feeRateDto.getInstrumentClass());
+            instrumentTyp.setInstrumentTypeCode(feeRateDto.getInstrumentType());
+            instrumentTyp.setInstrumentTypeName("-");
+            instrumentTyp = instrumentClassTypeService.createUpdateInstrumentType(instrumentTyp);
+            if (instrumentTyp != null) {
+                InstrumentCategorie instrumentCat = new InstrumentCategorie();
+                instrumentCat.setCategory(feeRateDto.getInstrumentCategorie());
+                instrumentCat.setInstrumentType(instrumentTyp);
+                instrumentCategorie.set(instrumentCategorieRepository.save(instrumentCat));
+            }
+        } else {
+            instrumentType.set(instrumentTypes.get(0));
+            instrumentCategorie.set(instrumentCategorieRepository.findInstrumentCategoriesByInstrumentTypeAndCategoryAndDeletedIsFalse(instrumentType.get(), feeRateDto.getInstrumentCategorie()));
+            if (instrumentCategorie.get() == null) {
+                InstrumentCategorieDTO instrumentCategorieDTO = new InstrumentCategorieDTO();
+                instrumentCategorieDTO.setCategorieName(feeRateDto.getInstrumentCategorie());
+                instrumentCategorieDTO.setInstrumentType(instrumentType.get().getId().toString());
+                instrumentCategorie.set(instrumentCategorieService.createUpdateCategorieRate(instrumentCategorieDTO));
+            }
+        }
+        System.out.println(instrumentCategorie.get());
+        return instrumentCategorie.get();
     }
 
     @Override
@@ -138,32 +139,72 @@ public class EcartTauxCommissionServiceImpl implements EcartTauxCommissionServic
     @Override
     public EcartCommission calculatEcartCommissionToAllFees(EcartCommission ecartCommission, FeeRate feeRate) {
 
-        double result = RegleCalcul.avoirsRegle(ecartCommission.relevesoldesAvoirs.getQUANTITE(),
-                ecartCommission.relevesoldesAvoirs.getPrice(),
-                feeRate.getFeeRate());
-
+        double result = 0;
         AllFeesGenerated allFeesGenerated = new AllFeesGenerated();
-        allFeesGenerated.setAmount(result);
         allFeesGenerated.setDate_calcul_commission(new Date());
-        allFeesGenerated.setRelevesoldesAvoirs(ecartCommission.getRelevesoldesAvoirs());
-        allFeesGenerated.setIdentifiant(ecartCommission.relevesoldesAvoirs.getCODE_VALEUR() + "-"
-                + ecartCommission.relevesoldesAvoirs.getDATE_MAJ() + "-"
-                + ecartCommission.relevesoldesAvoirs.getQUANTITE());
-        allFeesGenerated.setTypeCommission("Releve de solde (Avoirs)");
-        allFeesGenerated.setFeeRate(feeRate);
+
+        if (feeRate.getFeeType().getCategorieFees().getTypeCommission().equals("Avoirs")) {
+            result = RegleCalcul.avoirsRegle(ecartCommission.relevesoldesAvoirs.getQUANTITE(),
+                    ecartCommission.relevesoldesAvoirs.getPrice(),
+                    feeRate.getFeeRate());
+            allFeesGenerated.setAmount(result);
+            allFeesGenerated.setISIN(ecartCommission.relevesoldesAvoirs.getCODE_VALEUR());
+            allFeesGenerated.setRelevesoldesAvoirs(ecartCommission.getRelevesoldesAvoirs());
+            allFeesGenerated.setIdentifiant(ecartCommission.relevesoldesAvoirs.getCODE_VALEUR() + "-"
+                    + ecartCommission.relevesoldesAvoirs.getDATE_MAJ() + "-"
+                    + ecartCommission.relevesoldesAvoirs.getQUANTITE());
+            allFeesGenerated.setTypeCommission("Releve de solde (Avoirs)");
+            allFeesGenerated.setFeeRate(feeRate);
+            allFeesGenerated.setQuantite(ecartCommission.relevesoldesAvoirs.getQUANTITE());
+            allFeesGenerated.setBPID_LIABLE(ecartCommission.relevesoldesAvoirs.getCODE_MANDANT());
+            allFeesGenerated.setBPID_RECIPIENT(ecartCommission.relevesoldesAvoirs.getCODE_MANDATAIRE());
+        }
+
+        if (feeRate.getFeeType().getCategorieFees().getTypeCommission().equals("Comptes")) {
+            result = RegleCalcul.comptesRegle(ecartCommission.relevesoldesComptes.getQUANTITE(),
+                    feeRate.getMontant());
+            allFeesGenerated.setAmount(result);
+            allFeesGenerated.setISIN(ecartCommission.relevesoldesComptes.getCODE_VALEUR());
+            allFeesGenerated.setRelevesoldesComptes(ecartCommission.getRelevesoldesComptes());
+            allFeesGenerated.setIdentifiant(ecartCommission.relevesoldesComptes.getCODE_VALEUR() + "-"
+                    + ecartCommission.relevesoldesComptes.getDATE_MAJ() + "-"
+                    + ecartCommission.relevesoldesComptes.getQUANTITE());
+            allFeesGenerated.setTypeCommission("Releve de solde (Comptes)");
+            allFeesGenerated.setFeeRate(feeRate);
+            allFeesGenerated.setQuantite(ecartCommission.relevesoldesComptes.getQUANTITE());
+            allFeesGenerated.setBPID_LIABLE(ecartCommission.relevesoldesComptes.getCODE_MANDANT());
+            allFeesGenerated.setBPID_RECIPIENT(ecartCommission.relevesoldesComptes.getCODE_MANDATAIRE());
+        }
+
+        if (feeRate.getFeeType().getCategorieFees().getTypeCommission().equals("Droits_Admission")) {
+            System.out.println(ecartCommission.ssatf);
+            result = RegleCalcul.avoirsRegle(ecartCommission.ssatf.getQuantity(),
+                    ecartCommission.ssatf.getTradeprice(),
+                    feeRate.getFeeRate());
+            allFeesGenerated.setAmount(result);
+            allFeesGenerated.setISIN(ecartCommission.ssatf.getSecurityid());
+            allFeesGenerated.setSsatf(ecartCommission.getSsatf());
+            allFeesGenerated.setIdentifiant(ecartCommission.ssatf.getSecurityid() + "-"
+                    + ecartCommission.ssatf.getTradedate() + "-"
+                    + ecartCommission.ssatf.getQuantity());
+            allFeesGenerated.setTypeCommission("SSATF");
+            allFeesGenerated.setFeeRate(feeRate);
+            allFeesGenerated.setQuantite(ecartCommission.ssatf.getQuantity());
+        }
+
         allFeesGeneratedRepository.save(allFeesGenerated);
 
         ecartCommission.setDeleted(true);
-        ecartCommission.setTypeCommission("Releve de solde (Avoirs)");
         ecartCommission = ecartCommissionRepository.save(ecartCommission);
 
         return ecartCommission;
     }
 
     @Override
-    public void calculateAllEcartCommissionToAllFees(Page<EcartCommission> ecartCommissions) {
+    public void calculateAllEcartCommissionToAllFeesAvoirs(Page<EcartCommission> ecartCommissions) {
 
         ecartCommissions.forEach(ecartCommission -> {
+
             FeeRate feeRate = feeRateRepository.findFeeRate(ecartCommission.getInstClass(),
                     ecartCommission.getInstType(),
                     ecartCommission.getInstCat(),
@@ -171,7 +212,49 @@ public class EcartTauxCommissionServiceImpl implements EcartTauxCommissionServic
             );
 
             if (feeRate != null) {
-                calculatEcartCommissionToAllFees(ecartCommission,feeRate);
+                calculatEcartCommissionToAllFees(ecartCommission, feeRate);
+            }
+        });
+    }
+
+    @Override
+    public void calculateAllEcartCommissionToAllFeesDroitAdmission(Page<EcartCommission> ecartCommissions) {
+        ecartCommissions.forEach(ecartCommission -> {
+            FeeRate feeRate = feeRateRepository.findFeeRate(ecartCommission.getInstClass(),
+                    ecartCommission.getInstType(),
+                    ecartCommission.getInstCat(),
+                    "Droits_Admission"
+            );
+
+            if (feeRate != null) {
+                calculatEcartCommissionToAllFees(ecartCommission, feeRate);
+            }
+
+        });
+    }
+
+    @Override
+    public void calculateAllEcartCommissionToAllFeesCompte(Page<EcartCommission> ecartCommissions) {
+        ecartCommissions.forEach(ecartCommission -> {
+            String feeType = "";
+
+            if (
+                    ecartCommission.relevesoldesComptes.getCODE_MANDATAIRE().equals("00000000001") ||
+                            ecartCommission.relevesoldesComptes.getCODE_MANDATAIRE().equals("00000000010")
+            ) {
+                feeType = "P030";
+            } else {
+                feeType = "P029";
+            }
+            FeeRate feeRate = feeRateRepository.findFeeRate(ecartCommission.getInstClass(),
+                    ecartCommission.getInstType(),
+                    ecartCommission.getInstCat(),
+                    "Comptes",
+                    feeType
+            );
+
+            if (feeRate != null) {
+                calculatEcartCommissionToAllFees(ecartCommission, feeRate);
             }
 
         });

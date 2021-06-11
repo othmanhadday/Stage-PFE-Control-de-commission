@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml"
+      layout:decorator="~{layout/layout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <style>
+        .ajouterStl {
+            background-color: #53e6ee;
+        }
+
+        .modifierStl {
+            background-color: #d2cd83;
+        }
+
+        .supprimerStl {
+            background-color: #e4b89c;
+        }
+
+        /* Center the loader */
+        #loader {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            z-index: 1;
+            width: 120px;
+            height: 120px;
+            margin: -76px 0 0 -76px;
+            border: 16px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 16px solid #3498db;
+            -webkit-animation: spin 2s linear infinite;
+            animation: spin 2s linear infinite;
+        }
+
+        @-webkit-keyframes spin {
+            0% {
+                -webkit-transform: rotate(0deg);
+            }
+            100% {
+                -webkit-transform: rotate(360deg);
+            }
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Add animation to "page content" */
+        .animate-bottom {
+            position: relative;
+            -webkit-animation-name: animatebottom;
+            -webkit-animation-duration: 1s;
+            animation-name: animatebottom;
+            animation-duration: 1s
+        }
+
+        @-webkit-keyframes animatebottom {
+            from {
+                bottom: -100px;
+                opacity: 0
+            }
+            to {
+                bottom: 0px;
+                opacity: 1
+            }
+        }
+
+        @keyframes animatebottom {
+            from {
+                bottom: -100px;
+                opacity: 0
+            }
+            to {
+                bottom: 0;
+                opacity: 1
+            }
+        }
+
+        #myDiv {
+            display: none;
+            text-align: center;
+        }
+    </style>
+
+</head>
+
+
+<body>
+
+<div layout:fragment="content">
+    <div class="page-wrapper">
+
+        <div id="loader"></div>
+
+        <div class="container-fluid" id="myDivPage">
+
+            <div class="alert alert-primary" role="alert" th:text="${success}" th:if="${success}"></div>
+            <div class="alert alert-danger" role="alert" th:text="${delete}" th:if="${delete}"></div>
+            <div class="alert alert-info" role="alert" th:text="${exist}" th:if="${exist}"></div>
+
+            <div class="container-fluid">
+                <div class="row my-2">
+                    <button class="btn btn-info ml-auto" id="searchBtn">
+                        <i class="icons icons-Calculator"></i> Search
+                    </button>
+                </div>
+            </div>
+
+
+            <div class="row hide" id="searchForm">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <form method="get" th:action="@{/ecart_allFees/searchDate}">
+
+                                <ul class="alert alert-danger" th:if="${errors}">
+                                    <input type="hidden" id="errors" th:value="${errors}">
+
+                                    <li th:each="key: ${errors}">
+                                        <span th:text="${key}"></span>
+                                    </li>
+                                </ul>
+                                <input type="hidden" name="currentPage" th:value="0">
+
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="startDate">Du : </label>
+                                        <input type="date" name="firstDate" class="form-control" id="startDate">
+                                    </div>
+                                </div>
+
+
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label for="endDate">Au : </label>
+                                        <input type="date" name="secondDate" class="form-control" id="endDate">
+                                    </div>
+                                </div>
+
+                                <div class="text-right">
+                                    <button type="button" id="hideFormSearch"
+                                            class="btn btn-danger waves-effect text-left">
+                                        Annuler
+                                    </button>
+
+                                    <button type="submit" class="btn btn-info waves-effect text-left">
+                                        Soumettre
+                                    </button>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!--                Role card -->
+            <div class="row">
+                <!-- column -->
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title">Ecart All Fees</h4>
+                            <div class="table-responsive">
+
+
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>ISIN</th>
+                                            <th>BPID_RECIPIENT</th>
+                                            <th>BPID_LIABLE</th>
+                                            <th>Quantite</th>
+                                            <th>Prix</th>
+                                            <th>Fee Categorie</th>
+                                            <th>Fee Type</th>
+                                            <th>Fee Rate</th>
+                                            <th>Montant</th>
+                                            <th>Date</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr th:each="ecart: ${ecartAllFees}"
+                                            th:classappend="${(ecart.ajouter? 'ajouterStl':'') +
+                                            (ecart.modifier? 'modifierStl':'')+
+                                            (ecart.supprimer? 'supprimerStl':'')}">
+                                            <td th:text="${ecart.id}"></td>
+                                            <td th:text="${ecart.allFeesGenerated.ISIN}"></td>
+                                            <td th:text="${ecart.allFeesGenerated?.BPID_RECIPIENT}"></td>
+                                            <td th:text="${ecart.allFeesGenerated?.BPID_LIABLE}"></td>
+                                            <td th:text="${ecart.allFeesGenerated?.quantite}"></td>
+
+                                            <td contenteditable="true" th:id="${ecart.id}"
+                                                th:text="${ecart.allFeesGenerated?.prix}"
+                                                th:attr="onfocusout='myFunction(\'' + ${ecart.id}+ '\');'"></td>
+
+                                            <td th:text=" ${ecart.allFeesGenerated?.feeRate?.feeType?.typeName}"></td>
+                                            <td th:text="${ecart.allFeesGenerated?.feeRate?.feeType?.categorieFees?.categorieFeeName}"></td>
+                                            <td th:switch="${ecart.allFeesGenerated?.feeRate?.tauxMontant}">
+                                                <span th:case="'T'"
+                                                      th:text="${ecart.allFeesGenerated?.feeRate?.feeRate}">
+                                                </span>
+                                                <span th:case="'M'"
+                                                      th:text="${ecart.allFeesGenerated?.feeRate?.montant}">
+                                                </span>
+                                            </td>
+
+                                            <td th:id="${'amount'+ecart.id}" th:text="${ecart.allFeesGenerated?.amount}"></td>
+                                            <td th:text="${ecart.date}"></td>
+
+                                            <td>
+                                                <div class="btn-group btn-group-sm" role="group"
+                                                     aria-label="Basic example">
+                                                    <button th:if="${ecart.ajouter || ecart.supprimer || ecart.modifier}"
+                                                            class="btn btn-success ajouter"
+                                                            th:id="${ecart.id}">
+                                                        <i class="icons icons-Add"></i>
+                                                    </button>
+<!--                                                    <button th:if="${ecart.modifier}" class="btn btn-primary modifier"-->
+<!--                                                            th:id="${ecart.id}">-->
+<!--                                                        <i class="icons icons-Calculator"></i>-->
+<!--                                                    </button>-->
+                                                    <button th:if="${ecart.supprimer}" class="btn btn-info supprimer"
+                                                            th:id="${ecart.id}">
+                                                        <i class="icons icons-Calculator"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+
+                                        </tr>
+                                        </tbody>
+                                    </table>
+
+                                    <div class="container" th:switch="${#httpServletRequest.requestURI}">
+
+                                        <ul class="nav nav-pills" th:case="'/ecart_allFees/searchDate'">
+                                            <li th:each="p,s:${pages}" class="nav-item">
+                                                <a th:href="@{/ecart_allFees/searchDate(currentPage=${s.index},firstDate=${firstDate},secondDate=${secondDate})}"
+                                                   th:classappend="${#strings.contains(currentPage,s.index)} ? 'active' : ''"
+                                                   class="nav-link " th:text="${s.index+1}"></a>
+
+                                            </li>
+                                        </ul>
+
+                                        <ul class="nav nav-pills" th:case="'/ecart_allFees/'">
+                                            <li th:each="p,status:${pages}" class="nav-item">
+                                                <a th:href="@{/ecart_allFees/(page=${status.index})}"
+                                                   th:classappend="${currentPage == status.index}? 'active':''"
+                                                   class="nav-link " th:text="${status.index+1}"></a>
+
+                                            </li>
+                                        </ul>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+
+
+    <!--        modal pour recalculate ecart and add it to all fees generated -->
+    <div class="modal bs-example-modal-lg" id="ModalAjouter">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-FeeCategorie-title"> ligne à Ajouter </h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <form th:object="${ecart}" method="post" th:action="@{/ecart_allFees/ajouter}">
+                    <div class="modal-body">
+                        <div class="row">
+
+                            <strong>
+                                Add this row To AllFees and Submit
+                            </strong>
+                            <input type="hidden" th:field="*{id}" id="ecartFeesId">
+
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">
+                                Annuler
+                            </button>
+                            <button type="submit" class="btn btn-info waves-effect text-left">
+                                Soumettre
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!--        modal pour recalculate ecart and add it to all fees generated -->
+    <div class="modal bs-example-modal-lg" id="ModalSupprimer">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-FeeCategorie-title"> ligne à Supprimer </h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <form th:object="${ecart}" method="post" th:action="@{/ecart_allFees/supprimer}">
+                    <div class="modal-body">
+                        <div class="row">
+
+                            <strong>
+                                Delete this row To AllFees and Submit
+                            </strong>
+                            <input type="hidden" th:field="*{id}" id="ecartFeesIdSuprrimer">
+
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">
+                                Annuler
+                            </button>
+                            <button type="submit" class="btn btn-info waves-effect text-left">
+                                Soumettre
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+<section layout:fragment="js">
+
+    <script>
+        $(document).ready(function () {
+            document.getElementById("loader").style.display = "none";
+            var error = $('#errors').val();
+            console.log(error);
+            if (error != "" && error != null) {
+                $("#searchForm").slideDown("slow")
+            }
+        })
+        $(document).on('click', '#searchBtn', function () {
+            $("#searchForm").slideDown("slow");
+        })
+
+        $(document).on('click', '#hideFormSearch', function () {
+            $("#searchForm").slideUp("slow");
+        })
+
+
+        /// Modal ajouter un ecart AllFees vers allfees final
+        $(document).on('click', '.ajouter', function () {
+                var id = $(this).attr('id');
+                console.log(id);
+                $('#ecartFeesId').val(id);
+                $('#ModalAjouter').modal('show');
+            }
+        )
+
+        /// Modal ajouter un ecart AllFees vers allfees final
+        $(document).on('click', '.supprimer', function () {
+                var id = $(this).attr('id');
+                console.log(id);
+                $('#ecartFeesIdSuprrimer').val(id);
+                $('#ModalSupprimer').modal('show');
+            }
+        )
+
+
+        function myFunction(id) {
+            console.log(id);
+
+            var textContent = $('#' + id).text();
+            console.log(textContent);
+
+            document.getElementById("loader").style.display = "block";
+            document.getElementById("myDivPage").style.display = "none";
+
+            $.ajax({
+                type: 'post',
+                url: "/modifierEcartAllFees/" + id,
+                data: JSON.stringify({"prix": textContent}),
+                dataType: "json",
+                contentType: "application/json;charset-UTF-8",
+                success: function (data) {
+                    console.log(data);
+                    $('#amount'+id).text(data.allFeesGenerated.amount)
+                    document.getElementById("loader").style.display = "none";
+                    document.getElementById("myDivPage").style.display = "block";
+                },
+                error: function (data) {
+                    alert("Error in row of id = "+id)
+                    document.getElementById("loader").style.display = "none";
+                    document.getElementById("myDivPage").style.display = "block";
+                }
+            });
+
+        }
+
+        // var myVar;
+        //
+        // function myFunction() {
+        //     myVar = setTimeout(showPage, 3000);
+        // }
+        //
+        // function showPage() {
+        //     document.getElementById("loader").style.display = "none";
+        //     document.getElementById("myDiv").style.display = "block";
+        // }
+
+    </script>
+
+</section>
+</body>
+</html>

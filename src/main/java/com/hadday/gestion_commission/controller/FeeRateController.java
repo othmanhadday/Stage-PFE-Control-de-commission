@@ -38,12 +38,10 @@ public class FeeRateController {
     }
 
     @PostMapping
-    public String createUpdateFeeRate(@ModelAttribute("feeRate") FeeRateDto feeRateDto,RedirectAttributes redirAttrs,
+    public String createUpdateFeeRate(@ModelAttribute("feeRate") FeeRateDto feeRateDto, RedirectAttributes redirAttrs,
                                       Model model, BindingResult result) {
 
-        System.out.println(feeRateDto);
-        feeRateDto.setFeeRate("");
-        feeRateDto.setMontant("");
+
 
         if (feeRateDto.getFeeType() == null) {
             result.rejectValue("feeType", null, "Fee Type Not Selected");
@@ -51,9 +49,15 @@ public class FeeRateController {
         if (feeRateDto.getInstrumentCategorie() == null) {
             result.rejectValue("instrumentCategorie", null, "Instrument Categorie Not Selected");
         }
-        if (feeRateDto.getFeeRate().isEmpty() && feeRateDto.getMontant().isEmpty()) {
-            result.rejectValue("feeRate", null, "Fee Rate field is Empty");
-            result.rejectValue("montant", null, "Montant field is Empty");
+        if (feeRateDto.getFeeRate().isEmpty()) {
+            if (feeRateDto.getTauxMontant() == 'T') {
+                result.rejectValue("feeRate", null, "Fee Rate field is Empty");
+            }
+        }
+        if (feeRateDto.getMontant().isEmpty()) {
+            if (feeRateDto.getTauxMontant() == 'M') {
+                result.rejectValue("montant", null, "Montant field is Empty");
+            }
         }
 
         if (result.hasErrors()) {
@@ -63,9 +67,9 @@ public class FeeRateController {
             return "gestion-commission/feeRate";
         }
         FeeRate feeRate = feeRateService.createUpdateFeeRate(feeRateDto);
-        if(feeRate !=null){
+        if (feeRate != null) {
             redirAttrs.addFlashAttribute("success", " Fée Rate a été inséré avec succès : " + feeRate.getId());
-        }else{
+        } else {
             redirAttrs.addFlashAttribute("exist", " Fée Rate deja existe ");
         }
 

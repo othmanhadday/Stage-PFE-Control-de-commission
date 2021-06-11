@@ -144,4 +144,9 @@ public class InstrumentClassTypeServiceImpl implements InstrumentClassTypeServic
     public List<InstrumentType> getInstrumentTypeByClass(InstrumentClass instrumentClass) {
         return instrumentTypeRepository.findInstrumentTypesByInstrumentClassAndDeletedIsFalse(instrumentClass);
     }
+
+    @Override
+    public List<InstrumentType> getInstrumentTypeByClassAndTypeCode(InstrumentClass instrumentClass, String instrTypecode) {
+        return instrumentTypeRepository.findInstrumentTypesByInstrumentClassAndInstrumentTypeCodeAndDeletedIsFalse(instrumentClass, instrTypecode);
+    }
 }

@@ -28,5 +28,6 @@ public interface InstrumentClassTypeService {
 
     public List<InstrumentType> getInstrumentTypeByClass(InstrumentClass instrumentClass);
 
+    public List<InstrumentType> getInstrumentTypeByClassAndTypeCode(InstrumentClass instrumentClass, String instrTypecode);
 
 }
