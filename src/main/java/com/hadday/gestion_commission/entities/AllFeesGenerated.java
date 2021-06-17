@@ -19,6 +19,8 @@ public class AllFeesGenerated implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Date date_calcul_commission;
+    private Date date;
+
     private Double amount;
     @ManyToOne(targetEntity = Ssatf.class)
     private Ssatf ssatf;

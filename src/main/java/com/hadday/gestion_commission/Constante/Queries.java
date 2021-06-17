@@ -32,6 +32,16 @@ abstract public class Queries {
             " and cat.deleted = false " +
             " and fee.deleted = false ";
 
+    public static final String GET_ALLFEES_BY_IDENTITY = " select a from AllFees a " +
+            " where " +
+            " a.FEECATEGORY = :feeCategorie  " +
+            " and DATE(a.DATE) = :DATE " +
+            " and a.ISIN = :ISIN " +
+            " and a.FEEBASIS = :FEEBASIS " +
+//            " and a.PRICE = :price " +
+            " and a.BPID_RECIPIENT = :BPID_RECIPIENT" +
+            " and a.BPID_LIABLE = :BPID_LIABLE ";
+
 }
 
 

@@ -46,6 +46,7 @@ public class AllFees implements Serializable, Comparable<AllFees> {
     private Double CAPI;
     private boolean processed;
     private boolean deleted;
+    private boolean ecart;
 
     @Override
     public int compareTo(AllFees o) {

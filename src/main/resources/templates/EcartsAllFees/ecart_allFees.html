@@ -163,118 +163,441 @@
             </div>
 
 
-            <!--                Role card -->
-            <div class="row">
-                <!-- column -->
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <h4 class="card-title">Ecart All Fees</h4>
-                            <div class="table-responsive">
+            <div class="col-md">
+                <div class="card">
+                    <div class="card-body">
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#notExist" role="tab">
+                                <span class="hidden-sm-up"><i class="ti-user"></i></span>
+                                <span class="hidden-xs-down"> Etat generer a ajouter</span></a>
+                            </li>
+                            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#surfacturation" role="tab">
+                                <span class="hidden-sm-up"><i class="ti-user"></i></span>
+                                <span class="hidden-xs-down">Etat generer a supprimer</span></a>
+                            </li>
+
+                            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#Errone" role="tab">
+                                <span class="hidden-sm-up"><i class="ti-user"></i></span>
+                                <span class="hidden-xs-down">Etat generer a modifier</span></a>
+                            </li>
+
+                            <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#allFeesnotExist" role="tab">
+                                <span class="hidden-sm-up"><i class="ti-user"></i></span>
+                                <span class="hidden-xs-down">Etat n'existe pas </span></a>
+                            </li>
+                        </ul>
+                        <!-- Tab panes -->
+                        <div class="tab-content tabcontent-border">
 
 
+                            <div class="tab-pane active" id="notExist" role="tabpanel">
+                                <h4 class="card-title">Ecart All Fees</h4>
                                 <div class="table-responsive">
-                                    <table class="table table-hover">
-                                        <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>ISIN</th>
-                                            <th>BPID_RECIPIENT</th>
-                                            <th>BPID_LIABLE</th>
-                                            <th>Quantite</th>
-                                            <th>Prix</th>
-                                            <th>Fee Categorie</th>
-                                            <th>Fee Type</th>
-                                            <th>Fee Rate</th>
-                                            <th>Montant</th>
-                                            <th>Date</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr th:each="ecart: ${ecartAllFees}"
-                                            th:classappend="${(ecart.ajouter? 'ajouterStl':'') +
-                                            (ecart.modifier? 'modifierStl':'')+
-                                            (ecart.supprimer? 'supprimerStl':'')}">
-                                            <td th:text="${ecart.id}"></td>
-                                            <td th:text="${ecart.allFeesGenerated.ISIN}"></td>
-                                            <td th:text="${ecart.allFeesGenerated?.BPID_RECIPIENT}"></td>
-                                            <td th:text="${ecart.allFeesGenerated?.BPID_LIABLE}"></td>
-                                            <td th:text="${ecart.allFeesGenerated?.quantite}"></td>
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                            <tr>
+                                                <th>ISIN</th>
+                                                <th>BPID_RECIPIENT</th>
+                                                <th>BPID_LIABLE</th>
+                                                <th>Quantite</th>
+                                                <th>Prix</th>
+                                                <th>Fee Type</th>
+                                                <th>Fee Categorie</th>
+                                                <th>Fee Rate</th>
+                                                <th>Montant</th>
+                                                <th>Date</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr th:each="ecart: ${ecartAllFeesNotExist}">
+                                                <td th:text="${ecart.allFeesGenerated?.ISIN}"></td>
+                                                <td th:text="${ecart.allFeesGenerated?.BPID_RECIPIENT}"></td>
+                                                <td th:text="${ecart.allFeesGenerated?.BPID_LIABLE}"></td>
+                                                <td th:text="${ecart.allFeesGenerated?.quantite}"></td>
+                                                <td contenteditable="true" th:id="${ecart.id}"
+                                                    th:text="${ecart.allFeesGenerated?.prix}"
+                                                    th:attr="onfocusout='myFunction(\'' + ${ecart.id}+ '\');'"></td>
 
-                                            <td contenteditable="true" th:id="${ecart.id}"
-                                                th:text="${ecart.allFeesGenerated?.prix}"
-                                                th:attr="onfocusout='myFunction(\'' + ${ecart.id}+ '\');'"></td>
-
-                                            <td th:text=" ${ecart.allFeesGenerated?.feeRate?.feeType?.typeName}"></td>
-                                            <td th:text="${ecart.allFeesGenerated?.feeRate?.feeType?.categorieFees?.categorieFeeName}"></td>
-                                            <td th:switch="${ecart.allFeesGenerated?.feeRate?.tauxMontant}">
+                                                <td th:text=" ${ecart.allFeesGenerated?.feeRate?.feeType?.typeName}"></td>
+                                                <td th:text="${ecart.allFeesGenerated?.feeRate?.feeType?.categorieFees?.categorieFeeName}"></td>
+                                                <td th:switch="${ecart.allFeesGenerated?.feeRate?.tauxMontant}">
                                                 <span th:case="'T'"
                                                       th:text="${ecart.allFeesGenerated?.feeRate?.feeRate}">
                                                 </span>
-                                                <span th:case="'M'"
-                                                      th:text="${ecart.allFeesGenerated?.feeRate?.montant}">
+                                                    <span th:case="'M'"
+                                                          th:text="${ecart.allFeesGenerated?.feeRate?.montant}">
                                                 </span>
-                                            </td>
+                                                </td>
 
-                                            <td th:id="${'amount'+ecart.id}" th:text="${ecart.allFeesGenerated?.amount}"></td>
-                                            <td th:text="${ecart.date}"></td>
+                                                <td th:id="${'amount'+ecart.id}"
+                                                    th:text="${ecart.allFeesGenerated?.amount}"></td>
+                                                <td th:text="${ecart.date}"></td>
 
-                                            <td>
-                                                <div class="btn-group btn-group-sm" role="group"
-                                                     aria-label="Basic example">
-                                                    <button th:if="${ecart.ajouter || ecart.supprimer || ecart.modifier}"
-                                                            class="btn btn-success ajouter"
-                                                            th:id="${ecart.id}">
-                                                        <i class="icons icons-Add"></i>
-                                                    </button>
-<!--                                                    <button th:if="${ecart.modifier}" class="btn btn-primary modifier"-->
-<!--                                                            th:id="${ecart.id}">-->
-<!--                                                        <i class="icons icons-Calculator"></i>-->
-<!--                                                    </button>-->
-                                                    <button th:if="${ecart.supprimer}" class="btn btn-info supprimer"
-                                                            th:id="${ecart.id}">
-                                                        <i class="icons icons-Calculator"></i>
-                                                    </button>
-                                                </div>
-                                            </td>
+                                                <td>
+                                                    <div class="btn-group btn-group-sm" role="group"
+                                                         aria-label="Basic example">
+                                                        <button th:if="${ecart.ajouter || ecart.supprimer || ecart.modifier}"
+                                                                class="btn btn-success ajouter"
+                                                                th:id="${ecart.id}">
+                                                            <i class="icons icons-Add"></i>
+                                                        </button>
 
-                                        </tr>
-                                        </tbody>
-                                    </table>
+                                                        <button th:if="${ecart.supprimer}" class="btn btn-info supprimer"
+                                                                th:id="${ecart.id}">
+                                                            <i class="icons icons-Calculator"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
 
-                                    <div class="container" th:switch="${#httpServletRequest.requestURI}">
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                        <div class="container" th:switch="${#httpServletRequest.requestURI}">
 
-                                        <ul class="nav nav-pills" th:case="'/ecart_allFees/searchDate'">
-                                            <li th:each="p,s:${pages}" class="nav-item">
-                                                <a th:href="@{/ecart_allFees/searchDate(currentPage=${s.index},firstDate=${firstDate},secondDate=${secondDate})}"
-                                                   th:classappend="${#strings.contains(currentPage,s.index)} ? 'active' : ''"
-                                                   class="nav-link " th:text="${s.index+1}"></a>
+                                            <ul class="nav nav-pills" th:case="'/ecart_allFees/searchDate'">
+                                                <li th:each="p,s:${pagesNotExist}" class="nav-item">
+                                                    <a th:href="@{/ecart_allFees/searchDate(currentPageNotExist=${s.index},firstDate=${firstDate},secondDate=${secondDate})}"
+                                                       th:classappend="${#strings.contains(currentPageNotExist,s.index)} ? 'active' : ''"
+                                                       class="nav-link " th:text="${s.index+1}"></a>
+                                                </li>
+                                            </ul>
 
-                                            </li>
-                                        </ul>
+                                            <ul class="nav nav-pills" th:case="'/ecart_allFees/'">
+                                                <li th:each="p,status:${pagesNotExist}" class="nav-item">
+                                                    <a th:href="@{/ecart_allFees/(currentPageNotExist=${status.index})}"
+                                                       th:classappend="${currentPageNotExist == status.index}? 'active':''"
+                                                       class="nav-link " th:text="${status.index+1}"></a>
 
-                                        <ul class="nav nav-pills" th:case="'/ecart_allFees/'">
-                                            <li th:each="p,status:${pages}" class="nav-item">
-                                                <a th:href="@{/ecart_allFees/(page=${status.index})}"
-                                                   th:classappend="${currentPage == status.index}? 'active':''"
-                                                   class="nav-link " th:text="${status.index+1}"></a>
-
-                                            </li>
-                                        </ul>
-
-
+                                                </li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="tab-pane  p-20" id="surfacturation" role="tabpanel">
+                                <div class="table-responsive">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>ISIN</th>
+                                                <th>BPID_RECIPIENT</th>
+                                                <th>BPID_LIABLE</th>
+                                                <th>Quantite</th>
+                                                <th>Prix</th>
+                                                <th>Fee Type</th>
+                                                <th>Fee Categorie</th>
+                                                <th>Fee Rate</th>
+                                                <th>Montant</th>
+                                                <th>Date</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr th:each="ecart: ${ecartAllFeesSurfacturation}">
+                                                <td th:text="${ecart.allFees?.COM_SEQ}"></td>
+                                                <td th:text="${ecart.allFees?.ISIN}"></td>
+                                                <td th:text="${ecart.allFees?.BPID_RECIPIENT}"></td>
+                                                <td th:text="${ecart.allFees?.BPID_LIABLE}"></td>
+                                                <td th:text="${ecart.allFees?.FEEBASIS}"></td>
+                                                <td contenteditable="true" th:id="${ecart.id}"
+                                                    th:text="${ecart.allFees?.PRICE}"
+                                                    th:attr="onfocusout='myFunction(\'' + ${ecart.id}+ '\');'"></td>
+
+                                                <td th:text=" ${ecart.allFeesGenerated?.feeRate?.feeType?.typeName}"></td>
+                                                <td th:text="${ecart.allFeesGenerated?.feeRate?.feeType?.categorieFees?.categorieFeeName}"></td>
+                                                <td th:switch="${ecart.allFeesGenerated?.feeRate?.tauxMontant}">
+                                                <span th:case="'T'"
+                                                      th:text="${ecart.allFeesGenerated?.feeRate?.feeRate}">
+                                                </span>
+                                                    <span th:case="'M'"
+                                                          th:text="${ecart.allFeesGenerated?.feeRate?.montant}">
+                                                </span>
+                                                </td>
+
+                                                <td th:id="${'amount'+ecart.id}"
+                                                    th:text="${ecart.allFees?.AMOUNT}"></td>
+                                                <td th:text="${ecart.date}"></td>
+
+                                                <td>
+                                                    <div class="btn-group btn-group-sm" role="group"
+                                                         aria-label="Basic example">
+                                                        <button th:if="${ecart.ajouter || ecart.supprimer || ecart.modifier}"
+                                                                class="btn btn-success ajouter"
+                                                                th:id="${ecart.id}">
+                                                            <i class="icons icons-Add"></i>
+                                                        </button>
+
+                                                        <button th:if="${ecart.supprimer}" class="btn btn-info supprimer"
+                                                                th:id="${ecart.id}">
+                                                            <i class="icons icons-Calculator"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+
+                                            </tr>
+                                            </tbody>
+                                        </table>
+
+                                        <div class="container" th:switch="${#httpServletRequest.requestURI}">
+
+                                            <ul class="nav nav-pills" th:case="'/ecart_allFees/searchDate'">
+                                                <li th:each="p,s:${pagesSurfacturation}" class="nav-item">
+                                                    <a th:href="@{/ecart_allFees/searchDate(currentPageSurfacturation=${s.index},firstDate=${firstDate},secondDate=${secondDate})}"
+                                                       th:classappend="${#strings.contains(currentPageSurfacturation,s.index)} ? 'active' : ''"
+                                                       class="nav-link " th:text="${s.index+1}"></a>
+                                                </li>
+                                            </ul>
+
+                                            <ul class="nav nav-pills" th:case="'/ecart_allFees/'">
+                                                <li th:each="p,status:${pagesSurfacturation}" class="nav-item">
+                                                    <a th:href="@{/ecart_allFees/(currentPageSurfacturation=${status.index})}"
+                                                       th:classappend="${currentPageSurfacturation == status.index}? 'active':''"
+                                                       class="nav-link " th:text="${status.index+1}"></a>
+
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane  p-20" id="Errone" role="tabpanel">
+                                <div class="table-responsive">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>ISIN</th>
+                                                <th>BPID_RECIPIENT</th>
+                                                <th>BPID_LIABLE</th>
+                                                <th>Quantite</th>
+                                                <th>Prix</th>
+                                                <th>Fee Type</th>
+                                                <th>Fee Categorie</th>
+                                                <th>Fee Rate</th>
+                                                <th>Montant</th>
+                                                <th>Date</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr th:each="ecart: ${ecartAllFeesErrone}">
+                                                <td th:text="${ecart.allFees?.COM_SEQ}"></td>
+                                                <td th:text="${ecart.allFees?.ISIN}"></td>
+                                                <td th:text="${ecart.allFees?.BPID_RECIPIENT}"></td>
+                                                <td th:text="${ecart.allFees?.BPID_LIABLE}"></td>
+                                                <td th:text="${ecart.allFees?.FEEBASIS}"></td>
+                                                <td contenteditable="true" th:id="${ecart.id}"
+                                                    th:text="${ecart.allFees?.PRICE}"
+                                                    th:attr="onfocusout='myFunction(\'' + ${ecart.id}+ '\');'"></td>
+
+                                                <td th:text=" ${ecart.allFeesGenerated?.feeRate?.feeType?.typeName}"></td>
+                                                <td th:text="${ecart.allFeesGenerated?.feeRate?.feeType?.categorieFees?.categorieFeeName}"></td>
+                                                <td th:switch="${ecart.allFeesGenerated?.feeRate?.tauxMontant}">
+                                                <span th:case="'T'"
+                                                      th:text="${ecart.allFeesGenerated?.feeRate?.feeRate}">
+                                                </span>
+                                                    <span th:case="'M'"
+                                                          th:text="${ecart.allFeesGenerated?.feeRate?.montant}">
+                                                </span>
+                                                </td>
+
+                                                <td th:id="${'amount'+ecart.id}"
+                                                    th:text="${ecart.allFees?.AMOUNT}"></td>
+                                                <td th:text="${ecart.date}"></td>
+
+                                                <td>
+                                                    <div class="btn-group btn-group-sm" role="group"
+                                                         aria-label="Basic example">
+                                                        <button th:if="${ecart.ajouter || ecart.supprimer || ecart.modifier}"
+                                                                class="btn btn-success ajouter"
+                                                                th:id="${ecart.id}">
+                                                            <i class="icons icons-Add"></i>
+                                                        </button>
+
+                                                        <button th:if="${ecart.supprimer}" class="btn btn-info supprimer"
+                                                                th:id="${ecart.id}">
+                                                            <i class="icons icons-Calculator"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+
+                                            </tr>
+                                            </tbody>
+                                        </table>
+
+                                        <div class="container" th:switch="${#httpServletRequest.requestURI}">
+
+                                            <ul class="nav nav-pills" th:case="'/ecart_allFees/searchDate'">
+                                                <li th:each="p,s:${pagesErrone}" class="nav-item">
+                                                    <a th:href="@{/ecart_allFees/searchDate(currentPageErrone=${s.index},firstDate=${firstDate},secondDate=${secondDate})}"
+                                                       th:classappend="${#strings.contains(currentPageErrone,s.index)} ? 'active' : ''"
+                                                       class="nav-link " th:text="${s.index+1}"></a>
+                                                </li>
+                                            </ul>
+
+                                            <ul class="nav nav-pills" th:case="'/ecart_allFees/'">
+                                                <li th:each="p,status:${pagesErrone}" class="nav-item">
+                                                    <a th:href="@{/ecart_allFees/(currentPageErrone=${status.index})}"
+                                                       th:classappend="${currentPageErrone == status.index}? 'active':''"
+                                                       class="nav-link " th:text="${status.index+1}"></a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane  p-20" id="allFeesnotExist" role="tabpanel">
+                                <div class="table-responsive">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>ISIN</th>
+                                                <th>BPID_RECIPIENT</th>
+                                                <th>BPID_LIABLE</th>
+                                                <th>Quantite</th>
+                                                <th>Prix</th>
+                                                <th>Fee Categorie</th>
+                                                <th>Fee Type</th>
+                                                <th>Montant</th>
+                                                <th>Date</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr th:each="ecart: ${ecartAllFeesGeneratedPageNotExist}">
+                                                <td th:text="${ecart.COM_SEQ}"></td>
+                                                <td th:text="${ecart.ISIN}"></td>
+                                                <td th:text="${ecart.BPID_RECIPIENT}"></td>
+                                                <td th:text="${ecart.BPID_LIABLE}"></td>
+                                                <td th:text="${ecart.FEEBASIS}"></td>
+                                                <td th:text="${ecart.PRICE}"></td>
+                                                <td th:text=" ${ecart.FEETYPE}"></td>
+                                                <td th:text="${ecart.FEECATEGORY}"></td>
+                                                <td th:text="${ecart.AMOUNT}"></td>
+                                                <td th:text="${ecart.DATE}"></td>
+                                                <td>
+                                                    <div class="btn-group btn-group-sm" role="group"
+                                                         aria-label="Basic example">
+                                                        <button class="btn btn-success ajouterToAllFeesRef"
+                                                                title="Ajoute To AllFees"
+                                                                th:id="${ecart.COM_SEQ}">
+                                                            <i class="icons icons-Add"></i>
+                                                        </button>
+
+                                                        <button class="btn btn-danger supprimerAllFeesRef"
+                                                                title="Supprimer from AllFees"
+                                                                th:id="${ecart.COM_SEQ}">
+                                                            <i class="icons icons-Add"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+
+                                            </tr>
+                                            </tbody>
+                                        </table>
+
+                                        <div class="container" th:switch="${#httpServletRequest.requestURI}">
+
+                                            <ul class="nav nav-pills" th:case="'/ecart_allFees/searchDate'">
+                                                <li th:each="p,s:${pagesNotExistFeeGen}" class="nav-item">
+                                                    <a th:href="@{/ecart_allFees/searchDate(currentPageNotExistFeeGen=${s.index},firstDate=${firstDate},secondDate=${secondDate})}"
+                                                       th:classappend="${#strings.contains(currentPageNotExistFeeGen,s.index)} ? 'active' : ''"
+                                                       class="nav-link " th:text="${s.index+1}"></a>
+                                                </li>
+                                            </ul>
+
+                                            <ul class="nav nav-pills" th:case="'/ecart_allFees/'">
+                                                <li th:each="p,status:${pagesNotExistFeeGen}" class="nav-item">
+                                                    <a th:href="@{/ecart_allFees/(currentPageNotExistFeeGen=${status.index})}"
+                                                       th:classappend="${currentPageNotExistFeeGen == status.index}? 'active':''"
+                                                       class="nav-link " th:text="${status.index+1}"></a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
             </div>
 
-
         </div>
     </div>
 
+
+    <div class="modal bs-example-modal-lg" id="ModalAjouterToAllfeesRef">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-FeeCategorie-title"> ligne à Ajouter </h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <form th:object="${allFee}" method="post" th:action="@{/ecart_allFees/ajouterToAllFeesRef}">
+                    <div class="modal-body">
+                        <div class="row">
+
+                            <strong>
+                                Add this row To AllFees and Submit
+                            </strong>
+                            <input type="hidden" th:field="*{COM_SEQ}" id="allFeesId">
+
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">
+                                Annuler
+                            </button>
+                            <button type="submit" class="btn btn-info waves-effect text-left">
+                                Soumettre
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal bs-example-modal-lg" id="ModalSupprimerAllfeesRef">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-FeeCategorie-title"> ligne à Supprimer </h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <form th:object="${allFee}" method="post" th:action="@{/ecart_allFees/supprimerAllFeesRef}">
+                    <div class="modal-body">
+                        <div class="row">
+
+                            <strong>
+                                Delete this row To AllFees and Submit
+                            </strong>
+                            <input type="hidden" th:field="*{COM_SEQ}" id="FeesRefIdSuprrimer">
+
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">
+                                Annuler
+                            </button>
+                            <button type="submit" class="btn btn-info waves-effect text-left">
+                                Soumettre
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
 
     <!--        modal pour recalculate ecart and add it to all fees generated -->
@@ -368,12 +691,21 @@
         })
 
 
-        /// Modal ajouter un ecart AllFees vers allfees final
-        $(document).on('click', '.ajouter', function () {
+        /// Modal ajouter un ecart AllFees vers allfees Ref
+        $(document).on('click', '.ajouterToAllFeesRef', function () {
                 var id = $(this).attr('id');
                 console.log(id);
-                $('#ecartFeesId').val(id);
-                $('#ModalAjouter').modal('show');
+                $('#allFeesId').val(id);
+                $('#ModalAjouterToAllfeesRef').modal('show');
+            }
+        )
+
+        /// Modal ajouter un ecart AllFees vers allfees ref
+        $(document).on('click', '.supprimerAllFeesRef', function () {
+                var id = $(this).attr('id');
+                console.log(id);
+                $('#FeesRefIdSuprrimer').val(id);
+                $('#ModalSupprimerAllfeesRef').modal('show');
             }
         )
 
@@ -386,6 +718,15 @@
             }
         )
 
+
+        /// Modal ajouter un ecart AllFees vers allfees final
+        $(document).on('click', '.ajouter', function () {
+                var id = $(this).attr('id');
+                console.log(id);
+                $('#ecartFeesId').val(id);
+                $('#ModalAjouter').modal('show');
+            }
+        )
 
         function myFunction(id) {
             console.log(id);
@@ -404,12 +745,12 @@
                 contentType: "application/json;charset-UTF-8",
                 success: function (data) {
                     console.log(data);
-                    $('#amount'+id).text(data.allFeesGenerated.amount)
+                    $('#amount' + id).text(data.allFeesGenerated.amount)
                     document.getElementById("loader").style.display = "none";
                     document.getElementById("myDivPage").style.display = "block";
                 },
                 error: function (data) {
-                    alert("Error in row of id = "+id)
+                    alert("Error in row of id = " + id)
                     document.getElementById("loader").style.display = "none";
                     document.getElementById("myDivPage").style.display = "block";
                 }

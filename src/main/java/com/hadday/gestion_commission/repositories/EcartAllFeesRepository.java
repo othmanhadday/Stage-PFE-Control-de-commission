@@ -21,7 +21,18 @@ interface EcartAllFeesRepository extends JpaRepository<EcartAllFees, Long> {
 
     public Page<EcartAllFees> findEcartAllFeesByDeletedIsFalse(Pageable pageable);
 
-    public Page<EcartAllFees> findEcartAllFeesByDeletedIsFalseAndDateBetween(Pageable pageable, Date date, Date date2);
+    public Page<EcartAllFees> findEcartAllFeesByDeletedIsFalseAndAjouterIsTrue(Pageable pageable);
+
+    public Page<EcartAllFees> findEcartAllFeesByDeletedIsFalseAndSupprimerIsTrue(Pageable pageable);
+
+    public Page<EcartAllFees> findEcartAllFeesByDeletedIsFalseAndModifierIsTrue(Pageable pageable);
+
+
+    public Page<EcartAllFees> findEcartAllFeesByDeletedIsFalseAndAjouterIsTrueAndDateBetween(Pageable pageable, Date date, Date date2);
+
+    public Page<EcartAllFees> findEcartAllFeesByDeletedIsFalseAndSupprimerIsTrueAndDateBetween(Pageable pageable, Date date, Date date2);
+
+    public Page<EcartAllFees> findEcartAllFeesByDeletedIsFalseAndModifierIsTrueAndDateBetween(Pageable pageable, Date date, Date date2);
 
     public EcartAllFees findEcartAllFeesById(Long id);
 

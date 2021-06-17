@@ -1,7 +1,9 @@
 package com.hadday.gestion_commission.controller;
 
 import com.hadday.gestion_commission.Constante.RegleCalcul;
+import com.hadday.gestion_commission.Service.AllFeesService;
 import com.hadday.gestion_commission.Service.EcartAllFeesService;
+import com.hadday.gestion_commission.entities.AllFees;
 import com.hadday.gestion_commission.entities.AllFeesGenerated;
 import com.hadday.gestion_commission.entities.DTO.FeeRateDto;
 import com.hadday.gestion_commission.entities.EcartAllFees;
@@ -29,35 +31,64 @@ public class EcartAllFeesController {
 
     @Autowired
     private EcartAllFeesService ecartAllFeesService;
+    @Autowired
+    private AllFeesService allFeesService;
 
     @GetMapping("/")
     public String index(Model model,
-                        @RequestParam(name = "page", defaultValue = "0") int page,
+                        @RequestParam(name = "currentPageNotExist", defaultValue = "0") int currentPageNotExist,
+                        @RequestParam(name = "currentPageSurfacturation", defaultValue = "0") int currentPageSurfacturation,
+                        @RequestParam(name = "currentPageErrone", defaultValue = "0") int currentPageErrone,
                         @RequestParam(name = "size", defaultValue = "100") int size) {
 
-        Page<EcartAllFees> ecartAllFeesPage = ecartAllFeesService.getEcartAllFees(PageRequest.of(page, size));
+        // Not Exist allFees generated
+        Page<AllFees> ecartAllFeesGeneratedPageNotExist = allFeesService.findAllFeesisProcessed(PageRequest.of(currentPageNotExist, size));
+        int[] pagesNotExistFeeGen = new int[ecartAllFeesGeneratedPageNotExist.getTotalPages()];
+        model.addAttribute("pagesNotExistFeeGen", pagesNotExistFeeGen);
+        model.addAttribute("currentPageNotExistFeeGen", currentPageNotExist);
+        model.addAttribute("ecartAllFeesGeneratedPageNotExist", ecartAllFeesGeneratedPageNotExist);
 
 
-        int[] pages = new int[ecartAllFeesPage.getTotalPages()];
-        model.addAttribute("pages", pages);
-        model.addAttribute("currentPage", page);
+        // Not Exist allFeesben
+        Page<EcartAllFees> ecartAllFeesPageNotExist = ecartAllFeesService.getEcartAllFeesNotExist(PageRequest.of(currentPageNotExist, size));
+        int[] pagesNotExist = new int[ecartAllFeesPageNotExist.getTotalPages()];
+        model.addAttribute("pagesNotExist", pagesNotExist);
+        model.addAttribute("currentPageNotExist", currentPageNotExist);
+        model.addAttribute("ecartAllFeesNotExist", ecartAllFeesPageNotExist);
+
+
+        Page<EcartAllFees> ecartAllFeesSurfacturation = ecartAllFeesService.getEcartAllFeesSurfacturation(PageRequest.of(currentPageSurfacturation, size));
+        int[] pagesSurfacturation = new int[ecartAllFeesSurfacturation.getTotalPages()];
+        model.addAttribute("pagesSurfacturation", pagesSurfacturation);
+        model.addAttribute("currentPageSurfacturation", currentPageSurfacturation);
+        model.addAttribute("ecartAllFeesSurfacturation", ecartAllFeesSurfacturation);
+
+
+        Page<EcartAllFees> ecartAllFeesErrone = ecartAllFeesService.getEcartAllFeesErrone(PageRequest.of(currentPageErrone, size));
+        int[] pagesErrone = new int[ecartAllFeesErrone.getTotalPages()];
+        model.addAttribute("pagesErrone", pagesErrone);
+        model.addAttribute("currentPageErrone", currentPageErrone);
+        model.addAttribute("ecartAllFeesErrone", ecartAllFeesErrone);
+
 
         model.addAttribute("firstDate", null);
         model.addAttribute("secondDate", null);
         model.addAttribute("errors", null);
         model.addAttribute("ecart", new EcartAllFees());
+        model.addAttribute("allFee", new AllFees());
 
-
-        model.addAttribute("ecartAllFees", ecartAllFeesPage);
         return "ecartsAllFees/ecart_allFees";
     }
+
 
     @GetMapping("/searchDate")
     public String searchByDate(
             Model model,
             @RequestParam("firstDate") String firstDate,
             @RequestParam("secondDate") String secondDate,
-            @RequestParam("currentPage") String currentPage
+            @RequestParam(name = "currentPageNotExist", defaultValue = "0") int currentPageNotExist,
+            @RequestParam(name = "currentPageSurfacturation", defaultValue = "0") int currentPageSurfacturation,
+            @RequestParam(name = "currentPageErrone", defaultValue = "0") int currentPageErrone
     ) throws ParseException {
         HashMap<String, String> errors = new HashMap<>();
         Date date1 = null;
@@ -70,41 +101,82 @@ public class EcartAllFeesController {
         }
 
         if (errors.size() > 0) {
-            Page<EcartAllFees> ecartAllFeesPage = ecartAllFeesService.getEcartAllFees(PageRequest.of(0, 100));
 
-            int[] pages = new int[ecartAllFeesPage.getTotalPages()];
-            model.addAttribute("pages", pages);
-            model.addAttribute("currentPage", 0);
+            // Not Exist allFees
+            Page<EcartAllFees> ecartAllFeesPageNotExist = ecartAllFeesService.getEcartAllFeesNotExist(PageRequest.of(currentPageNotExist, 100));
+            int[] pagesNotExist = new int[ecartAllFeesPageNotExist.getTotalPages()];
+            model.addAttribute("pagesNotExist", pagesNotExist);
+            model.addAttribute("currentPageNotExist", currentPageNotExist);
+            model.addAttribute("ecartAllFeesNotExist", ecartAllFeesPageNotExist);
+
+
+            Page<EcartAllFees> ecartAllFeesSurfacturation = ecartAllFeesService.getEcartAllFeesSurfacturation(PageRequest.of(currentPageSurfacturation, 100));
+            int[] pagesSurfacturation = new int[ecartAllFeesSurfacturation.getTotalPages()];
+            model.addAttribute("pagesSurfacturation", pagesSurfacturation);
+            model.addAttribute("currentPageSurfacturation", currentPageSurfacturation);
+            model.addAttribute("ecartAllFeesSurfacturation", ecartAllFeesSurfacturation);
+
+
+            Page<EcartAllFees> ecartAllFeesErrone = ecartAllFeesService.getEcartAllFeesErrone(PageRequest.of(currentPageErrone, 100));
+            int[] pagesErrone = new int[ecartAllFeesErrone.getTotalPages()];
+            model.addAttribute("pagesErrone", pagesErrone);
+            model.addAttribute("currentPageErrone", currentPageErrone);
+            model.addAttribute("ecartAllFeesErrone", ecartAllFeesErrone);
+
 
             model.addAttribute("firstDate", null);
             model.addAttribute("secondDate", null);
-            model.addAttribute("errors", errors);
+            model.addAttribute("errors", null);
             model.addAttribute("ecart", new EcartAllFees());
 
-            model.addAttribute("ecartAllFees", ecartAllFeesPage);
             return "ecartsAllFees/ecart_allFees";
         }
 
-        System.out.println(date1);
-        System.out.println(date2);
+
         date1 = new SimpleDateFormat("yyyy-MM-dd").parse(firstDate);
         date2 = new SimpleDateFormat("yyyy-MM-dd").parse(secondDate);
 
-        Page<EcartAllFees> ecartAllFeesPage = ecartAllFeesService.
-                getEcartBetweenDate(
-                        PageRequest.of(Integer.valueOf(currentPage), 100),
+        // Not existe in AllFees
+        Page<EcartAllFees> ecartAllFeesPageNotExist = ecartAllFeesService.
+                getEcartBetweenDateNotExist(
+                        PageRequest.of(Integer.valueOf(currentPageNotExist), 100),
                         date1,
                         date2
                 );
+        int[] pagesNotExist = new int[ecartAllFeesPageNotExist.getTotalPages()];
+        model.addAttribute("pagesNotExist", pagesNotExist);
+        model.addAttribute("currentPageNotExist", currentPageNotExist);
+        model.addAttribute("ecartAllFeesNotExist", ecartAllFeesPageNotExist);
 
-        int[] pages = new int[ecartAllFeesPage.getTotalPages()];
-        model.addAttribute("pages", pages);
-        model.addAttribute("currentPage", currentPage);
+
+        // Surfacturation in AllFees
+        Page<EcartAllFees> ecartAllFeesSurfacturation = ecartAllFeesService.
+                getEcartBetweenDateSurfacturation(
+                        PageRequest.of(Integer.valueOf(currentPageNotExist), 100),
+                        date1,
+                        date2
+                );
+        int[] pagesSurfacturation = new int[ecartAllFeesSurfacturation.getTotalPages()];
+        model.addAttribute("pagesSurfacturation", pagesSurfacturation);
+        model.addAttribute("currentPageSurfacturation", currentPageSurfacturation);
+        model.addAttribute("ecartAllFeesSurfacturation", ecartAllFeesSurfacturation);
+
+
+        // Errone in AllFees
+        Page<EcartAllFees> ecartAllFeesErrone = ecartAllFeesService.
+                getEcartBetweenDateErrone(
+                        PageRequest.of(Integer.valueOf(currentPageNotExist), 100),
+                        date1,
+                        date2
+                );
+        int[] pagesErrone = new int[ecartAllFeesErrone.getTotalPages()];
+        model.addAttribute("pagesErrone", pagesErrone);
+        model.addAttribute("currentPageErrone", currentPageErrone);
+        model.addAttribute("ecartAllFeesErrone", ecartAllFeesErrone);
         model.addAttribute("firstDate", firstDate);
         model.addAttribute("secondDate", secondDate);
         model.addAttribute("ecart", new EcartAllFees());
 
-        model.addAttribute("ecartAllFees", ecartAllFeesPage);
         return "ecartsAllFees/ecart_allFees";
     }
 
@@ -122,6 +194,21 @@ public class EcartAllFeesController {
         return "redirect:/ecart_allFees/";
     }
 
+
+    @PostMapping("/ajouterToAllFeesRef")
+    public String ajouterToAllFeesRef(@ModelAttribute("allFee") AllFees allFees,
+                                      RedirectAttributes redirAttrs,
+                                      Model model, BindingResult result) {
+
+
+        allFees = ecartAllFeesService.ajouterEcartoAllFeesRef(allFees);
+        if (allFees != null) {
+            redirAttrs.addFlashAttribute("exist", " ce ligne a ete ajoute avec success ");
+        }
+
+        return "redirect:/ecart_allFees/";
+    }
+
     @PostMapping("/supprimer")
     public String suprimerFromAllFees(@ModelAttribute("ecart") EcartAllFees ecartAllFees,
                                       RedirectAttributes redirAttrs,
@@ -129,6 +216,19 @@ public class EcartAllFeesController {
 
         ecartAllFees = ecartAllFeesService.deleteEcartoAllFeesFinal(ecartAllFees);
         if (ecartAllFees != null) {
+            redirAttrs.addFlashAttribute("success", " ce ligne a ete supprimer avec success ");
+        }
+
+        return "redirect:/ecart_allFees/";
+    }
+
+    @PostMapping("/supprimerAllFeesRef")
+    public String suprimerFromAllFeesRef(@ModelAttribute("allFee") AllFees allFees,
+                                      RedirectAttributes redirAttrs,
+                                      Model model, BindingResult result) {
+
+        allFees = ecartAllFeesService.supprimerEcarFromAllFeesRef(allFees);
+        if (allFees != null) {
             redirAttrs.addFlashAttribute("success", " ce ligne a ete supprimer avec success ");
         }
 

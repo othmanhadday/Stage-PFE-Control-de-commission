@@ -32,6 +32,8 @@ public class EcartTauxCommissionServiceImpl implements EcartTauxCommissionServic
     private InstrumentCategorieRepository instrumentCategorieRepository;
     @Autowired
     private AllFeesGeneratedRepository allFeesGeneratedRepository;
+    @Autowired
+    private AllFeesService allFeesService;
 
     @Override
     public Optional<EcartCommission> findEcartById(Long id) {
@@ -192,8 +194,9 @@ public class EcartTauxCommissionServiceImpl implements EcartTauxCommissionServic
             allFeesGenerated.setQuantite(ecartCommission.ssatf.getQuantity());
         }
 
-        allFeesGeneratedRepository.save(allFeesGenerated);
+        allFeesGenerated = allFeesGeneratedRepository.save(allFeesGenerated);
 
+        allFeesService.controllerEtat(allFeesGenerated);
         ecartCommission.setDeleted(true);
         ecartCommission = ecartCommissionRepository.save(ecartCommission);
 

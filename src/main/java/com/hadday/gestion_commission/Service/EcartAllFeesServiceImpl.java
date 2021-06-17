@@ -25,13 +25,38 @@ public class EcartAllFeesServiceImpl implements EcartAllFeesService {
     }
 
     @Override
+    public Page<EcartAllFees> getEcartAllFeesNotExist(Pageable pageable) {
+        return ecartAllFeesRepository.findEcartAllFeesByDeletedIsFalseAndAjouterIsTrue(pageable);
+    }
+
+    @Override
+    public Page<EcartAllFees> getEcartAllFeesSurfacturation(Pageable pageable) {
+        return ecartAllFeesRepository.findEcartAllFeesByDeletedIsFalseAndSupprimerIsTrue(pageable);
+    }
+
+    @Override
+    public Page<EcartAllFees> getEcartAllFeesErrone(Pageable pageable) {
+        return ecartAllFeesRepository.findEcartAllFeesByDeletedIsFalseAndModifierIsTrue(pageable);
+    }
+
+    @Override
     public EcartAllFees getEcartById(Long id) {
         return ecartAllFeesRepository.findById(id).get();
     }
 
     @Override
-    public Page<EcartAllFees> getEcartBetweenDate(Pageable pageable, Date date, Date date2) {
-        return ecartAllFeesRepository.findEcartAllFeesByDeletedIsFalseAndDateBetween(pageable, date, date2);
+    public Page<EcartAllFees> getEcartBetweenDateErrone(Pageable pageable, Date date, Date date2) {
+        return ecartAllFeesRepository.findEcartAllFeesByDeletedIsFalseAndModifierIsTrueAndDateBetween(pageable, date, date2);
+    }
+
+    @Override
+    public Page<EcartAllFees> getEcartBetweenDateSurfacturation(Pageable pageable, Date date, Date date2) {
+        return ecartAllFeesRepository.findEcartAllFeesByDeletedIsFalseAndSupprimerIsTrueAndDateBetween(pageable, date, date2);
+    }
+
+    @Override
+    public Page<EcartAllFees> getEcartBetweenDateNotExist(Pageable pageable, Date date, Date date2) {
+        return ecartAllFeesRepository.findEcartAllFeesByDeletedIsFalseAndAjouterIsTrueAndDateBetween(pageable, date, date2);
     }
 
     @Override
@@ -41,7 +66,7 @@ public class EcartAllFeesServiceImpl implements EcartAllFeesService {
 
         AllFees newAllfees = new AllFees();
 
-        if (ecartAllFees.getAllFees()==null){
+        if (ecartAllFees.getAllFees() == null) {
             newAllfees.setCOM_SEQ(null);
             newAllfees.setDATE(ecartAllFees.getDate());
             newAllfees.setBPID_RECIPIENT(ecartAllFees.getAllFeesGenerated().getBPID_RECIPIENT());
@@ -57,9 +82,8 @@ public class EcartAllFeesServiceImpl implements EcartAllFeesService {
             newAllfees.setAMOUNT(ecartAllFees.getAllFeesGenerated().getAmount());
             newAllfees.setCURRENCY("MAD");
             newAllfees.setProcessed(true);
-        }else{
-            newAllfees=ecartAllFees.getAllFees();
-            newAllfees.setPRICE(ecartAllFees.getAllFeesGenerated().getPrix());
+        } else {
+            newAllfees = ecartAllFees.getAllFees();
             newAllfees.setPRICE(ecartAllFees.getAllFeesGenerated().getPrix());
         }
         newAllfees = allFeesRepository.save(newAllfees);
@@ -73,6 +97,25 @@ public class EcartAllFeesServiceImpl implements EcartAllFeesService {
     }
 
     @Override
+    public AllFees ajouterEcartoAllFeesRef(AllFees allFees) {
+
+        allFees = allFeesRepository.findById(allFees.getCOM_SEQ()).get();
+        allFees.setProcessed(true);
+        allFees = allFeesRepository.save(allFees);
+
+        return allFees;
+    }
+
+    @Override
+    public AllFees supprimerEcarFromAllFeesRef(AllFees allFees) {
+        allFees = allFeesRepository.findById(allFees.getCOM_SEQ()).get();
+        allFees.setDeleted(true);
+        allFees = allFeesRepository.save(allFees);
+
+        return allFees;
+    }
+
+    @Override
     public EcartAllFees deleteEcartoAllFeesFinal(EcartAllFees ecartAllFees) {
 
         ecartAllFees = getEcartById(ecartAllFees.getId());
@@ -81,7 +124,7 @@ public class EcartAllFeesServiceImpl implements EcartAllFeesService {
         ecartAllFees.setDeleted(true);
         allFees.setDeleted(true);
         allFeesRepository.save(allFees);
-        ecartAllFees=ecartAllFeesRepository.save(ecartAllFees);
+        ecartAllFees = ecartAllFeesRepository.save(ecartAllFees);
         System.out.println(ecartAllFees);
         System.out.println(allFees);
 

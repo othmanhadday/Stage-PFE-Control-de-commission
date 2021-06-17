@@ -15,6 +15,7 @@ public interface EcartCommissionRepository extends JpaRepository<EcartCommission
 
     public boolean existsEcartCommissionBySsatf(Ssatf ssatf);
 
+
     public List<EcartCommission> findEcartCommissionsByRelevesoldesAvoirs(RelevesoldesAvoirs relevesoldesAvoirs);
 
     public Page<EcartCommission> findEcartCommissionsByRelevesoldesAvoirsIsNotNullAndDeletedIsFalse(Pageable pageable);

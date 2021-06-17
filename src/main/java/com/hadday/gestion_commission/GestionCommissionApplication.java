@@ -12,7 +12,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 public class GestionCommissionApplication {
 
     @Bean
-    public AuditorAware<String> auditorAware(){
+    public AuditorAware<String> auditorAware() {
         return new SpringSecurityAuditorAware();
     }
 
